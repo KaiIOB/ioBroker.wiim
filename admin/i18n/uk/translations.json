@@ -1,0 +1,5 @@
+{
+    "IP_Address": "IP-адреса пристрою Wiim",
+    "Refresh_Interval": "інтервал оновлення даних гравця в секундах",
+    "wiim adapter settings": "Налаштування адаптера для wiim"
+}

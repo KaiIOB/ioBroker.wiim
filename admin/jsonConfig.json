@@ -1,0 +1,16 @@
+{
+	"i18n": true,
+	"type": "panel",
+	"items": {
+		"IP_Address": {
+			"type": "text",
+			"label": "IP address of Wiim device",
+			"newLine": true
+		},
+		"Refresh_Interval": {
+			"type": "number",
+			"label": "interval for refresh of player data in seconds",
+			"newLine": true
+		}
+	}
+}
