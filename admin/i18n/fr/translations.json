@@ -1,5 +1,5 @@
 {
-    "IP_Address": "IP address of Wiim device",
-    "Refresh_Interval": "interval for refresh of player data in seconds",
-    "wiim adapter settings": "Paramètres d'adaptateur pour wiim"
+	"wiim adapter settings": "Paramètres d'adaptateur pour wiim",
+	"IP_Address": "IP address of Wiim device",
+	"Refresh_Interval": "interval for refresh of player data in seconds"
 }

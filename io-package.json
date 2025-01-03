@@ -1,130 +1,101 @@
 {
-    "common": {
-        "name": "wiim",
-        "version": "0.0.1",
-        "news": {
-            "0.0.1": {
-                "en": "initial release",
-                "de": "Erstveröffentlichung",
-                "ru": "Начальная версия",
-                "pt": "lançamento inicial",
-                "nl": "Eerste uitgave",
-                "fr": "Première version",
-                "it": "Versione iniziale",
-                "es": "Versión inicial",
-                "pl": "Pierwsze wydanie",
-                "zh-cn": "首次出版",
-                "uk": "початковий випуск"
-            }
-        },
-        "title": "Wiim Connect",
-        "titleLang": {
-            "en": "Wiim Connect",
-            "de": "Wiim Connect",
-            "ru": "Wiim Connect",
-            "pt": "Wiim Connect",
-            "nl": "Wiim Connect",
-            "fr": "Wiim Connect",
-            "it": "Wiim Connect",
-            "es": "Wiim Connect",
-            "pl": "Wiim Connect",
-            "zh-cn": "Wiim Connect",
-            "uk": "Wiim Connect"
-        },
-        "desc": {
-            "en": "adapter to access Wiim devices",
-            "de": "adapter to access Wiim devices",
-            "ru": "adapter to access Wiim devices",
-            "pt": "adapter to access Wiim devices",
-            "nl": "adapter to access Wiim devices",
-            "fr": "adapter to access Wiim devices",
-            "it": "adapter to access Wiim devices",
-            "es": "adapter to access Wiim devices",
-            "pl": "adapter to access Wiim devices",
-            "zh-cn": "adapter to access Wiim devices",
-            "uk": "адаптер для доступу до пристроїв Wiim"
-        },
-        "authors": [
-            "KaiIOB <Kaibrendel@kabelmail.de>"
-        ],
-        "keywords": [
-            "Wiim",
-            "streamer",
-            "pro",
-            "amp"
-        ],
-        "license": "MIT",
-        "platform": "Javascript/Node.js",
-        "main": "main.js",
-        "icon": "wiim.png",
-        "enabled": true,
-        "extIcon": "https://raw.githubusercontent.com/KaiIOB/ioBroker.wiim/main/admin/wiim.png",
-        "readme": "https://github.com/KaiIOB/ioBroker.wiim/blob/main/README.md",
-        "loglevel": "info",
-        "mode": "daemon",
-        "type": "multimedia",
-        "compact": true,
-        "connectionType": "local",
-        "dataSource": "poll",
-        "adminUI": {
-            "config": "json",
-            "tab": "materialize"
-        },
-        "adminTab": {
-            "singleton": true,
-            "name": {
-                "en": "Wiim Connect",
-                "de": "Wiim Connect",
-                "ru": "Wiim Connect",
-                "pt": "Wiim Connect",
-                "nl": "Wiim Connect",
-                "fr": "Wiim Connect",
-                "it": "Wiim Connect",
-                "es": "Wiim Connect",
-                "pl": "Wiim Connect",
-                "zh-cn": "Wiim Connect"
-            },
-            "link": "",
-            "fa-icon": "info"
-        },
-        "supportCustoms": true,
-        "dependencies": [
-            {
-                "js-controller": ">=3.3.22"
-            }
-        ],
-        "globalDependencies": [
-            {
-                "admin": ">=5.1.13"
-            }
-        ]
-    },
-    "native": {
-        "IP_Address": "0.0.0.0",
-        "Refresh_Interval": "15"
-    },
-    "objects": [],
-    "instanceObjects": [
-        {
-            "_id": "info",
-            "type": "channel",
-            "common": {
-                "name": "Information"
-            },
-            "native": {}
-        },
-        {
-            "_id": "info.connection",
-            "type": "state",
-            "common": {
-                "role": "indicator.connected",
-                "name": "Device or service connected",
-                "type": "boolean",
-                "read": true,
-                "write": false,
-                "def": false
-            },
-            "native": {}
-        }
-    ]
+	"common": {
+		"name": "wiim",
+		"version": "0.0.1",
+		"news": {
+			"0.0.1": {
+				"en": "initial release",
+				"de": "Erstveröffentlichung",
+				"ru": "Начальная версия",
+				"pt": "lançamento inicial",
+				"nl": "Eerste uitgave",
+				"fr": "Première version",
+				"it": "Versione iniziale",
+				"es": "Versión inicial",
+				"pl": "Pierwsze wydanie",
+				"zh-cn": "首次出版"
+			}
+		},
+		"title": "Wiim Connect",
+		"titleLang": {
+			"en": "Wiim Connect",
+			"de": "Wiim Connect",
+			"ru": "Wiim Connect",
+			"pt": "Wiim Connect",
+			"nl": "Wiim Connect",
+			"fr": "Wiim Connect",
+			"it": "Wiim Connect",
+			"es": "Wiim Connect",
+			"pl": "Wiim Connect",
+			"zh-cn": "Wiim Connect"
+		},
+		"desc": {
+			"en": "adapter to access Wiim devices",
+			"de": "adapter to access Wiim devices",
+			"ru": "adapter to access Wiim devices",
+			"pt": "adapter to access Wiim devices",
+			"nl": "adapter to access Wiim devices",
+			"fr": "adapter to access Wiim devices",
+			"it": "adapter to access Wiim devices",
+			"es": "adapter to access Wiim devices",
+			"pl": "adapter to access Wiim devices",
+			"zh-cn": "adapter to access Wiim devices"
+		},
+		"authors": ["KaiIOB <Kaibrendel@kabelmail.de>"],
+		"keywords": ["Wiim", "streamer", "pro", "amp"],
+		"license": "MIT",
+		"platform": "Javascript/Node.js",
+		"main": "main.js",
+		"icon": "wiim.png",
+		"enabled": true,
+		"extIcon": "https://raw.githubusercontent.com/KaiIOB/ioBroker.wiim/main/admin/wiim.png",
+		"readme": "https://github.com/KaiIOB/ioBroker.wiim/blob/main/README.md",
+		"loglevel": "info",
+		"mode": "daemon",
+		"type": "multimedia",
+		"compact": true,
+		"connectionType": "local",
+		"dataSource": "poll",
+		"adminUI": {
+			"config": "json"
+		},
+		"dependencies": [
+			{
+				"js-controller": ">=3.3.22"
+			}
+		],
+		"globalDependencies": [
+			{
+				"admin": ">=5.1.13"
+			}
+		]
+	},
+	"native": {
+		"IP_Address": "0.0.0.0",
+		"Refresh_Interval": "15"
+	},
+	"objects": [],
+	"instanceObjects": [
+		{
+			"_id": "info",
+			"type": "channel",
+			"common": {
+				"name": "Information"
+			},
+			"native": {}
+		},
+		{
+			"_id": "info.connection",
+			"type": "state",
+			"common": {
+				"role": "indicator.connected",
+				"name": "Device or service connected",
+				"type": "boolean",
+				"read": true,
+				"write": false,
+				"def": false
+			},
+			"native": {}
+		}
+	]
 }

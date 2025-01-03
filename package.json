@@ -2,46 +2,24 @@
   "name": "iobroker.wiim",
   "version": "0.0.1",
   "description": "adapter to access Wiim devices",
+  "author": {
+    "name": "KaiIOB",
+    "email": "Kaibrendel@kabelmail.de"
+  },
+  "homepage": "https://github.com/KaiIOB/ioBroker.wiim",
+  "license": "MIT",
   "keywords": [
     "Wiim",
     "streamer",
     "pro",
     "amp"
   ],
-  "homepage": "https://github.com/KaiIOB/ioBroker.wiim",
-  "bugs": {
-    "url": "https://github.com/KaiIOB/ioBroker.wiim/issues"
-  },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/KaiIOB/ioBroker.wiim.git"
+    "url": "https://github.com/KaiIOB/ioBroker.wiim.git"
   },
-  "license": "MIT",
-  "author": "KaiIOB <Kaibrendel@kabelmail.de>",
-  "type": "commonjs",
-  "main": "main.js",
-  "directories": {
-    "lib": "lib",
-    "test": "test"
-  },
-  "files": [
-    "admin{,/!(src)/**}/!(tsconfig|tsconfig.*|.eslintrc).json",
-    "admin{,/!(src)/**}/*.{html,css,png,svg,jpg,js}",
-    "lib/",
-    "www/",
-    "io-package.json",
-    "LICENSE",
-    "main.js"
-  ],
-  "scripts": {
-    "test:js": "mocha --config test/mocharc.custom.json \"{!(node_modules|test)/**/*.test.js,*.test.js,test/**/test!(PackageFiles|Startup).js}\"",
-    "test:package": "mocha test/package --exit",
-    "test:integration": "mocha test/integration --exit",
-    "test": "npm run test:js && npm run test:package",
-    "check": "tsc --noEmit -p tsconfig.check.json",
-    "lint": "eslint .",
-    "translate": "translate-adapter",
-    "build": "build-adapter"
+  "engines": {
+    "node": ">= 14"
   },
   "dependencies": {
     "@iobroker/adapter-core": "^3.2.3"
@@ -63,13 +41,55 @@
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.2.1",
     "mocha": "^9.2.2",
+    "nyc": "^17.1.0",
     "prettier": "^3.4.2",
     "proxyquire": "^2.1.3",
-    "sinon": "^13.0.2",
     "sinon-chai": "^4.0.0",
+    "sinon": "^13.0.2",
     "typescript": "~4.6.4"
   },
-  "engines": {
-    "node": ">= 14"
-  }
+  "main": "main.js",
+  "files": [
+    "admin{,/!(src)/**}/!(tsconfig|tsconfig.*|.eslintrc).json",
+    "admin{,/!(src)/**}/*.{html,css,png,svg,jpg,js}",
+    "lib/",
+    "www/",
+    "io-package.json",
+    "LICENSE",
+    "main.js"
+  ],
+  "scripts": {
+    "test:js": "mocha --config test/mocharc.custom.json \"{!(node_modules|test)/**/*.test.js,*.test.js,test/**/test!(PackageFiles|Startup).js}\"",
+    "test:package": "mocha test/package --exit",
+    "test:integration": "mocha test/integration --exit",
+    "test": "npm run test:js && npm run test:package",
+    "check": "tsc --noEmit -p tsconfig.check.json",
+    "coverage": "nyc npm run test:ts",
+    "lint": "eslint .",
+    "translate": "translate-adapter"
+  },
+  "nyc": {
+    "include": [
+      "src/**/*.ts"
+    ],
+    "exclude": [
+      "src/**/*.test.ts"
+    ],
+    "extension": [
+      ".ts"
+    ],
+    "require": [
+      "ts-node/register"
+    ],
+    "reporter": [
+      "text-summary",
+      "html"
+    ],
+    "sourceMap": true,
+    "instrument": true
+  },
+  "bugs": {
+    "url": "https://github.com/KaiIOB/ioBroker.wiim/issues"
+  },
+  "readmeFilename": "README.md"
 }
