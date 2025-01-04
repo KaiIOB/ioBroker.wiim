@@ -43,7 +43,7 @@ class Wiim extends utils.Adapter {
 		this.setState("info.connection", false, true);
 		// Reset the connection indicator during startup
 		var http = require("https")			
-		let url = "https://"+this.config.IP_Address+"/httpapi.asp?command=wlanGetConnectState";
+		let url = "https://"+this.config.IP_Address+"/httpapi.asp?command=getStatusEx";
 
 		
 		http.get(url,{ validateCertificate: false, rejectUnauthorized: false, requestCert: true },(res) => {
@@ -56,13 +56,17 @@ class Wiim extends utils.Adapter {
 		
 			res.on("end", () => {
 				try {
+					let json = JSON.parse(body);
+					//this.log.info(body);
+					this.log.info("Wiim with firmware " + json.firmware+ " found. Ready to go, greetings to qlink ;-)");
+					this.setState("info.connection", true, true);
 
-					if (body==="OK") {
-						this.setState("info.connection", true, true);
-					}
-					else {this.setState("info.connection", false, true);}
-					this.log.info("Wiim wifi status: "+body + ", IP: " +this.config.IP_Address);
-					this.log.info("Refresh interval: " + this.config.Refresh_Interval + "sec.");
+				//	if (body==="OK") {
+				//		this.setState("info.connection", true, true);
+				//	}
+				//	else {this.setState("info.connection", false, true);}
+				//	this.log.info("Wiim wifi status: "+body + ", IP: " +this.config.IP_Address);
+				//	this.log.info("Refresh interval: " + this.config.Refresh_Interval + "sec.");
 				} catch (error) {
 					this.log.error(error.message);
 				};
