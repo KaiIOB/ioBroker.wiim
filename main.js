@@ -201,12 +201,11 @@ class Wiim extends utils.Adapter {
 			type: "state",
 			common: {
 				name: "loop_mode",
-				type: "number",
+				type: "string",
 				role: "indicator",
 				read: true,
 				write: true,
-				min: -1,
-				max: 2,
+				def: "to be read", 
 			},
 			native: {},
 		});
@@ -254,7 +253,7 @@ class Wiim extends utils.Adapter {
 		await this.setObjectNotExistsAsync("play_URL", {
 			type: "state",
 			common: {
-				name: "play_preset",
+				name: "play_URL",
 				type: "string",
 				role: "indicator",
 				read: true,
@@ -263,6 +262,36 @@ class Wiim extends utils.Adapter {
 			},
 			native: {},
 		});
+
+
+
+		await this.setObjectNotExistsAsync("toggle_loop_mode", {
+			type: "state",
+			common: {
+				name: "toggle_loop_mode",
+				type: "boolean",
+				role: "indicator",
+				read: true,
+				write: true,
+				def: "false",
+			},
+			native: {},
+		});
+
+		await this.setObjectNotExistsAsync("wiim_mode", {
+			type: "state",
+			common: {
+				name: "wiim_mode",
+				type: "string",
+				role: "indicator",
+				read: true,
+				write: true,
+				def: "to be read",
+			},
+			native: {},
+		});
+
+
 
 
 		// In order to get state updates, you need to subscribe to them. The following line adds a subscription for our variable we have created above.
@@ -278,8 +307,11 @@ class Wiim extends utils.Adapter {
 		this.subscribeStates("lastRefresh", { val: true, ack: false });
 		this.subscribeStates("volume", { val: true, ack: false });
 		this.subscribeStates("play_preset", { val: true, ack: false });
+		this.subscribeStates("play_URL", { val: true, ack: false });
 		this.subscribeStates("loop_mode" ,{ val: true, ack: false }) ;
-		this.subscribeStates("play_URL" ,{ val: true, ack: false }) ;
+		this.subscribeStates("toggle_loop_mode" ,{ val: true, ack: false }) ;
+		this.subscribeStates("wiim_mode" ,{ val: true, ack: false }) ;
+
 		// You can also add a subscription for multiple states. The following line watches all states starting with "lights."
 		// this.subscribeStates("lights.*");
 		// Or, if you really must, you can also watch all states. Don't do this if you don't need to. Otherwise this will cause a lot of unnecessary load on the system:
@@ -310,7 +342,10 @@ class Wiim extends utils.Adapter {
 		setInterval(()=> { 
 						// alle XX Sekunden ausführen		
 			var http = require("https")			
-			let url = "https://192.168.0.87/httpapi.asp?command=getMetaInfo";
+			
+			//*********************** request Wiim's playing info and uupdate corresponding datapoints */
+			
+			let url = "https://"+this.config.IP_Address+"/httpapi.asp?command=getMetaInfo";
 
 			http.get(url,{ validateCertificate: false, rejectUnauthorized: false, requestCert: true },(res) => {
 				let body = "";
@@ -326,7 +361,6 @@ class Wiim extends utils.Adapter {
 						//var myInstance = id.substring(0,7);
 						// write info to statea
 
-						
 						this.setState("album",json.metaData.album,true);
 						this.setState("title",json.metaData.title,true);
 						this.setState("artist",json.metaData.artist,true);
@@ -343,12 +377,50 @@ class Wiim extends utils.Adapter {
 				this.log.error(error.message);
 			});
 			
+		
+			url = "https://"+this.config.IP_Address+"/httpapi.asp?command=getPlayerStatus";
+
+			http.get(url,{ validateCertificate: false, rejectUnauthorized: false, requestCert: true },(res) => {
+				let body = "";
 			
+						//write response chunks to body
+				res.on("data", (chunk) => {
+					body += chunk;
+				});
+			
+				res.on("end", () => {
+					try {
+						let json = JSON.parse(body);
+						//var myInstance = id.substring(0,7);
+						// write info to statea
+
+						this.setState("loop_mode",json.loop,true);
+						this.setState("wiim_mode",json.mode,true);
+						
+					} catch (error) {
+						this.log.error(error.message);
+					};
+				});
+			
+			}).on("error", (error) => {
+				this.log.error(error.message);
+			});
+			
+
+
+
+
 	
 			var theDate = new Date();
 			var mydate = theDate.toString();
 			//this.log.info(mydate.substring(16,25));
 			this.setState("lastRefresh",mydate.substring(16,25),true);
+
+
+
+
+
+
 
 		}, this.config.Refresh_Interval*1000); 
 	
@@ -415,8 +487,21 @@ class Wiim extends utils.Adapter {
 						this.getState(id.substring(0,7)+"play_URL", (err, state)=> {
 
 							sendWiimcommand(this, "setPlayerCmd:play:"+state.val);
+							this.log.info("setPlayerCmd:play:"+state.val);
 						}); 
 					break;
+
+
+
+					case id.substring(0,7)+"toggle_loop_mode":
+						this.getState(id.substring(0,7)+"toggle_loop_mode", (err, state)=> {
+
+							sendWiimcommand(this, "setPlayerCmd:loopmode:1");
+						}); 
+					break;
+
+
+
 
 			} 
 
