@@ -251,6 +251,19 @@ class Wiim extends utils.Adapter {
 			native: {},
 		});
 
+		await this.setObjectNotExistsAsync("play_URL", {
+			type: "state",
+			common: {
+				name: "play_preset",
+				type: "string",
+				role: "indicator",
+				read: true,
+				write: true,
+				def: "none",
+			},
+			native: {},
+		});
+
 
 		// In order to get state updates, you need to subscribe to them. The following line adds a subscription for our variable we have created above.
 		this.subscribeStates("album", { val: true, ack: true });
@@ -266,6 +279,7 @@ class Wiim extends utils.Adapter {
 		this.subscribeStates("volume", { val: true, ack: false });
 		this.subscribeStates("play_preset", { val: true, ack: false });
 		this.subscribeStates("loop_mode" ,{ val: true, ack: false }) ;
+		this.subscribeStates("play_URL" ,{ val: true, ack: false }) ;
 		// You can also add a subscription for multiple states. The following line watches all states starting with "lights."
 		// this.subscribeStates("lights.*");
 		// Or, if you really must, you can also watch all states. Don't do this if you don't need to. Otherwise this will cause a lot of unnecessary load on the system:
@@ -393,6 +407,14 @@ class Wiim extends utils.Adapter {
 					case id.substring(0,7)+"play_preset":
 						this.getState(id.substring(0,7)+"play_preset", (err, state)=> {
 							sendWiimcommand(this, "MCUKeyShortClick:"+state.val);
+						}); 
+					break;
+
+					
+					case id.substring(0,7)+"play_URL":
+						this.getState(id.substring(0,7)+"play_URL", (err, state)=> {
+
+							sendWiimcommand(this, "setPlayerCmd:play:"+state.val);
 						}); 
 					break;
 
