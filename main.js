@@ -372,8 +372,31 @@ class Wiim extends utils.Adapter {
 			native: {},
 		});
 
+		await this.setObjectNotExistsAsync("jumptopos", {
+			type: "state",
+			common: {
+				name: "jumptops",
+				type: "number",
+				role: "indicator",
+				read: true,
+				write: true,
+				def: 0,
+			},
+			native: {},
+		});
 
-
+		await this.setObjectNotExistsAsync("jumptopli", {
+			type: "state",
+			common: {
+				name: "jumptopli",
+				type: "string",
+				role: "indicator",
+				read: true,
+				write: true,
+				def: "",
+			},
+			native: {},
+		});
 
 
 		// In order to get state updates, you need to subscribe to them. The following line adds a subscription for our variable we have created above.
@@ -395,7 +418,8 @@ class Wiim extends utils.Adapter {
 		this.subscribeStates("wiim_mode" ,{ val: true, ack: false }) ;
 		this.subscribeStates("setMaster" ,{ val: true, ack: false }) ;
 		this.subscribeStates("leaveSyncGroup" ,{ val: true, ack: false }) ;
-
+		this.subscribeStates("jumptopos" ,{ val: true, ack: false }) ;
+		this.subscribeStates("jumptopli" ,{ val: true, ack: false }) ;
 		// You can also add a subscription for multiple states. The following line watches all states starting with "lights."
 		// this.subscribeStates("lights.*");
 		// Or, if you really must, you can also watch all states. Don't do this if you don't need to. Otherwise this will cause a lot of unnecessary load on the system:
@@ -484,10 +508,10 @@ class Wiim extends utils.Adapter {
 						let PliCurr = Number(json.plicurr);
 						this.setState("loop_mode",json.loop,true);
 						this.setState("wiim_mode",json.mode,true);
-						this.setState("curpos",Position,true);
+						this.setState("curpos",Position,false);
 						this.setState("offset_pts",Offset_PTS,true);
-						this.setState("tracklength",TotLen,true);
-						this.setState("plicurr",PliCurr,true);
+						this.setState("tracklength",TotLen,false);
+						this.setState("plicurr",PliCurr,false);
 					} catch (error) {
 						this.log.error(error.message);
 					};
@@ -542,6 +566,27 @@ class Wiim extends utils.Adapter {
 			// The state was changed
 			
 			switch (id) {
+
+					case id.substring(0,7)+"jumptopos":
+
+						this.getState(id.substring(0,7)+"jumptopos", (err, state)=> {
+
+							sendWiimcommand(this, "setPlayerCmd:seek:"+state.val);
+						}); 
+					break;
+
+					case id.substring(0,7)+"jumptopli":
+
+						this.getState(id.substring(0,7)+"jumptopli", (err, state)=> {
+
+							sendWiimcommand(this, "setPlayerCmd:playlist:"+state.val);
+						}); 
+					break;
+
+
+
+
+
 
 					case id.substring(0,7)+"Play_Pause":					
 						sendWiimcommand(this, "setPlayerCmd:onepause");
