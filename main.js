@@ -571,7 +571,7 @@ class Wiim extends utils.Adapter {
 
 						this.getState(id.substring(0,7)+"jumptopos", (err, state)=> {
 
-							sendWiimcommand(this, "setPlayerCmd:seek:"+state.val);
+							sendWiimcommand(this, "setPlayerCmd:seek:"+state.val/1000);
 						}); 
 					break;
 
