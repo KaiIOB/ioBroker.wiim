@@ -292,6 +292,88 @@ class Wiim extends utils.Adapter {
 		});
 
 
+		await this.setObjectNotExistsAsync("curpos", {
+			type: "state",
+			common: {
+				name: "current_pos",
+				type: "number",
+				role: "indicator",
+				read: true,
+				write: true,
+				def: "",
+			},
+			native: {},
+		});
+		
+		
+		await this.setObjectNotExistsAsync("offset_pts", {
+			type: "state",
+			common: {
+				name: "offset_pts",
+				type: "number",
+				role: "indicator",
+				read: true,
+				write: true,
+				def: "",
+			},
+			native: {},
+		});
+
+		await this.setObjectNotExistsAsync("setMaster", {
+			type: "state",
+			common: {
+				name: "setMaster",
+				type: "string",
+				role: "indicator",
+				read: true,
+				write: true,
+				def: "0.0.0.0",
+			},
+			native: {},
+		});
+
+
+		await this.setObjectNotExistsAsync("leaveSyncGroup", {
+			type: "state",
+			common: {
+				name: "leaveSyncGroup",
+				type: "boolean",
+				role: "button",
+				read: true,
+				write: true,
+				def: "",
+			},
+			native: {},
+		});
+
+		await this.setObjectNotExistsAsync("tracklength", {
+			type: "state",
+			common: {
+				name: "tracklength",
+				type: "number",
+				role: "indicator",
+				read: true,
+				write: true,
+				def: "",
+			},
+			native: {},
+		});
+
+		await this.setObjectNotExistsAsync("plicurr", {
+			type: "state",
+			common: {
+				name: "plicurr",
+				type: "number",
+				role: "indicator",
+				read: true,
+				write: true,
+				def: "undefined",
+			},
+			native: {},
+		});
+
+
+
 
 
 		// In order to get state updates, you need to subscribe to them. The following line adds a subscription for our variable we have created above.
@@ -311,6 +393,8 @@ class Wiim extends utils.Adapter {
 		this.subscribeStates("loop_mode" ,{ val: true, ack: false }) ;
 		this.subscribeStates("toggle_loop_mode" ,{ val: true, ack: false }) ;
 		this.subscribeStates("wiim_mode" ,{ val: true, ack: false }) ;
+		this.subscribeStates("setMaster" ,{ val: true, ack: false }) ;
+		this.subscribeStates("leaveSyncGroup" ,{ val: true, ack: false }) ;
 
 		// You can also add a subscription for multiple states. The following line watches all states starting with "lights."
 		// this.subscribeStates("lights.*");
@@ -367,6 +451,7 @@ class Wiim extends utils.Adapter {
 						this.setState("albumArtURI",json.metaData.albumArtURI,true);
 						this.setState("sampleRate",json.metaData.sampleRate,true);
 						this.setState("bitDepth",json.metaData.bitDepth,true);
+		
 
 					} catch (error) {
 						this.log.error(error.message);
@@ -393,10 +478,16 @@ class Wiim extends utils.Adapter {
 						let json = JSON.parse(body);
 						//var myInstance = id.substring(0,7);
 						// write info to statea
-
+						let Position = Number(json.curpos);
+						let Offset_PTS = Number (json.offset_pts);
+						let TotLen = Number(json.totlen);
+						let PliCurr = Number(json.plicurr);
 						this.setState("loop_mode",json.loop,true);
 						this.setState("wiim_mode",json.mode,true);
-						
+						this.setState("curpos",Position,true);
+						this.setState("offset_pts",Offset_PTS,true);
+						this.setState("tracklength",TotLen,true);
+						this.setState("plicurr",PliCurr,true);
 					} catch (error) {
 						this.log.error(error.message);
 					};
@@ -500,6 +591,21 @@ class Wiim extends utils.Adapter {
 						}); 
 					break;
 
+					case id.substring(0,7)+"setMaster":
+						this.getState(id.substring(0,7)+"setMaster", (err, state)=> {
+
+							sendWiimcommand(this, "ConnectMasterAp:JoinGroupMaster:eth"+state.val);
+							this.log.info("ConnectMasterAp:JoinGroupMaster:eth"+state.val)
+						}); 
+					break;
+
+					case id.substring(0,7)+"leaveSyncGroup":
+						this.getState(id.substring(0,7)+"leaveSyncGroup", (err, state)=> {
+							sendWiimcommand(this, "ConnectMasterAp:JoinGroupMaster:eth0.0.0.0")
+							sendWiimcommand(this, "ConnectMasterAp:LeaveGroup");
+							this.log.info("ConnectMasterAp:LeaveGroup")
+						}); 
+					break;
 
 
 
