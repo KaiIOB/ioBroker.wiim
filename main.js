@@ -399,6 +399,36 @@ class Wiim extends utils.Adapter {
 		});
 
 
+		await this.setObjectNotExistsAsync("mode", {
+			type: "state",
+			common: {
+				name: "mode",
+				type: "string",
+				role: "indicator",
+				read: true,
+				write: true,
+				def: "",
+			},
+			native: {},
+		});
+
+
+		await this.setObjectNotExistsAsync("switchmode", {
+			type: "state",
+			common: {
+				name: "switchmode",
+				type: "string",
+				role: "indicator",
+				read: true,
+				write: true,
+				def: "",
+			},
+			native: {},
+		});
+
+
+
+
 		// In order to get state updates, you need to subscribe to them. The following line adds a subscription for our variable we have created above.
 		this.subscribeStates("album", { val: true, ack: true });
 		this.subscribeStates("title", { val: true, ack: true });
@@ -420,6 +450,10 @@ class Wiim extends utils.Adapter {
 		this.subscribeStates("leaveSyncGroup" ,{ val: true, ack: false }) ;
 		this.subscribeStates("jumptopos" ,{ val: true, ack: false }) ;
 		this.subscribeStates("jumptopli" ,{ val: true, ack: false }) ;
+		this.subscribeStates("mode" ,{ val: true, ack: false }) ;
+		this.subscribeStates("switchmode" ,{ val: true, ack: false }) ;
+
+
 		// You can also add a subscription for multiple states. The following line watches all states starting with "lights."
 		// this.subscribeStates("lights.*");
 		// Or, if you really must, you can also watch all states. Don't do this if you don't need to. Otherwise this will cause a lot of unnecessary load on the system:
@@ -496,18 +530,88 @@ class Wiim extends utils.Adapter {
 				res.on("data", (chunk) => {
 					body += chunk;
 				});
-			
+	
 				res.on("end", () => {
 					try {
 						let json = JSON.parse(body);
 						//var myInstance = id.substring(0,7);
 						// write info to statea
 						let Position = Number(json.curpos);
-						let Offset_PTS = Number (json.offset_pts);
+ 						let Offset_PTS = Number (json.offset_pts);
 						let TotLen = Number(json.totlen);
 						let PliCurr = Number(json.plicurr);
 						this.setState("loop_mode",json.loop,true);
-						this.setState("wiim_mode",json.mode,true);
+this.log.info(json.mode);	
+						switch (json.mode) {
+							case("0"):
+								this.setState("mode","idling",true);
+							break;
+
+
+							case("1"):
+								this.setState("mode","Airplay",true);
+							break;
+
+							case("2"):
+								this.setState("mode","DLNA",true);
+							break;
+
+
+							case("10"):
+								this.setState("mode","Network",true);
+							break;
+							case("11"):
+								this.setState("mode","UDISK",true);
+							break;
+
+							case("20"):
+								this.setState("mode","HTTPAPI",true);
+							break;
+
+
+							case("31"):
+								this.setState("mode","Spotify Connect",true);
+							break;
+							case("40"):
+								this.setState("mode","Line-In #1",true);
+							break;
+
+
+							case("41"):
+								this.setState("mode","Bluetooth",true);
+							break;
+
+							case("43"):
+								this.setState("mode","Optical",true);
+							break;
+
+							case("45"):
+								this.setState("mode","co-axial",true);
+							break;
+
+
+
+							case("47"):
+								this.setState("mode","Line-In #2",true);
+							break;
+
+							case("49"):
+								this.setState("mode","HDMI",true);
+							break;
+
+
+
+							case("51"):
+								this.setState("mode","USBDAC",true);
+							break;
+							
+							case("99"):
+							this.setState("mode","MR Guest",true);
+						break;
+
+						}
+
+
 						this.setState("curpos",Position,false);
 						this.setState("offset_pts",Offset_PTS,true);
 						this.setState("tracklength",TotLen,false);
@@ -522,6 +626,8 @@ class Wiim extends utils.Adapter {
 			});
 			
 
+
+			
 
 
 
@@ -566,6 +672,15 @@ class Wiim extends utils.Adapter {
 			// The state was changed
 			
 			switch (id) {
+
+					case id.substring(0,7)+"switchmode":
+
+						this.getState(id.substring(0,7)+"switchmode", (err, state)=> {
+
+							sendWiimcommand(this, "setPlayerCmd:switchmode:"+state.val);
+							}); 
+					break;
+
 
 					case id.substring(0,7)+"jumptopos":
 
