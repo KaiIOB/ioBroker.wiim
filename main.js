@@ -428,6 +428,33 @@ class Wiim extends utils.Adapter {
 
 
 
+		
+		await this.setObjectNotExistsAsync("playprompt", {
+			type: "state",
+			common: {
+				name: "playprompt",
+				type: "string",
+				role: "indicator",
+				read: true,
+				write: true,
+				def: "",
+			},
+			native: {},
+		});
+
+		await this.setObjectNotExistsAsync("setShutdown", {
+			type: "state",
+			common: {
+				name: "setShutdown",
+				type: "string",
+				role: "indicator",
+				read: true,
+				write: true,
+				def: "",
+			},
+			native: {},
+		});
+
 
 		// In order to get state updates, you need to subscribe to them. The following line adds a subscription for our variable we have created above.
 		this.subscribeStates("album", { val: true, ack: true });
@@ -452,7 +479,8 @@ class Wiim extends utils.Adapter {
 		this.subscribeStates("jumptopli" ,{ val: true, ack: false }) ;
 		this.subscribeStates("mode" ,{ val: true, ack: false }) ;
 		this.subscribeStates("switchmode" ,{ val: true, ack: false }) ;
-
+		this.subscribeStates("playprompt" ,{ val: true, ack: false }) ;
+		this.subscribeStates("setShutdown" ,{ val: true, ack: false }) ;
 
 		// You can also add a subscription for multiple states. The following line watches all states starting with "lights."
 		// this.subscribeStates("lights.*");
@@ -541,7 +569,7 @@ class Wiim extends utils.Adapter {
 						let TotLen = Number(json.totlen);
 						let PliCurr = Number(json.plicurr);
 						this.setState("loop_mode",json.loop,true);
-this.log.info(json.mode);	
+//this.log.info(json.mode);	
 						switch (json.mode) {
 							case("0"):
 								this.setState("mode","idling",true);
@@ -672,6 +700,16 @@ this.log.info(json.mode);
 			// The state was changed
 			
 			switch (id) {
+
+					case id.substring(0,7)+"setShutdown":
+
+						this.getState(id.substring(0,7)+"setShutdown", (err, state)=> {
+
+						sendWiimcommand(this, "setShutdown:"+state.val);
+			
+									}); 
+					break;
+
 
 					case id.substring(0,7)+"switchmode":
 
@@ -813,6 +851,8 @@ async function sendWiimcommand(mywiimadapter, wiimcmd)
 		
 		http.get("https://" + mywiimadapter.config.IP_Address + "/httpapi.asp?command="+wiimcmd, { validateCertificate: false, rejectUnauthorized: false, requestCert: true }, (err) => {
 		 
+mywiimadapter.log.info("https://" + mywiimadapter.config.IP_Address + "/httpapi.asp?command="+wiimcmd);
+
 			if (!err) {
 				
 		} else {
