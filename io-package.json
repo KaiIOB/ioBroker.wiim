@@ -13,12 +13,13 @@
 				"it": "Versione iniziale",
 				"es": "Versión inicial",
 				"pl": "Pierwsze wydanie",
+				"uk": "Початкова версія",
 				"zh-cn": "首次出版"
 			}
 		},
 		"titleLang": {
 			"en": "Wiim Connect",
-			"de": "Wiim Konnektor",
+			"de": "Wiim Connect",
 			"ru": "Wiim Connect",
 			"pt": "Wiim Connect",
 			"nl": "Wiim Connect",
@@ -26,30 +27,35 @@
 			"it": "Wiim Connect",
 			"es": "Wiim Connect",
 			"pl": "Wiim Connect",
+			"uk": "Wiim Connect",
 			"zh-cn": "Wiim Connect"
 		},
 		"desc": {
-			"en": "adapter to access Wiim devices",
-			"de": "adapter to access Wiim devices",
-			"ru": "adapter to access Wiim devices",
-			"pt": "adapter to access Wiim devices",
-			"nl": "adapter to access Wiim devices",
-			"fr": "adapter to access Wiim devices",
-			"it": "adapter to access Wiim devices",
-			"es": "adapter to access Wiim devices",
-			"pl": "adapter to access Wiim devices",
-			"zh-cn": "adapter to access Wiim devices"
+			"en": "adapter to access Wiim/Arylic devices",
+			"de": "adapter to access Wiim/Arylic devices",
+			"ru": "adapter to access Wiim/Arylic devices",
+			"pt": "adapter to access Wiim/Arylic devices",
+			"nl": "adapter to access Wiim/Arylic devices",
+			"fr": "adapter to access Wiim/Arylic devices",
+			"it": "adapter to access Wiim/Arylic devices",
+			"es": "adapter to access Wiim/Arylic devices",
+			"pl": "adapter to access Wiim/Arylic devices",
+			"uk": "adapter to access Wiim/Arylic devices",
+			"zh-cn": "adapter to access Wiim/Arylic devices"
 		},
 		"authors": ["KaiIOB <Kaibrendel@kabelmail.de>"],
-		"keywords": ["Wiim", "streamer", "pro", "amp"],
-		"license": "MIT",
+		"keywords": ["Wiim", "streamer", "pro", "amp", "Arylic"],
+		"licenseInformation": {
+			"type": "free",
+			"license": "MIT"
+		},
 		"platform": "Javascript/Node.js",
-		"main": "main.js",
 		"icon": "wiim.png",
 		"enabled": true,
 		"extIcon": "https://raw.githubusercontent.com/KaiIOB/ioBroker.wiim/main/admin/wiim.png",
 		"readme": "https://github.com/KaiIOB/ioBroker.wiim/blob/main/README.md",
 		"loglevel": "info",
+		"tier": 3,
 		"mode": "daemon",
 		"type": "multimedia",
 		"compact": true,
@@ -60,18 +66,19 @@
 		},
 		"dependencies": [
 			{
-				"js-controller": ">=3.3.22"
+				"js-controller": ">=6.0.11"
 			}
 		],
 		"globalDependencies": [
 			{
-				"admin": ">=5.1.13"
+				"admin": "7.1.5"
 			}
 		]
 	},
 	"native": {
 		"IP_Address": "0.0.0.0",
-		"Refresh_Interval": "15"
+		"Refresh_Interval": "15",
+		"Request_Type": "https"
 	},
 	"objects": [],
 	"instanceObjects": [

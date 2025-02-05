@@ -38,12 +38,14 @@ class Wiim extends utils.Adapter {
 	 */
 	async onReady() {
 		// Initialize your adapter here
-
+        let reqtype = "https";
+		if (this.config.Request_Type != "https") {reqtype="http";}
+		   
 		this.log.info(this.getstates);
 		this.setState("info.connection", false, true);
 		// Reset the connection indicator during startup
-		var http = require("https")			
-		let url = "https://"+this.config.IP_Address+"/httpapi.asp?command=getStatusEx";
+		var http = require(reqtype)			
+		let url = reqtype + "://"+this.config.IP_Address+"/httpapi.asp?command=getStatusEx";
 
 		
 		http.get(url,{ validateCertificate: false, rejectUnauthorized: false, requestCert: true },(res) => {
@@ -278,18 +280,6 @@ class Wiim extends utils.Adapter {
 			native: {},
 		});
 
-		await this.setObjectNotExistsAsync("wiim_mode", {
-			type: "state",
-			common: {
-				name: "wiim_mode",
-				type: "string",
-				role: "indicator",
-				read: true,
-				write: true,
-				def: "to be read",
-			},
-			native: {},
-		});
 
 
 		await this.setObjectNotExistsAsync("curpos", {
@@ -429,10 +419,10 @@ class Wiim extends utils.Adapter {
 
 
 		
-		await this.setObjectNotExistsAsync("playprompt", {
+		await this.setObjectNotExistsAsync("playpromptUrl", {
 			type: "state",
 			common: {
-				name: "playprompt",
+				name: "playpromptUrl",
 				type: "string",
 				role: "indicator",
 				read: true,
@@ -472,14 +462,13 @@ class Wiim extends utils.Adapter {
 		this.subscribeStates("play_URL", { val: true, ack: false });
 		this.subscribeStates("loop_mode" ,{ val: true, ack: false }) ;
 		this.subscribeStates("toggle_loop_mode" ,{ val: true, ack: false }) ;
-		this.subscribeStates("wiim_mode" ,{ val: true, ack: false }) ;
 		this.subscribeStates("setMaster" ,{ val: true, ack: false }) ;
 		this.subscribeStates("leaveSyncGroup" ,{ val: true, ack: false }) ;
 		this.subscribeStates("jumptopos" ,{ val: true, ack: false }) ;
 		this.subscribeStates("jumptopli" ,{ val: true, ack: false }) ;
 		this.subscribeStates("mode" ,{ val: true, ack: false }) ;
 		this.subscribeStates("switchmode" ,{ val: true, ack: false }) ;
-		this.subscribeStates("playprompt" ,{ val: true, ack: false }) ;
+		this.subscribeStates("playpromptUrl" ,{ val: true, ack: false }) ;
 		this.subscribeStates("setShutdown" ,{ val: true, ack: false }) ;
 
 		// You can also add a subscription for multiple states. The following line watches all states starting with "lights."
@@ -511,11 +500,11 @@ class Wiim extends utils.Adapter {
 		
 		setInterval(()=> { 
 						// alle XX Sekunden ausführen		
-			var http = require("https")			
+			var http = require(reqtype)			
 			
 			//*********************** request Wiim's playing info and uupdate corresponding datapoints */
-			
-			let url = "https://"+this.config.IP_Address+"/httpapi.asp?command=getMetaInfo";
+			if (reqtype == "https") {
+			let url = reqtype+"://"+this.config.IP_Address+"/httpapi.asp?command=getMetaInfo";
 
 			http.get(url,{ validateCertificate: false, rejectUnauthorized: false, requestCert: true },(res) => {
 				let body = "";
@@ -547,9 +536,9 @@ class Wiim extends utils.Adapter {
 			}).on("error", (error) => {
 				this.log.error(error.message);
 			});
-			
+		}
 		
-			url = "https://"+this.config.IP_Address+"/httpapi.asp?command=getPlayerStatus";
+			url = reqtype + "://"+this.config.IP_Address+"/httpapi.asp?command=getPlayerStatus";
 
 			http.get(url,{ validateCertificate: false, rejectUnauthorized: false, requestCert: true },(res) => {
 				let body = "";
@@ -644,6 +633,14 @@ class Wiim extends utils.Adapter {
 						this.setState("offset_pts",Offset_PTS,true);
 						this.setState("tracklength",TotLen,false);
 						this.setState("plicurr",PliCurr,false);
+						if (reqtype == "http")
+						{
+							this.setState("album",hexToASCII(json.Album),true);
+							this.setState("title",hexToASCII(json.Title),true);
+							this.setState("artist",hexToASCII(json.Artist),true);}
+
+
+
 					} catch (error) {
 						this.log.error(error.message);
 					};
@@ -694,7 +691,7 @@ class Wiim extends utils.Adapter {
 	}
 
 	onStateChange(id, state) {
-		var http = require("https")
+		//var http = require("https")
 		var myInstance = id.substring(0,7);
 		if (state) {
 			// The state was changed
@@ -709,6 +706,15 @@ class Wiim extends utils.Adapter {
 			
 									}); 
 					break;
+
+					case id.substring(0,7)+"playpromptUrl":
+
+						this.getState(id.substring(0,7)+"playpromptUrl", (err, state)=> {
+
+							sendWiimcommand(this, "playpromptUrl:"+state.val);
+							}); 
+					break;
+
 
 
 					case id.substring(0,7)+"switchmode":
@@ -847,11 +853,13 @@ class Wiim extends utils.Adapter {
 
 async function sendWiimcommand(mywiimadapter, wiimcmd)
 	{	
-		var http = require("https")
+		let reqtype = "https";
+		if (mywiimadapter.config.Request_Type != "https") {reqtype="http";}
+		var http = require(reqtype)
 		
-		http.get("https://" + mywiimadapter.config.IP_Address + "/httpapi.asp?command="+wiimcmd, { validateCertificate: false, rejectUnauthorized: false, requestCert: true }, (err) => {
+		http.get(reqtype+"://" + mywiimadapter.config.IP_Address + "/httpapi.asp?command="+wiimcmd, { validateCertificate: false, rejectUnauthorized: false, requestCert: true }, (err) => {
 		 
-mywiimadapter.log.info("https://" + mywiimadapter.config.IP_Address + "/httpapi.asp?command="+wiimcmd);
+mywiimadapter.log.info(reqtype+ "://" + mywiimadapter.config.IP_Address + "/httpapi.asp?command="+wiimcmd);
 
 			if (!err) {
 				
@@ -861,6 +869,25 @@ mywiimadapter.log.info("https://" + mywiimadapter.config.IP_Address + "/httpapi.
 		}) 
 		
 	}
+
+	function hexToASCII(hex) {
+        // initialize the ASCII code string as empty.
+        var ascii = "";
+ 
+        for (var i = 0; i < hex.length; i += 2) {
+          // extract two characters from hex string
+          var part = hex.substring(i, i + 2);
+ 
+          // change it into base 16 and
+          // typecast as the character
+          var ch = String.fromCharCode(parseInt(part, 16));
+ 
+          // add this char to final ASCII string
+          ascii = ascii + ch;
+        }
+        return ascii;
+      }
+
 
 
 
@@ -873,13 +900,6 @@ if (require.main !== module) {
 } else {
 	// otherwise start the instance directly
 	new Wiim();
-
-	
-
-
-
-
-
 
 }
 

@@ -12,7 +12,7 @@
 
 ## wiim adapter for ioBroker
 
-adapter to access Wiim devices
+adapter to access Wiim/Arylic devices
 
 ## Developer manual
 This section is intended for the developer. It can be deleted later.
