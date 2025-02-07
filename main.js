@@ -419,10 +419,10 @@ class Wiim extends utils.Adapter {
 
 
 		
-		await this.setObjectNotExistsAsync("playpromptUrl", {
+		await this.setObjectNotExistsAsync("playPromptUrl", {
 			type: "state",
 			common: {
-				name: "playpromptUrl",
+				name: "playPromptUrl",
 				type: "string",
 				role: "indicator",
 				read: true,
@@ -468,7 +468,7 @@ class Wiim extends utils.Adapter {
 		this.subscribeStates("jumptopli" ,{ val: true, ack: false }) ;
 		this.subscribeStates("mode" ,{ val: true, ack: false }) ;
 		this.subscribeStates("switchmode" ,{ val: true, ack: false }) ;
-		this.subscribeStates("playpromptUrl" ,{ val: true, ack: false }) ;
+		this.subscribeStates("playPromptUrl" ,{ val: true, ack: false }) ;
 		this.subscribeStates("setShutdown" ,{ val: true, ack: false }) ;
 
 		// You can also add a subscription for multiple states. The following line watches all states starting with "lights."
@@ -707,11 +707,11 @@ class Wiim extends utils.Adapter {
 									}); 
 					break;
 
-					case id.substring(0,7)+"playpromptUrl":
+					case id.substring(0,7)+"playPromptUrl":
 
-						this.getState(id.substring(0,7)+"playpromptUrl", (err, state)=> {
+						this.getState(id.substring(0,7)+"playPromptUrl", (err, state)=> {
 
-							sendWiimcommand(this, "playpromptUrl:"+state.val);
+							sendWiimcommand(this, "playPromptUrl:"+state.val);
 							}); 
 					break;
 
