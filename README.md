@@ -99,9 +99,13 @@ For later updates, the above procedure is not necessary. Just do the following:
 
 ## Changelog
 
-### 0.0.1
-* (KaiIOB) initial release
+### 0.0.2
+* (KaiIOB) Arylic devices added and corrections>
 
+
+<### 0.0.1
+* (KaiIOB) initial release>
+<>
 ## License
 MIT License
 
