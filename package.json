@@ -13,14 +13,15 @@
     "streamer",
     "pro",
     "amp",
-    "Arylic"
+    "Arylic",
+    "ioBroker"
   ],
   "repository": {
     "type": "git",
     "url": "https://github.com/KaiIOB/ioBroker.wiim.git"
   },
   "engines": {
-    "node": ">= 14"
+    "node": ">= 18"
   },
   "dependencies": {
     "@iobroker/adapter-core": "^3.2.3"

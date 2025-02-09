@@ -1,6 +1,6 @@
 {
-	"wiim adapter settings": "Paramètres d'adaptateur pour wiim",
-	"IP_Address": "IP address of device",
-	"Refresh_Interval": "interval for refresh of player data in seconds",
-	"Request_Type": "API request type: https for Wiim products, http for Arylic products"
+    "wiim adapter settings": "Paramètres d'adaptateur pour wiim",
+    "IP_Address": "IP address of device",
+    "Refresh_Interval": "interval for refresh of player data in seconds",
+    "Request_Type": "API request type: https for Wiim products, http for Arylic products"
 }

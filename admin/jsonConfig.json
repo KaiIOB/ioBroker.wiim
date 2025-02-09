@@ -5,17 +5,20 @@
 		"IP_Address": {
 			"type": "text",
 			"label": "IP address of device",
-			"newLine": true
+			"newLine": true,
+			"size":"md"
 		},
 		"Refresh_Interval": {
 			"type": "number",
 			"label": "interval for refresh of player data in seconds",
-			"newLine": true
+			"newLine": true,
+			"size":"md"
 		},
 		"Request_Type": {
 			"type": "text",
 			"label": "API request type: https for Wiim products, http for Arylic products",
-			"newLine": true
+			"newLine": true,
+			"size":"md"
 		}
 	}
 }
