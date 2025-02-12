@@ -1,15 +1,8 @@
 "use strict";
 
-
-
-/*
- * Created with @iobroker/create-adapter v2.3.0
- */
-
 // The adapter-core module gives you access to the core ioBroker functions
 // you need to create an adapter
 const utils = require("@iobroker/adapter-core");
-
 
 // Load your modules here, e.g.:
 // const fs = require("fs");
@@ -30,9 +23,6 @@ class Wiim extends utils.Adapter {
 		// this.on("message", this.onMessage.bind(this));
 		this.on("unload", this.onUnload.bind(this));
 	}
-
-
-
 	/**
 	 * Is called when databases are connected and adapter received configuration.
 	 */
@@ -63,12 +53,6 @@ class Wiim extends utils.Adapter {
 					this.log.info("Wiim with firmware " + json.firmware+ " found. Ready to go, greetings to qlink ;-)");
 					this.setState("info.connection", true, true);
 
-				//	if (body==="OK") {
-				//		this.setState("info.connection", true, true);
-				//	}
-				//	else {this.setState("info.connection", false, true);}
-				//	this.log.info("Wiim wifi status: "+body + ", IP: " +this.config.IP_Address);
-				//	this.log.info("Refresh interval: " + this.config.Refresh_Interval + "sec.");
 				} catch (error) {
 					this.log.error(error.message);
 				}
@@ -76,17 +60,6 @@ class Wiim extends utils.Adapter {
 
 		}).on("error", (error) => {
 			this.log.error(error.message);});
-
-		// The adapters config (in the instance object everything under the attribute "native") is accessible via
-		// this.config:
-		//this.log.info("config IP_Address: " + this.config.IP_Address);
-
-		/*
-		For every state in the system there has to be also an object of type state
-		Here a simple template for a boolean variable named "testVariable"
-		Because every adapter instance uses its own unique namespace variable names can't collide with other adapters variables
-		*/
-
 
 		await this.setObjectNotExistsAsync("album", {
 			type: "state",
@@ -172,7 +145,6 @@ class Wiim extends utils.Adapter {
 			native: {},
 		});
 
-
 		await this.setObjectNotExistsAsync("next", {
 			type: "state",
 			common: {
@@ -185,7 +157,6 @@ class Wiim extends utils.Adapter {
 			native: {},
 		});
 
-
 		await this.setObjectNotExistsAsync("previous", {
 			type: "state",
 			common: {
@@ -197,7 +168,6 @@ class Wiim extends utils.Adapter {
 			},
 			native: {},
 		});
-
 
 		await this.setObjectNotExistsAsync("loop_mode", {
 			type: "state",
@@ -224,7 +194,6 @@ class Wiim extends utils.Adapter {
 			},
 			native: {},
 		});
-
 
 		await this.setObjectNotExistsAsync("volume", {
 			type: "state",
@@ -265,8 +234,6 @@ class Wiim extends utils.Adapter {
 			native: {},
 		});
 
-
-
 		await this.setObjectNotExistsAsync("toggle_loop_mode", {
 			type: "state",
 			common: {
@@ -280,8 +247,6 @@ class Wiim extends utils.Adapter {
 			native: {},
 		});
 
-
-
 		await this.setObjectNotExistsAsync("curpos", {
 			type: "state",
 			common: {
@@ -294,7 +259,6 @@ class Wiim extends utils.Adapter {
 			},
 			native: {},
 		});
-
 
 		await this.setObjectNotExistsAsync("offset_pts", {
 			type: "state",
@@ -321,7 +285,6 @@ class Wiim extends utils.Adapter {
 			},
 			native: {},
 		});
-
 
 		await this.setObjectNotExistsAsync("leaveSyncGroup", {
 			type: "state",
@@ -388,7 +351,6 @@ class Wiim extends utils.Adapter {
 			native: {},
 		});
 
-
 		await this.setObjectNotExistsAsync("mode", {
 			type: "state",
 			common: {
@@ -402,7 +364,6 @@ class Wiim extends utils.Adapter {
 			native: {},
 		});
 
-
 		await this.setObjectNotExistsAsync("switchmode", {
 			type: "state",
 			common: {
@@ -415,9 +376,6 @@ class Wiim extends utils.Adapter {
 			},
 			native: {},
 		});
-
-
-
 
 		await this.setObjectNotExistsAsync("playPromptUrl", {
 			type: "state",
@@ -445,7 +403,6 @@ class Wiim extends utils.Adapter {
 			native: {},
 		});
 
-
 		// In order to get state updates, you need to subscribe to them. The following line adds a subscription for our variable we have created above.
 		this.subscribeStates("album", { val: true, ack: true });
 		this.subscribeStates("title", { val: true, ack: true });
@@ -471,27 +428,6 @@ class Wiim extends utils.Adapter {
 		this.subscribeStates("playPromptUrl" ,{ val: true, ack: false }) ;
 		this.subscribeStates("setShutdown" ,{ val: true, ack: false }) ;
 
-		// You can also add a subscription for multiple states. The following line watches all states starting with "lights."
-		// this.subscribeStates("lights.*");
-		// Or, if you really must, you can also watch all states. Don't do this if you don't need to. Otherwise this will cause a lot of unnecessary load on the system:
-		// this.subscribeStates("*");
-
-		/*
-			setState examples
-			you will notice that each setState will cause the stateChange event to fire (because of above subscribeStates cmd)
-		*/
-		// the variable testVariable is set to true as command (ack=false)
-		//await this.setStateAsync("testVariable", true);
-		//await this.setStateAsync("Playing", {val: this.config.IP_Address, ack: true});
-
-		// same thing, but the value is flagged "ack"
-		// ack should be a lways set to true if the value is received from or acknowledged from the target system
-		//await this.setStateAsync("testVariable", { val: true, ack: true });
-
-		// same thing, but the state is deleted after 30s (getState will return null afterwards)
-		//await this.setStateAsync("testVariable", { val: true, ack: true, expire: 30 });
-
-		// examples for the checkPassword/checkGroup functions
 		let result = await this.checkPasswordAsync("admin", "iobroker");
 		this.log.info("check user admin pw iobroker: " + result);
 
@@ -505,10 +441,8 @@ class Wiim extends utils.Adapter {
 			//*********************** request Wiim's playing info and uupdate corresponding datapoints */
 			if (reqtype == "https") {
 				const url = reqtype+"://"+this.config.IP_Address+"/httpapi.asp?command=getMetaInfo";
-
 				http.get(url,{ validateCertificate: false, rejectUnauthorized: false, requestCert: true },(res) => {
 					let body = "";
-
 					//write response chunks to body
 					res.on("data", (chunk) => {
 						body += chunk;
@@ -517,9 +451,6 @@ class Wiim extends utils.Adapter {
 					res.on("end", () => {
 						try {
 							let json = JSON.parse(body);
-							//var myInstance = id.substring(0,7);
-							// write info to statea
-
 							this.setState("album",json.metaData.album,true);
 							this.setState("title",json.metaData.title,true);
 							this.setState("artist",json.metaData.artist,true);
@@ -551,8 +482,6 @@ class Wiim extends utils.Adapter {
 				res.on("end", () => {
 					try {
 						const json = JSON.parse(body);
-						//var myInstance = id.substring(0,7);
-						// write info to statea
 						const Position = Number(json.curpos);
  						const Offset_PTS = Number (json.offset_pts);
 						const TotLen = Number(json.totlen);
@@ -564,7 +493,6 @@ class Wiim extends utils.Adapter {
 								this.setState("mode","idling",true);
 								break;
 
-
 							case("1"):
 								this.setState("mode","Airplay",true);
 								break;
@@ -572,7 +500,6 @@ class Wiim extends utils.Adapter {
 							case("2"):
 								this.setState("mode","DLNA",true);
 								break;
-
 
 							case("10"):
 								this.setState("mode","Network",true);
@@ -585,14 +512,13 @@ class Wiim extends utils.Adapter {
 								this.setState("mode","HTTPAPI",true);
 								break;
 
-
 							case("31"):
 								this.setState("mode","Spotify Connect",true);
 							break;	
+
 							case("40"):
 								this.setState("mode","Line-In #1",true);
 								break;
-
 
 							case("41"):
 								this.setState("mode","Bluetooth",true);
@@ -606,8 +532,6 @@ class Wiim extends utils.Adapter {
 								this.setState("mode","co-axial",true);
 								break;
 
-
-
 							case("47"):
 								this.setState("mode","Line-In #2",true);
 								break;
@@ -616,8 +540,6 @@ class Wiim extends utils.Adapter {
 								this.setState("mode","HDMI",true);
 								break;
 
-
-
 							case("51"):
 								this.setState("mode","USBDAC",true);
 								break;
@@ -625,9 +547,7 @@ class Wiim extends utils.Adapter {
 							case("99"):
 							this.setState("mode","MR Guest",true);
 								break;
-
 						}
-
 
 						this.setState("curpos",Position,false);
 						this.setState("offset_pts",Offset_PTS,true);
@@ -715,8 +635,6 @@ class Wiim extends utils.Adapter {
 					});
 					break;
 
-
-
 				case id.substring(0,7)+"switchmode":
 
 					this.getState(id.substring(0,7)+"switchmode", (err, state)=> {
@@ -724,7 +642,6 @@ class Wiim extends utils.Adapter {
 						sendWiimcommand(this, "setPlayerCmd:switchmode:"+state.val);
 						});
 					break;
-
 
 				case id.substring(0,7)+"jumptopos":
 
@@ -741,11 +658,6 @@ class Wiim extends utils.Adapter {
 						sendWiimcommand(this, "setPlayerCmd:playlist:"+state.val);
 					});
 					break;
-
-
-
-
-
 
 				case id.substring(0,7)+"Play_Pause":					
 					sendWiimcommand(this, "setPlayerCmd:onepause");
@@ -818,38 +730,14 @@ class Wiim extends utils.Adapter {
 
 
 		} else {
-			// The state was deleted
-			//this.log.info(`state ${id} deleted`);
+
 		}
 
 
 	}
 
 
-
-	
-
-	// If you need to accept messages in your adapter, uncomment the following block and the corresponding line in the constructor.
-	// /**
-	//  * Some message was sent to this instance over message box. Used by email, pushover, text2speech, ...
-	//  * Using this method requires "common.messagebox" property to be set to true in io-package.json
-	//  * @param {ioBroker.Message} obj
-	//  */
-	// onMessage(obj) {
-	// 	if (typeof obj === "object" && obj.message) {
-	// 		if (obj.command === "send") {
-	// 			// e.g. send email or pushover or whatever
-	// 			this.log.info("send command");
-
-	// 			// Send response in callback if required
-	// 			if (obj.callback) this.sendTo(obj.from, obj.command, "Message received", obj.callback);
-	// 		}
-	// 	}
-	// }
 }
-
-
-
 
 async function sendWiimcommand(mywiimadapter, wiimcmd)
 {
@@ -888,9 +776,6 @@ function hexToASCII(hex) {
 	return ascii;
 }
 
-
-
-
 if (require.main !== module) {
 	// Export the constructor in compact mode
 	/**
@@ -902,6 +787,3 @@ if (require.main !== module) {
 	new Wiim();
 
 }
-
-
-
