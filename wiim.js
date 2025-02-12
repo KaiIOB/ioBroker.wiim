@@ -746,7 +746,7 @@ async function sendWiimcommand(mywiimadapter, wiimcmd)
 		mywiimadapter.log.info(reqtype+ "://" + mywiimadapter.config.IP_Address + "/httpapi.asp?command="+wiimcmd);
 
 		if (!err) {
-			mywiimadapter.log.info("success");			
+			mywiimadapter.log.info("success");
 		} else {
 			mywiimadapter.log.info(err);
 		}
