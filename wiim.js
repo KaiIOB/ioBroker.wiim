@@ -64,7 +64,7 @@ class Wiim extends utils.Adapter {
 			common: {
 				name: "album",
 				type: "string",
-				role: "indicator",
+				role: "album",
 				read: true,
 				write: false,
 			},
@@ -76,7 +76,7 @@ class Wiim extends utils.Adapter {
 			common: {
 				name: "title",
 				type: "string",
-				role: "indicator",
+				role: "media.title",
 				read: true,
 				write: false,
 			},
@@ -88,7 +88,7 @@ class Wiim extends utils.Adapter {
 			common: {
 				name: "artist",
 				type: "string",
-				role: "indicator",
+				role: "media.artist",
 				read: true,
 				write: false,
 			},
@@ -100,7 +100,7 @@ class Wiim extends utils.Adapter {
 			common: {
 				name: "albumArtURI",
 				type: "string",
-				role: "indicator",
+				role: "media.cover",
 				read: true,
 				write: false ,
 			},
@@ -112,7 +112,7 @@ class Wiim extends utils.Adapter {
 			common: {
 				name: "samplRate",
 				type: "string",
-				role: "indicator",
+				role: "media.bitrate",
 				read: true,
 				write: false,
 			},
@@ -148,7 +148,7 @@ class Wiim extends utils.Adapter {
 			common: {
 				name: "next",
 				type: "boolean",
-				role: "button.play",
+				role: "button.next",
 				read: true,
 				write: true,
 			},
@@ -160,7 +160,7 @@ class Wiim extends utils.Adapter {
 			common: {
 				name: "previous",
 				type: "boolean",
-				role: "button.play",
+				role: "button.prev",
 				read: true,
 				write: true,
 			},
@@ -198,7 +198,7 @@ class Wiim extends utils.Adapter {
 			common: {
 				name: "volume",
 				type: "string",
-				role: "indicator",
+				role: "level.volume",
 				read: true,
 				write: true,
 				def: "never",
@@ -224,7 +224,7 @@ class Wiim extends utils.Adapter {
 			common: {
 				name: "play_URL",
 				type: "string",
-				role: "indicator",
+				role: "media.url",
 				read: true,
 				write: true,
 				def: "none",
@@ -250,7 +250,7 @@ class Wiim extends utils.Adapter {
 			common: {
 				name: "current_pos",
 				type: "number",
-				role: "indicator",
+				role: "media.elapsed",
 				read: true,
 				write: true,
 				def: "",
@@ -302,7 +302,7 @@ class Wiim extends utils.Adapter {
 			common: {
 				name: "tracklength",
 				type: "number",
-				role: "indicator",
+				role: "media.duration",
 				read: true,
 				write: true,
 				def: "",
@@ -315,7 +315,7 @@ class Wiim extends utils.Adapter {
 			common: {
 				name: "plicurr",
 				type: "number",
-				role: "indicator",
+				role: "media.playlist",
 				read: true,
 				write: true,
 				def: "undefined",
@@ -354,7 +354,7 @@ class Wiim extends utils.Adapter {
 			common: {
 				name: "mode",
 				type: "string",
-				role: "indicator",
+				role: "media.input",
 				read: true,
 				write: false,
 				def: "",
@@ -367,7 +367,7 @@ class Wiim extends utils.Adapter {
 			common: {
 				name: "switchmode",
 				type: "string",
-				role: "indicator",
+				role: "media.input",
 				read: true,
 				write: true,
 				def: "",
@@ -380,7 +380,7 @@ class Wiim extends utils.Adapter {
 			common: {
 				name: "playPromptUrl",
 				type: "string",
-				role: "indicator",
+				role: "media.url",
 				read: true,
 				write: true,
 				def: "",
