@@ -434,7 +434,7 @@ class Wiim extends utils.Adapter {
 
 		setInterval(()=> {
 			// alle XX Sekunden ausführen
-			const http = require(reqtype)
+			const http = require(reqtype);
 
 			//*********************** request Wiim's playing info and uupdate corresponding datapoints */
 			if (reqtype == "https") {
@@ -512,7 +512,7 @@ class Wiim extends utils.Adapter {
 
 							case("31"):
 								this.setState("mode","Spotify Connect",true);
-							break;
+								break;
 
 							case("40"):
 								this.setState("mode","Line-In #1",true);
@@ -543,7 +543,7 @@ class Wiim extends utils.Adapter {
 								break;
 
 							case("99"):
-							this.setState("mode","MR Guest",true);
+								this.setState("mode","MR Guest",true);
 								break;
 						}
 
@@ -699,7 +699,7 @@ class Wiim extends utils.Adapter {
 
 
 				case id.substring(0,7)+"toggle_loop_mode":
-					this.getState(id.substring(0,7)+"toggle_loop_mode", (err)=> {
+					this.getState(id.substring(0,7)+"toggle_loop_mode", ()=> {
 
 						sendWiimcommand(this, "setPlayerCmd:loopmode:1");
 					});
@@ -714,7 +714,7 @@ class Wiim extends utils.Adapter {
 					break;
 
 				case id.substring(0,7)+"leaveSyncGroup":
-					this.getState(id.substring(0,7)+"leaveSyncGroup", (err)=> {
+					this.getState(id.substring(0,7)+"leaveSyncGroup", ()=> {
 						sendWiimcommand(this, "ConnectMasterAp:JoinGroupMaster:eth0.0.0.0");
 						sendWiimcommand(this, "ConnectMasterAp:LeaveGroup");
 						this.log.info("ConnectMasterAp:LeaveGroup");
@@ -739,14 +739,14 @@ async function sendWiimcommand(mywiimadapter, wiimcmd)
 {
 	let reqtype = "https";
 	if (mywiimadapter.config.Request_Type != "https") {reqtype="http";}
-	let http = require(reqtype);
-		
+	const http = require(reqtype);
+
 	http.get(reqtype+"://" + mywiimadapter.config.IP_Address + "/httpapi.asp?command="+wiimcmd, { validateCertificate: false, rejectUnauthorized: false, requestCert: true }, (err) => {
 
 		mywiimadapter.log.info(reqtype+ "://" + mywiimadapter.config.IP_Address + "/httpapi.asp?command="+wiimcmd);
 
 		if (!err) {
-
+			mywiimadapter.log.info("success");			
 		} else {
 			mywiimadapter.log.info(err);
 		}
