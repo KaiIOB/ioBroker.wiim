@@ -17,7 +17,7 @@ const utils = require("@iobroker/adapter-core");
 class Wiim extends utils.Adapter {
 	/**
 	 * @param {Partial<utils.AdapterOptions>} [options={}]
-	
+
 	*/
 	constructor(options) {
 		super({
@@ -31,34 +31,34 @@ class Wiim extends utils.Adapter {
 		this.on("unload", this.onUnload.bind(this));
 	}
 
-	
+
 
 	/**
 	 * Is called when databases are connected and adapter received configuration.
 	 */
 	async onReady() {
 		// Initialize your adapter here
-        let reqtype = "https";
+		let reqtype = "https";
 		if (this.config.Request_Type != "https") {reqtype="http";}
 		   
 		this.log.info(this.getstates);
 		this.setState("info.connection", false, true);
 		// Reset the connection indicator during startup
-		var http = require(reqtype)			
+		let http = require(reqtype);
 		let url = reqtype + "://"+this.config.IP_Address+"/httpapi.asp?command=getStatusEx";
 
-		
+
 		http.get(url,{ validateCertificate: false, rejectUnauthorized: false, requestCert: true },(res) => {
 			let body = "";
-		
-					//write response chunks to body
+
+			//write response chunks to body
 			res.on("data", (chunk) => {
 				body += chunk;
 			});
-		
+
 			res.on("end", () => {
 				try {
-					let json = JSON.parse(body);
+					const json = JSON.parse(body);
 					//this.log.info(body);
 					this.log.info("Wiim with firmware " + json.firmware+ " found. Ready to go, greetings to qlink ;-)");
 					this.setState("info.connection", true, true);
@@ -71,12 +71,12 @@ class Wiim extends utils.Adapter {
 				//	this.log.info("Refresh interval: " + this.config.Refresh_Interval + "sec.");
 				} catch (error) {
 					this.log.error(error.message);
-				};
+				}
 			});
-		
+
 		}).on("error", (error) => {
-			this.log.error(error.message);})
-		
+			this.log.error(error.message);});
+
 		// The adapters config (in the instance object everything under the attribute "native") is accessible via
 		// this.config:
 		//this.log.info("config IP_Address: " + this.config.IP_Address);
@@ -207,7 +207,7 @@ class Wiim extends utils.Adapter {
 				role: "indicator",
 				read: true,
 				write: false,
-				def: "to be read", 
+				def: "to be read",
 			},
 			native: {},
 		});
@@ -225,7 +225,7 @@ class Wiim extends utils.Adapter {
 			native: {},
 		});
 
-		
+
 		await this.setObjectNotExistsAsync("volume", {
 			type: "state",
 			common: {
@@ -294,8 +294,8 @@ class Wiim extends utils.Adapter {
 			},
 			native: {},
 		});
-		
-		
+
+
 		await this.setObjectNotExistsAsync("offset_pts", {
 			type: "state",
 			common: {
@@ -418,7 +418,7 @@ class Wiim extends utils.Adapter {
 
 
 
-		
+
 		await this.setObjectNotExistsAsync("playPromptUrl", {
 			type: "state",
 			common: {
@@ -497,134 +497,134 @@ class Wiim extends utils.Adapter {
 
 		result = await this.checkGroupAsync("admin", "admin");
 		this.log.info("check group user admin group admin: " + result);
-		
-		setInterval(()=> { 
-						// alle XX Sekunden ausführen		
-			var http = require(reqtype)			
+
+		setInterval(()=> {
+			// alle XX Sekunden ausführen
+			let http = require(reqtype)
 			
 			//*********************** request Wiim's playing info and uupdate corresponding datapoints */
 			if (reqtype == "https") {
-			let url = reqtype+"://"+this.config.IP_Address+"/httpapi.asp?command=getMetaInfo";
+				const url = reqtype+"://"+this.config.IP_Address+"/httpapi.asp?command=getMetaInfo";
 
-			http.get(url,{ validateCertificate: false, rejectUnauthorized: false, requestCert: true },(res) => {
-				let body = "";
+				http.get(url,{ validateCertificate: false, rejectUnauthorized: false, requestCert: true },(res) => {
+					let body = "";
+
+					//write response chunks to body
+					res.on("data", (chunk) => {
+						body += chunk;
+					});
+
+					res.on("end", () => {
+						try {
+							let json = JSON.parse(body);
+							//var myInstance = id.substring(0,7);
+							// write info to statea
+
+							this.setState("album",json.metaData.album,true);
+							this.setState("title",json.metaData.title,true);
+							this.setState("artist",json.metaData.artist,true);
+							this.setState("albumArtURI",json.metaData.albumArtURI,true);
+							this.setState("sampleRate",json.metaData.sampleRate,true);
+							this.setState("bitDepth",json.metaData.bitDepth,true);
+
+
+						} catch (error) {
+							this.log.error(error.message);
+						}
+					});
 			
-						//write response chunks to body
-				res.on("data", (chunk) => {
-					body += chunk;
+				}).on("error", (error) => {
+					this.log.error(error.message);
 				});
-			
-				res.on("end", () => {
-					try {
-						let json = JSON.parse(body);
-						//var myInstance = id.substring(0,7);
-						// write info to statea
+			}
 
-						this.setState("album",json.metaData.album,true);
-						this.setState("title",json.metaData.title,true);
-						this.setState("artist",json.metaData.artist,true);
-						this.setState("albumArtURI",json.metaData.albumArtURI,true);
-						this.setState("sampleRate",json.metaData.sampleRate,true);
-						this.setState("bitDepth",json.metaData.bitDepth,true);
-		
-
-					} catch (error) {
-						this.log.error(error.message);
-					};
-				});
-			
-			}).on("error", (error) => {
-				this.log.error(error.message);
-			});
-		}
-		
 			url = reqtype + "://"+this.config.IP_Address+"/httpapi.asp?command=getPlayerStatus";
 
 			http.get(url,{ validateCertificate: false, rejectUnauthorized: false, requestCert: true },(res) => {
 				let body = "";
-			
-						//write response chunks to body
+
+				//write response chunks to body
 				res.on("data", (chunk) => {
 					body += chunk;
 				});
-	
+
 				res.on("end", () => {
 					try {
-						let json = JSON.parse(body);
+						const json = JSON.parse(body);
 						//var myInstance = id.substring(0,7);
 						// write info to statea
-						let Position = Number(json.curpos);
- 						let Offset_PTS = Number (json.offset_pts);
-						let TotLen = Number(json.totlen);
-						let PliCurr = Number(json.plicurr);
+						const Position = Number(json.curpos);
+ 						const Offset_PTS = Number (json.offset_pts);
+						const TotLen = Number(json.totlen);
+						const PliCurr = Number(json.plicurr);
 						this.setState("loop_mode",json.loop,true);
-//this.log.info(json.mode);	
+	
 						switch (json.mode) {
 							case("0"):
 								this.setState("mode","idling",true);
-							break;
+								break;
 
 
 							case("1"):
 								this.setState("mode","Airplay",true);
-							break;
+								break;
 
 							case("2"):
 								this.setState("mode","DLNA",true);
-							break;
+								break;
 
 
 							case("10"):
 								this.setState("mode","Network",true);
-							break;
+								break;
 							case("11"):
 								this.setState("mode","UDISK",true);
-							break;
+								break;
 
 							case("20"):
 								this.setState("mode","HTTPAPI",true);
-							break;
+								break;
 
 
 							case("31"):
 								this.setState("mode","Spotify Connect",true);
-							break;
+							break;	
 							case("40"):
 								this.setState("mode","Line-In #1",true);
-							break;
+								break;
 
 
 							case("41"):
 								this.setState("mode","Bluetooth",true);
-							break;
+								break;
 
 							case("43"):
 								this.setState("mode","Optical",true);
-							break;
+								break;
 
 							case("45"):
 								this.setState("mode","co-axial",true);
-							break;
+								break;
 
 
 
 							case("47"):
 								this.setState("mode","Line-In #2",true);
-							break;
+								break;
 
 							case("49"):
 								this.setState("mode","HDMI",true);
-							break;
+								break;
 
 
 
 							case("51"):
 								this.setState("mode","USBDAC",true);
-							break;
-							
+								break;
+
 							case("99"):
 							this.setState("mode","MR Guest",true);
-						break;
+								break;
 
 						}
 
@@ -643,22 +643,22 @@ class Wiim extends utils.Adapter {
 
 					} catch (error) {
 						this.log.error(error.message);
-					};
+					}
 				});
-			
+
 			}).on("error", (error) => {
 				this.log.error(error.message);
 			});
-			
-
-
-			
 
 
 
-	
-			var theDate = new Date();
-			var mydate = theDate.toString();
+
+
+
+
+
+			const theDate = new Date();
+			const mydate = theDate.toString();
 			//this.log.info(mydate.substring(16,25));
 			this.setState("lastRefresh",mydate.substring(16,25),true);
 
@@ -668,8 +668,8 @@ class Wiim extends utils.Adapter {
 
 
 
-		}, this.config.Refresh_Interval*1000); 
-	
+		}, this.config.Refresh_Interval*1000);
+
 	}
 
 	/**
@@ -692,143 +692,143 @@ class Wiim extends utils.Adapter {
 
 	onStateChange(id, state) {
 		//var http = require("https")
-		var myInstance = id.substring(0,7);
+		let myInstance = id.substring(0,7);
 		if (state) {
 			// The state was changed
-			
+
 			switch (id) {
 
-					case id.substring(0,7)+"setShutdown":
+				case id.substring(0,7)+"setShutdown":
 
-						this.getState(id.substring(0,7)+"setShutdown", (err, state)=> {
+					this.getState(id.substring(0,7)+"setShutdown", (err, state)=> {
 
 						sendWiimcommand(this, "setShutdown:"+state.val);
-			
-									}); 
+
+					});
 					break;
 
-					case id.substring(0,7)+"playPromptUrl":
+				case id.substring(0,7)+"playPromptUrl":
 
-						this.getState(id.substring(0,7)+"playPromptUrl", (err, state)=> {
+					this.getState(id.substring(0,7)+"playPromptUrl", (err, state)=> {
 
-							sendWiimcommand(this, "playPromptUrl:"+state.val);
-							}); 
-					break;
-
-
-
-					case id.substring(0,7)+"switchmode":
-
-						this.getState(id.substring(0,7)+"switchmode", (err, state)=> {
-
-							sendWiimcommand(this, "setPlayerCmd:switchmode:"+state.val);
-							}); 
-					break;
-
-
-					case id.substring(0,7)+"jumptopos":
-
-						this.getState(id.substring(0,7)+"jumptopos", (err, state)=> {
-
-							sendWiimcommand(this, "setPlayerCmd:seek:"+state.val/1000);
-						}); 
-					break;
-
-					case id.substring(0,7)+"jumptopli":
-
-						this.getState(id.substring(0,7)+"jumptopli", (err, state)=> {
-
-							sendWiimcommand(this, "setPlayerCmd:playlist:"+state.val);
-						}); 
+						sendWiimcommand(this, "playPromptUrl:"+state.val);
+					});
 					break;
 
 
 
+				case id.substring(0,7)+"switchmode":
 
+					this.getState(id.substring(0,7)+"switchmode", (err, state)=> {
 
-
-					case id.substring(0,7)+"Play_Pause":					
-						sendWiimcommand(this, "setPlayerCmd:onepause");
-					break;
-
-						
-					case id.substring(0,7)+"next":
-						sendWiimcommand(this, "setPlayerCmd:next");	
-					break;
-				
-
-					case id.substring(0,7)+"previous":
-						sendWiimcommand(this, "setPlayerCmd:previous");
+						sendWiimcommand(this, "setPlayerCmd:switchmode:"+state.val);
+						});
 					break;
 
 
-					case id.substring(0,7)+"volume":
+				case id.substring(0,7)+"jumptopos":
 
-						this.getState(id.substring(0,7)+"volume", (err, state)=> {
-    
-							sendWiimcommand(this, "setPlayerCmd:vol:"+state.val);
-						}); 
+					this.getState(id.substring(0,7)+"jumptopos", (err, state)=> {
+
+						sendWiimcommand(this, "setPlayerCmd:seek:"+state.val/1000);
+					});
 					break;
 
+				case id.substring(0,7)+"jumptopli":
 
-					case id.substring(0,7)+"play_preset":
-						this.getState(id.substring(0,7)+"play_preset", (err, state)=> {
-							sendWiimcommand(this, "MCUKeyShortClick:"+state.val);
-						}); 
-					break;
+					this.getState(id.substring(0,7)+"jumptopli", (err, state)=> {
 
-					
-					case id.substring(0,7)+"play_URL":
-						this.getState(id.substring(0,7)+"play_URL", (err, state)=> {
-
-							sendWiimcommand(this, "setPlayerCmd:play:"+state.val);
-							this.log.info("setPlayerCmd:play:"+state.val);
-						}); 
+						sendWiimcommand(this, "setPlayerCmd:playlist:"+state.val);
+					});
 					break;
 
 
 
-					case id.substring(0,7)+"toggle_loop_mode":
-						this.getState(id.substring(0,7)+"toggle_loop_mode", (err, state)=> {
 
-							sendWiimcommand(this, "setPlayerCmd:loopmode:1");
-						}); 
-					break;
 
-					case id.substring(0,7)+"setMaster":
-						this.getState(id.substring(0,7)+"setMaster", (err, state)=> {
 
-							sendWiimcommand(this, "ConnectMasterAp:JoinGroupMaster:eth"+state.val);
-							this.log.info("ConnectMasterAp:JoinGroupMaster:eth"+state.val)
-						}); 
-					break;
-
-					case id.substring(0,7)+"leaveSyncGroup":
-						this.getState(id.substring(0,7)+"leaveSyncGroup", (err, state)=> {
-							sendWiimcommand(this, "ConnectMasterAp:JoinGroupMaster:eth0.0.0.0")
-							sendWiimcommand(this, "ConnectMasterAp:LeaveGroup");
-							this.log.info("ConnectMasterAp:LeaveGroup")
-						}); 
+				case id.substring(0,7)+"Play_Pause":					
+					sendWiimcommand(this, "setPlayerCmd:onepause");
 					break;
 
 
+				case id.substring(0,7)+"next":
+					sendWiimcommand(this, "setPlayerCmd:next");	
+					break;
 
-			} 
 
-			
-		
+				case id.substring(0,7)+"previous":
+					sendWiimcommand(this, "setPlayerCmd:previous");
+					break;
+
+
+				case id.substring(0,7)+"volume":
+
+					this.getState(id.substring(0,7)+"volume", (err, state)=> {
+
+						sendWiimcommand(this, "setPlayerCmd:vol:"+state.val);
+					});
+					break;
+
+
+				case id.substring(0,7)+"play_preset":
+					this.getState(id.substring(0,7)+"play_preset", (err, state)=> {
+						sendWiimcommand(this, "MCUKeyShortClick:"+state.val);
+					});
+					break;
+
+
+				case id.substring(0,7)+"play_URL":
+					this.getState(id.substring(0,7)+"play_URL", (err, state)=> {
+
+						sendWiimcommand(this, "setPlayerCmd:play:"+state.val);
+						this.log.info("setPlayerCmd:play:"+state.val);
+					});
+					break;
+
+
+
+				case id.substring(0,7)+"toggle_loop_mode":
+					this.getState(id.substring(0,7)+"toggle_loop_mode", (err, state)=> {
+
+						sendWiimcommand(this, "setPlayerCmd:loopmode:1");
+					});
+					break;
+
+				case id.substring(0,7)+"setMaster":
+					this.getState(id.substring(0,7)+"setMaster", (err, state)=> {
+
+						sendWiimcommand(this, "ConnectMasterAp:JoinGroupMaster:eth"+state.val);
+
+					});
+					break;
+
+				case id.substring(0,7)+"leaveSyncGroup":
+					this.getState(id.substring(0,7)+"leaveSyncGroup", (err, state)=> {
+						sendWiimcommand(this, "ConnectMasterAp:JoinGroupMaster:eth0.0.0.0");
+						sendWiimcommand(this, "ConnectMasterAp:LeaveGroup");
+						this.log.info("ConnectMasterAp:LeaveGroup");
+					});
+					break;
+
+
+
+			}
+
+
+
 		} else {
 			// The state was deleted
 			//this.log.info(`state ${id} deleted`);
 		}
-		
+
 
 	}
 
-	
+
 
 	
-	
+
 	// If you need to accept messages in your adapter, uncomment the following block and the corresponding line in the constructor.
 	// /**
 	//  * Some message was sent to this instance over message box. Used by email, pushover, text2speech, ...
@@ -852,46 +852,46 @@ class Wiim extends utils.Adapter {
 
 
 async function sendWiimcommand(mywiimadapter, wiimcmd)
-	{	
-		let reqtype = "https";
-		if (mywiimadapter.config.Request_Type != "https") {reqtype="http";}
-		var http = require(reqtype)
+{
+	let reqtype = "https";
+	if (mywiimadapter.config.Request_Type != "https") {reqtype="http";}
+	let http = require(reqtype);
 		
-		http.get(reqtype+"://" + mywiimadapter.config.IP_Address + "/httpapi.asp?command="+wiimcmd, { validateCertificate: false, rejectUnauthorized: false, requestCert: true }, (err) => {
-		 
-mywiimadapter.log.info(reqtype+ "://" + mywiimadapter.config.IP_Address + "/httpapi.asp?command="+wiimcmd);
+	http.get(reqtype+"://" + mywiimadapter.config.IP_Address + "/httpapi.asp?command="+wiimcmd, { validateCertificate: false, rejectUnauthorized: false, requestCert: true }, (err) => {
 
-			if (!err) {
-				
+		mywiimadapter.log.info(reqtype+ "://" + mywiimadapter.config.IP_Address + "/httpapi.asp?command="+wiimcmd);
+
+		if (!err) {
+
 		} else {
 			mywiimadapter.log.info(err);
-			}
-		}) 
-		
+		}
+		});
+
+}
+
+function hexToASCII(hex) {
+	// initialize the ASCII code string as empty.
+	var ascii = "";
+
+    for (let i = 0; i < hex.length; i += 2) {
+		// extract two characters from hex string
+    	let part = hex.substring(i, i + 2);
+
+		// change it into base 16 and
+		// typecast as the character
+		let ch = String.fromCharCode(parseInt(part, 16));
+
+		// add this char to final ASCII string
+		ascii = ascii + ch;
 	}
-
-	function hexToASCII(hex) {
-        // initialize the ASCII code string as empty.
-        var ascii = "";
- 
-        for (var i = 0; i < hex.length; i += 2) {
-          // extract two characters from hex string
-          var part = hex.substring(i, i + 2);
- 
-          // change it into base 16 and
-          // typecast as the character
-          var ch = String.fromCharCode(parseInt(part, 16));
- 
-          // add this char to final ASCII string
-          ascii = ascii + ch;
-        }
-        return ascii;
-      }
+	return ascii;
+}
 
 
 
 
-if (require.main !== module) { 
+if (require.main !== module) {
 	// Export the constructor in compact mode
 	/**
 	 * @param {Partial<utils.AdapterOptions>} [options={}]

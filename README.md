@@ -97,6 +97,17 @@ For later updates, the above procedure is not necessary. Just do the following:
 1. Overwrite the changed files in the adapter directory (`/opt/iobroker/node_modules/iobroker.wiim`)
 1. Execute `iobroker upload wiim` on the ioBroker host
 
+## Adapter Configuration
+
+	IP address of device: IP of the device you intend to control, can be found in wiim app
+
+	interval for refresh of player data in seconds: time between two requests for updated data
+
+	API request type: Wiim and Arylic use similar APIs, but they differ in the protocol used. For Wiim products https must be chosen, for Arylic products http must be chosen
+
+ 
+
+
 ## Changelog
 
 <### 0.0.2
