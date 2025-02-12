@@ -5,7 +5,6 @@
 const utils = require("@iobroker/adapter-core");
 // Load your modules here, e.g.:
 // const fs = require("fs");
-
 class Wiim extends utils.Adapter {
 	/**
 	 * @param {Partial<utils.AdapterOptions>} [options={}]
