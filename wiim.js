@@ -3,7 +3,6 @@
 // The adapter-core module gives you access to the core ioBroker functions
 // you need to create an adapter
 const utils = require("@iobroker/adapter-core");
-
 // Load your modules here, e.g.:
 // const fs = require("fs");
 
@@ -30,11 +29,11 @@ class Wiim extends utils.Adapter {
 		// Initialize your adapter here
 		let reqtype = "https";
 		if (this.config.Request_Type != "https") {reqtype="http";}
-		   
+
 		this.log.info(this.getstates);
 		this.setState("info.connection", false, true);
 		// Reset the connection indicator during startup
-		let http = require(reqtype);
+		const http = require(reqtype);
 		let url = reqtype + "://"+this.config.IP_Address+"/httpapi.asp?command=getStatusEx";
 
 
@@ -436,8 +435,8 @@ class Wiim extends utils.Adapter {
 
 		setInterval(()=> {
 			// alle XX Sekunden ausführen
-			let http = require(reqtype)
-			
+			const http = require(reqtype)
+
 			//*********************** request Wiim's playing info and uupdate corresponding datapoints */
 			if (reqtype == "https") {
 				const url = reqtype+"://"+this.config.IP_Address+"/httpapi.asp?command=getMetaInfo";
@@ -450,7 +449,7 @@ class Wiim extends utils.Adapter {
 
 					res.on("end", () => {
 						try {
-							let json = JSON.parse(body);
+							const json = JSON.parse(body);
 							this.setState("album",json.metaData.album,true);
 							this.setState("title",json.metaData.title,true);
 							this.setState("artist",json.metaData.artist,true);
@@ -463,7 +462,7 @@ class Wiim extends utils.Adapter {
 							this.log.error(error.message);
 						}
 					});
-			
+
 				}).on("error", (error) => {
 					this.log.error(error.message);
 				});
@@ -483,11 +482,11 @@ class Wiim extends utils.Adapter {
 					try {
 						const json = JSON.parse(body);
 						const Position = Number(json.curpos);
- 						const Offset_PTS = Number (json.offset_pts);
+						const Offset_PTS = Number(json.offset_pts);
 						const TotLen = Number(json.totlen);
 						const PliCurr = Number(json.plicurr);
 						this.setState("loop_mode",json.loop,true);
-	
+
 						switch (json.mode) {
 							case("0"):
 								this.setState("mode","idling",true);
@@ -514,7 +513,7 @@ class Wiim extends utils.Adapter {
 
 							case("31"):
 								this.setState("mode","Spotify Connect",true);
-							break;	
+							break;
 
 							case("40"):
 								this.setState("mode","Line-In #1",true);
@@ -612,7 +611,7 @@ class Wiim extends utils.Adapter {
 
 	onStateChange(id, state) {
 		//var http = require("https")
-		let myInstance = id.substring(0,7);
+
 		if (state) {
 			// The state was changed
 
@@ -640,7 +639,7 @@ class Wiim extends utils.Adapter {
 					this.getState(id.substring(0,7)+"switchmode", (err, state)=> {
 
 						sendWiimcommand(this, "setPlayerCmd:switchmode:"+state.val);
-						});
+					});
 					break;
 
 				case id.substring(0,7)+"jumptopos":
@@ -659,13 +658,13 @@ class Wiim extends utils.Adapter {
 					});
 					break;
 
-				case id.substring(0,7)+"Play_Pause":					
+				case id.substring(0,7)+"Play_Pause":
 					sendWiimcommand(this, "setPlayerCmd:onepause");
 					break;
 
 
 				case id.substring(0,7)+"next":
-					sendWiimcommand(this, "setPlayerCmd:next");	
+					sendWiimcommand(this, "setPlayerCmd:next");
 					break;
 
 
@@ -701,7 +700,7 @@ class Wiim extends utils.Adapter {
 
 
 				case id.substring(0,7)+"toggle_loop_mode":
-					this.getState(id.substring(0,7)+"toggle_loop_mode", (err, state)=> {
+					this.getState(id.substring(0,7)+"toggle_loop_mode", (err)=> {
 
 						sendWiimcommand(this, "setPlayerCmd:loopmode:1");
 					});
@@ -716,7 +715,7 @@ class Wiim extends utils.Adapter {
 					break;
 
 				case id.substring(0,7)+"leaveSyncGroup":
-					this.getState(id.substring(0,7)+"leaveSyncGroup", (err, state)=> {
+					this.getState(id.substring(0,7)+"leaveSyncGroup", (err)=> {
 						sendWiimcommand(this, "ConnectMasterAp:JoinGroupMaster:eth0.0.0.0");
 						sendWiimcommand(this, "ConnectMasterAp:LeaveGroup");
 						this.log.info("ConnectMasterAp:LeaveGroup");
@@ -728,8 +727,6 @@ class Wiim extends utils.Adapter {
 			}
 
 
-
-		} else {
 
 		}
 
@@ -754,21 +751,21 @@ async function sendWiimcommand(mywiimadapter, wiimcmd)
 		} else {
 			mywiimadapter.log.info(err);
 		}
-		});
+	});
 
 }
 
 function hexToASCII(hex) {
 	// initialize the ASCII code string as empty.
-	var ascii = "";
+	let ascii = "";
 
-    for (let i = 0; i < hex.length; i += 2) {
+	for (let i = 0; i < hex.length; i += 2) {
 		// extract two characters from hex string
-    	let part = hex.substring(i, i + 2);
+		const part = hex.substring(i, i + 2);
 
 		// change it into base 16 and
 		// typecast as the character
-		let ch = String.fromCharCode(parseInt(part, 16));
+		const ch = String.fromCharCode(parseInt(part, 16));
 
 		// add this char to final ASCII string
 		ascii = ascii + ch;
