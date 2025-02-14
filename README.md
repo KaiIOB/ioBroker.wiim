@@ -14,6 +14,18 @@
 
 adapter to access Wiim/Arylic devices
 
+## supported devices
+The adapter has been tested with:
+
+	Wiim Amp
+ 	Wiim Mini
+  	Arylic up2stream v3
+   	Arylic S10+
+
+Wiim devices use https communication, Arylic devices use http communication.
+At least one feature (playPromptUrl) works only with Arylic devices with firmware >=4.6.415145 
+Currently only the most important features of the API are implemented. Please let me know if other features are useful to you.
+
 
 ## Adapter Configuration
 
