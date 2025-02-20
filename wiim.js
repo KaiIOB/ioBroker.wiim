@@ -31,24 +31,24 @@ class Wiim extends utils.Adapter {
 	 */
 	async onReady() {
 		// Initialize your adapter here
-        let reqtype = "https";
+		let reqtype = "https";
 		if (this.config.Request_Type != "https") {reqtype="http";}
 		this.log.info(this.getstates);
 		this.setState("info.connection", false, true);
 		// Reset the connection indicator during startup
-		var http = require(reqtype)
-		let url = reqtype + "://"+this.config.IP_Address+"/httpapi.asp?command=getStatusEx";
+		let http = require(reqtype)
+		const url = reqtype + "://"+this.config.IP_Address+"/httpapi.asp?command=getStatusEx";
 
 		http.get(url,{ validateCertificate: false, rejectUnauthorized: false, requestCert: true },(res) => {
-			let body = "";
-					//write response chunks to body
+		let body = "";
+			//write response chunks to body
 			res.on("data", (chunk) => {
 				body += chunk;
 			});
 
 			res.on("end", () => {
 				try {
-					let json = JSON.parse(body);
+					const json = JSON.parse(body);
 					//this.log.info(body);
 					this.log.info("Wiim with firmware " + json.firmware+ " found. Ready to go, greetings to qlink ;-)");
 					this.setState("info.connection", true, true);
@@ -61,11 +61,11 @@ class Wiim extends utils.Adapter {
 				//	this.log.info("Refresh interval: " + this.config.Refresh_Interval + "sec.");
 				} catch (error) {
 					this.log.error(error.message);
-				};
+				}
 			});
 
 		}).on("error", (error) => {
-			this.log.error(error.message);})
+			this.log.error(error.message);});
 
 
 
@@ -188,7 +188,7 @@ class Wiim extends utils.Adapter {
 				role: "indicator",
 				read: true,
 				write: false,
-				def: "to be read", 
+				def: "to be read",
 			},
 			native: {},
 		});
@@ -449,7 +449,7 @@ class Wiim extends utils.Adapter {
 		this.subscribeStates("setShutdown" ,{ val: true, ack: false }) ;
 
 		getWiimData(this);
-	
+
 	}
 
 	/**
@@ -459,7 +459,7 @@ class Wiim extends utils.Adapter {
 	onUnload(callback) {
 		try {
 
-			this.clearTimeout(pollTimeout);
+//			this.clearTimeout(pollTimeout);
 			callback();
 		} catch (e) {
 			callback();
@@ -468,119 +468,117 @@ class Wiim extends utils.Adapter {
 
 	onStateChange(id, state) {
 		//var http = require("https")
-		var myInstance = id.substring(0,7);
+//		var myInstance = id.substring(0,7);
 		if (state) {
 			// The state was changed
 
 			switch (id) {
 
-					case id.substring(0,7)+"setShutdown":
+				case id.substring(0,7)+"setShutdown":
 
-						this.getState(id.substring(0,7)+"setShutdown", (err, state)=> {
+					this.getState(id.substring(0,7)+"setShutdown", (err, state)=> {
 
-						sendWiimcommand(this, "setShutdown:"+state.val);
-									});
+					sendWiimcommand(this, "setShutdown:"+state.val);
+					});
 					break;
 
-					case id.substring(0,7)+"playPromptUrl":
+				case id.substring(0,7)+"playPromptUrl":
 
-						this.getState(id.substring(0,7)+"playPromptUrl", (err, state)=> {
+					this.getState(id.substring(0,7)+"playPromptUrl", (err, state)=> {
 
-							sendWiimcommand(this, "playPromptUrl:"+state.val);
-							});
-					break;
-
-
-
-					case id.substring(0,7)+"switchmode":
-
-						this.getState(id.substring(0,7)+"switchmode", (err, state)=> {
-
-							sendWiimcommand(this, "setPlayerCmd:switchmode:"+state.val);
-							});
+						sendWiimcommand(this, "playPromptUrl:"+state.val);
+					});
 					break;
 
 
-					case id.substring(0,7)+"jumptopos":
+				case id.substring(0,7)+"switchmode":						
+					this.getState(id.substring(0,7)+"switchmode", (err, state)=> {
 
-						this.getState(id.substring(0,7)+"jumptopos", (err, state)=> {
-
-							sendWiimcommand(this, "setPlayerCmd:seek:"+state.val/1000);
-						});
-					break;
-
-					case id.substring(0,7)+"jumptopli":
-
-						this.getState(id.substring(0,7)+"jumptopli", (err, state)=> {
-
-							sendWiimcommand(this, "setPlayerCmd:playlist:"+state.val);
-						});
-					break;
-
-					case id.substring(0,7)+"Play_Pause":
-						sendWiimcommand(this, "setPlayerCmd:onepause");
-					break;
-
-					case id.substring(0,7)+"next":
-						sendWiimcommand(this, "setPlayerCmd:next");
-					break;
-				
-
-					case id.substring(0,7)+"previous":
-						sendWiimcommand(this, "setPlayerCmd:previous");
+						sendWiimcommand(this, "setPlayerCmd:switchmode:"+state.val);
+					});
 					break;
 
 
-					case id.substring(0,7)+"volume":
+				case id.substring(0,7)+"jumptopos":
 
-						this.getState(id.substring(0,7)+"volume", (err, state)=> {
+					this.getState(id.substring(0,7)+"jumptopos", (err, state)=> {
 
-							sendWiimcommand(this, "setPlayerCmd:vol:"+state.val);
-						});
+						sendWiimcommand(this, "setPlayerCmd:seek:"+state.val/1000);
+					});
+					break;
+
+				case id.substring(0,7)+"jumptopli":
+
+					this.getState(id.substring(0,7)+"jumptopli", (err, state)=> {
+
+						sendWiimcommand(this, "setPlayerCmd:playlist:"+state.val);
+					});
+					break;
+
+				case id.substring(0,7)+"Play_Pause":
+					sendWiimcommand(this, "setPlayerCmd:onepause");
+					break;
+
+				case id.substring(0,7)+"next":
+					sendWiimcommand(this, "setPlayerCmd:next");
 					break;
 
 
-					case id.substring(0,7)+"play_preset":
-						this.getState(id.substring(0,7)+"play_preset", (err, state)=> {
-							sendWiimcommand(this, "MCUKeyShortClick:"+state.val);
-						});
+				case id.substring(0,7)+"previous":
+					sendWiimcommand(this, "setPlayerCmd:previous");
 					break;
 
-					case id.substring(0,7)+"play_URL":
-						this.getState(id.substring(0,7)+"play_URL", (err, state)=> {
-							sendWiimcommand(this, "setPlayerCmd:play:"+state.val);
-							this.log.info("setPlayerCmd:play:"+state.val);
+
+				case id.substring(0,7)+"volume":
+
+					this.getState(id.substring(0,7)+"volume", (err, state)=> {
+
+						sendWiimcommand(this, "setPlayerCmd:vol:"+state.val);
 						});
 					break;
 
 
-
-					case id.substring(0,7)+"toggle_loop_mode":
-						this.getState(id.substring(0,7)+"toggle_loop_mode", (err, state)=> {
-
-							sendWiimcommand(this, "setPlayerCmd:loopmode:1");
+				case id.substring(0,7)+"play_preset":
+					this.getState(id.substring(0,7)+"play_preset", (err, state)=> {
+						sendWiimcommand(this, "MCUKeyShortClick:"+state.val);
 						});
 					break;
 
-					case id.substring(0,7)+"setMaster":
-						this.getState(id.substring(0,7)+"setMaster", (err, state)=> {
-
-							sendWiimcommand(this, "ConnectMasterAp:JoinGroupMaster:eth"+state.val);
-							this.log.info("ConnectMasterAp:JoinGroupMaster:eth"+state.val);
+				case id.substring(0,7)+"play_URL":
+					this.getState(id.substring(0,7)+"play_URL", (err, state)=> {
+						sendWiimcommand(this, "setPlayerCmd:play:"+state.val);
+						this.log.info("setPlayerCmd:play:"+state.val);
 						});
 					break;
 
-					case id.substring(0,7)+"leaveSyncGroup":
-						this.getState(id.substring(0,7)+"leaveSyncGroup", (err, state)=> {
-							sendWiimcommand(this, "ConnectMasterAp:JoinGroupMaster:eth0.0.0.0");
-							sendWiimcommand(this, "ConnectMasterAp:LeaveGroup");
-							this.log.info("ConnectMasterAp:LeaveGroup");
+
+
+				case id.substring(0,7)+"toggle_loop_mode":
+					this.getState(id.substring(0,7)+"toggle_loop_mode", (err, state)=> {
+
+						sendWiimcommand(this, "setPlayerCmd:loopmode:1");
 						});
 					break;
 
-			} 
+				case id.substring(0,7)+"setMaster":
+					this.getState(id.substring(0,7)+"setMaster", (err, state)=> {
 
-			
+						sendWiimcommand(this, "ConnectMasterAp:JoinGroupMaster:eth"+state.val);
+						this.log.info("ConnectMasterAp:JoinGroupMaster:eth"+state.val);
+						});
+					break;
+
+				case id.substring(0,7)+"leaveSyncGroup":
+					this.getState(id.substring(0,7)+"leaveSyncGroup", (err, state)=> {
+						sendWiimcommand(this, "ConnectMasterAp:JoinGroupMaster:eth0.0.0.0");
+						sendWiimcommand(this, "ConnectMasterAp:LeaveGroup");
+						this.log.info("ConnectMasterAp:LeaveGroup");
+						});
+					break;
+
+			}
+
+
 		
 		} else {
 
@@ -596,7 +594,7 @@ class Wiim extends utils.Adapter {
 async function getWiimData(mywiimadapter)
 {
 	const reqtype = mywiimadapter.config.Request_Type;
-	var http = require(reqtype);
+	let http = require(reqtype);
 
 	//*********************** request Wiim's playing info and uupdate corresponding datapoints */
 	if (reqtype == "https") {	//only Wiim supports getMetaInfo
@@ -758,21 +756,21 @@ mywiimadapter.log.info(reqtype+ "://" + mywiimadapter.config.IP_Address + "/http
 	}
 
 	function hexToASCII(hex) {
-        // initialize the ASCII code string as empty.
-        var ascii = "";
-        for (var i = 0; i < hex.length; i += 2) {
-          // extract two characters from hex string
-          var part = hex.substring(i, i + 2);
+    // initialize the ASCII code string as empty.
+    	var ascii = "";
+    	for (var i = 0; i < hex.length; i += 2) {
+    	// extract two characters from hex string
+    	var part = hex.substring(i, i + 2);
  
-          // change it into base 16 and
-          // typecast as the character
-          var ch = String.fromCharCode(parseInt(part, 16));
+    	// change it into base 16 and
+    	// typecast as the character
+    	var ch = String.fromCharCode(parseInt(part, 16));
  
-          // add this char to final ASCII string
-          ascii = ascii + ch;
-        }
-        return ascii;
-      }
+    	// add this char to final ASCII string
+    	ascii = ascii + ch;
+    	}
+    	return ascii;
+    }
 
 
 
