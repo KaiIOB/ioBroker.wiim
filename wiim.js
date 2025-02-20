@@ -2,13 +2,8 @@
 /*
  * Created with @iobroker/create-adapter v2.3.0
  */
-// The adapter-core module gives you access to the core ioBroker functions
-// you need to create an adapter
+
 const utils = require("@iobroker/adapter-core");
-
-
-// Load your modules here, e.g.:
-// const fs = require("fs");
 
 class Wiim extends utils.Adapter {
 	/**
@@ -21,8 +16,6 @@ class Wiim extends utils.Adapter {
 		});
 		this.on("ready", this.onReady.bind(this));
 		this.on("stateChange", this.onStateChange.bind(this));
-		// this.on("objectChange", this.onObjectChange.bind(this));
-		// this.on("message", this.onMessage.bind(this));
 		this.on("unload", this.onUnload.bind(this));
 	}
 
@@ -52,13 +45,6 @@ class Wiim extends utils.Adapter {
 					//this.log.info(body);
 					this.log.info("Wiim with firmware " + json.firmware+ " found. Ready to go, greetings to qlink ;-)");
 					this.setState("info.connection", true, true);
-
-				//	if (body==="OK") {
-				//		this.setState("info.connection", true, true);
-				//	}
-				//	else {this.setState("info.connection", false, true);}
-				//	this.log.info("Wiim wifi status: "+body + ", IP: " +this.config.IP_Address);
-				//	this.log.info("Refresh interval: " + this.config.Refresh_Interval + "sec.");
 				} catch (error) {
 					this.log.error(error.message);
 				}
@@ -66,8 +52,6 @@ class Wiim extends utils.Adapter {
 
 		}).on("error", (error) => {
 			this.log.error(error.message);});
-
-
 
 		await this.setObjectNotExistsAsync("album", {
 			type: "state",
@@ -245,8 +229,6 @@ class Wiim extends utils.Adapter {
 			native: {},
 		});
 
-
-
 		await this.setObjectNotExistsAsync("toggle_loop_mode", {
 			type: "state",
 			common: {
@@ -259,8 +241,6 @@ class Wiim extends utils.Adapter {
 			},
 			native: {},
 		});
-
-
 
 		await this.setObjectNotExistsAsync("curpos", {
 			type: "state",
@@ -300,7 +280,6 @@ class Wiim extends utils.Adapter {
 			},
 			native: {},
 		});
-
 
 		await this.setObjectNotExistsAsync("leaveSyncGroup", {
 			type: "state",
@@ -367,7 +346,6 @@ class Wiim extends utils.Adapter {
 			native: {},
 		});
 
-
 		await this.setObjectNotExistsAsync("mode", {
 			type: "state",
 			common: {
@@ -381,7 +359,6 @@ class Wiim extends utils.Adapter {
 			native: {},
 		});
 
-
 		await this.setObjectNotExistsAsync("switchmode", {
 			type: "state",
 			common: {
@@ -394,7 +371,6 @@ class Wiim extends utils.Adapter {
 			},
 			native: {},
 		});
-
 
 		await this.setObjectNotExistsAsync("playPromptUrl", {
 			type: "state",
@@ -423,7 +399,6 @@ class Wiim extends utils.Adapter {
 		});
 
 
-		// In order to get state updates, you need to subscribe to them. The following line adds a subscription for our variable we have created above.
 		this.subscribeStates("album", { val: true, ack: true });
 		this.subscribeStates("title", { val: true, ack: true });
 		this.subscribeStates("artist", { val: true, ack: true });
@@ -467,11 +442,9 @@ class Wiim extends utils.Adapter {
 	}
 
 	onStateChange(id, state) {
-		//var http = require("https")
-		//var myInstance = id.substring(0,7);
-		if (state) {
-			// The state was changed
 
+		if (state) {
+	
 			switch (id) {
 
 				case id.substring(0,7)+"setShutdown":
@@ -578,17 +551,11 @@ class Wiim extends utils.Adapter {
 
 			}
 
-
-
 		} 
-
-
 
 	}
 
 }
-
-
 
 
 async function getWiimData(mywiimadapter)
@@ -735,7 +702,6 @@ async function getWiimData(mywiimadapter)
 	mywiimadapter.setState("lastRefresh",mydate.substring(16,25),true);
 	const pollTimeout = setTimeout(function () {getWiimData(mywiimadapter);}, mywiimadapter.config.Refresh_Interval*1000);
 }
-
 
 async function sendWiimcommand(mywiimadapter, wiimcmd)
 {
