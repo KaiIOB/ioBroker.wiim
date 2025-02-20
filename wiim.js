@@ -36,11 +36,11 @@ class Wiim extends utils.Adapter {
 		this.log.info(this.getstates);
 		this.setState("info.connection", false, true);
 		// Reset the connection indicator during startup
-		let http = require(reqtype)
+		const http = require(reqtype);
 		const url = reqtype + "://"+this.config.IP_Address+"/httpapi.asp?command=getStatusEx";
 
 		http.get(url,{ validateCertificate: false, rejectUnauthorized: false, requestCert: true },(res) => {
-		let body = "";
+			let body = "";
 			//write response chunks to body
 			res.on("data", (chunk) => {
 				body += chunk;
@@ -459,7 +459,7 @@ class Wiim extends utils.Adapter {
 	onUnload(callback) {
 		try {
 
-//			this.clearTimeout(pollTimeout);
+			//this.clearTimeout(pollTimeout);
 			callback();
 		} catch (e) {
 			callback();
@@ -468,7 +468,7 @@ class Wiim extends utils.Adapter {
 
 	onStateChange(id, state) {
 		//var http = require("https")
-//		var myInstance = id.substring(0,7);
+		//var myInstance = id.substring(0,7);
 		if (state) {
 			// The state was changed
 
@@ -478,7 +478,7 @@ class Wiim extends utils.Adapter {
 
 					this.getState(id.substring(0,7)+"setShutdown", (err, state)=> {
 
-					sendWiimcommand(this, "setShutdown:"+state.val);
+						sendWiimcommand(this, "setShutdown:"+state.val);
 					});
 					break;
 
@@ -491,7 +491,7 @@ class Wiim extends utils.Adapter {
 					break;
 
 
-				case id.substring(0,7)+"switchmode":						
+				case id.substring(0,7)+"switchmode":
 					this.getState(id.substring(0,7)+"switchmode", (err, state)=> {
 
 						sendWiimcommand(this, "setPlayerCmd:switchmode:"+state.val);
@@ -531,33 +531,33 @@ class Wiim extends utils.Adapter {
 
 				case id.substring(0,7)+"volume":
 
-					this.getState(id.substring(0,7)+"volume", (err, state)=> {
+					this.getState(id.substring(0,7)+"volume", (state)=> {
 
 						sendWiimcommand(this, "setPlayerCmd:vol:"+state.val);
-						});
+					});
 					break;
 
 
 				case id.substring(0,7)+"play_preset":
-					this.getState(id.substring(0,7)+"play_preset", (err, state)=> {
+					this.getState(id.substring(0,7)+"play_preset", (state)=> {
 						sendWiimcommand(this, "MCUKeyShortClick:"+state.val);
-						});
+					});
 					break;
 
 				case id.substring(0,7)+"play_URL":
-					this.getState(id.substring(0,7)+"play_URL", (err, state)=> {
+					this.getState(id.substring(0,7)+"play_URL", (state)=> {
 						sendWiimcommand(this, "setPlayerCmd:play:"+state.val);
 						this.log.info("setPlayerCmd:play:"+state.val);
-						});
+					});
 					break;
 
 
 
 				case id.substring(0,7)+"toggle_loop_mode":
-					this.getState(id.substring(0,7)+"toggle_loop_mode", (err, state)=> {
+					this.getState(id.substring(0,7)+"toggle_loop_mode", ()=> {
 
 						sendWiimcommand(this, "setPlayerCmd:loopmode:1");
-						});
+					});
 					break;
 
 				case id.substring(0,7)+"setMaster":
@@ -565,24 +565,23 @@ class Wiim extends utils.Adapter {
 
 						sendWiimcommand(this, "ConnectMasterAp:JoinGroupMaster:eth"+state.val);
 						this.log.info("ConnectMasterAp:JoinGroupMaster:eth"+state.val);
-						});
+					});
 					break;
 
 				case id.substring(0,7)+"leaveSyncGroup":
-					this.getState(id.substring(0,7)+"leaveSyncGroup", (err, state)=> {
+					this.getState(id.substring(0,7)+"leaveSyncGroup", ()=> {
 						sendWiimcommand(this, "ConnectMasterAp:JoinGroupMaster:eth0.0.0.0");
 						sendWiimcommand(this, "ConnectMasterAp:LeaveGroup");
 						this.log.info("ConnectMasterAp:LeaveGroup");
-						});
+					});
 					break;
 
 			}
 
 
-		
-		} else {
 
-		}
+		} 
+
 
 
 	}
@@ -591,122 +590,123 @@ class Wiim extends utils.Adapter {
 
 
 
+
 async function getWiimData(mywiimadapter)
 {
 	const reqtype = mywiimadapter.config.Request_Type;
-	let http = require(reqtype);
+	const http = require(reqtype);
 
 	//*********************** request Wiim's playing info and uupdate corresponding datapoints */
 	if (reqtype == "https") {	//only Wiim supports getMetaInfo
-	let url = reqtype+"://"+mywiimadapter.config.IP_Address+"/httpapi.asp?command=getMetaInfo";
+		let url = reqtype+"://"+mywiimadapter.config.IP_Address+"/httpapi.asp?command=getMetaInfo";
 
-	http.get(url,{ validateCertificate: false, rejectUnauthorized: false, requestCert: true },(res) => {
-		let body = "";
-				//write response chunks to body
-		res.on("data", (chunk) => {
-			body += chunk;
+		http.get(url,{ validateCertificate: false, rejectUnauthorized: false, requestCert: true },(res) => {
+			let body = "";
+			//write response chunks to body
+			res.on("data", (chunk) => {
+				body += chunk;
+				});
+
+			res.on("end", () => {
+				try {
+					let json = JSON.parse(body);
+					// write info to statea
+					mywiimadapter.setState("album",json.metaData.album,true);
+					mywiimadapter.setState("title",json.metaData.title,true);
+					mywiimadapter.setState("artist",json.metaData.artist,true);
+					mywiimadapter.setState("albumArtURI",json.metaData.albumArtURI,true);
+					mywiimadapter.setState("sampleRate",json.metaData.sampleRate,true);
+					mywiimadapter.setState("bitDepth",json.metaData.bitDepth,true);
+
+				} catch (error) {
+					mywiimadapter.log.info("no track playing");
+				};
+			});
+
+		}).on("error", (error) => {
+			mywiimadapter.log.error("error1:" + error.message);
 		});
-
-		res.on("end", () => {
-			try {
-				let json = JSON.parse(body);
-				// write info to statea
-				mywiimadapter.setState("album",json.metaData.album,true);
-				mywiimadapter.setState("title",json.metaData.title,true);
-				mywiimadapter.setState("artist",json.metaData.artist,true);
-				mywiimadapter.setState("albumArtURI",json.metaData.albumArtURI,true);
-				mywiimadapter.setState("sampleRate",json.metaData.sampleRate,true);
-				mywiimadapter.setState("bitDepth",json.metaData.bitDepth,true);
-
-			} catch (error) {
-				mywiimadapter.log.info("no track playing");
-			};
-		});
-
-	}).on("error", (error) => {
-		mywiimadapter.log.error("error1:" + error.message);
-	});
 	}
 
-	let url = reqtype + "://"+mywiimadapter.config.IP_Address+"/httpapi.asp?command=getPlayerStatus";
+	const url = reqtype + "://"+mywiimadapter.config.IP_Address+"/httpapi.asp?command=getPlayerStatus";
 
 	http.get(url,{ validateCertificate: false, rejectUnauthorized: false, requestCert: true },(res) => {
 		let body = "";
-				//write response chunks to body
+		//write response chunks to body
 		res.on("data", (chunk) => {
 			body += chunk;
 		});
 
 		res.on("end", () => {
 			try {
-				let json = JSON.parse(body);
+				const json = JSON.parse(body);
 				// write info to statea
-				let Position = Number(json.curpos);
-				let Offset_PTS = Number (json.offset_pts);
-				let TotLen = Number(json.totlen);
-				let PliCurr = Number(json.plicurr);
+				const Position = Number(json.curpos);
+				const Offset_PTS = Number (json.offset_pts);
+				const TotLen = Number(json.totlen);
+				const PliCurr = Number(json.plicurr);
 				mywiimadapter.setState("loop_mode",json.loop,true);
 
 				switch (json.mode) {
 					case("0"):
 						mywiimadapter.setState("mode","idling",true);
-					break;
+						break;
 
 					case("1"):
 						mywiimadapter.setState("mode","Airplay",true);
-					break;
+						break;
 
 					case("2"):
 						mywiimadapter.setState("mode","DLNA",true);
-					break;
+						break;
 
 					case("10"):
 						mywiimadapter.setState("mode","Network",true);
-					break;
+						break;
 
 					case("11"):
 						mywiimadapter.setState("mode","UDISK",true);
-					break;
+						break;
 
 					case("20"):
 						mywiimadapter.setState("mode","HTTPAPI",true);
-					break;
+						break;
 
 					case("31"):
 						mywiimadapter.setState("mode","Spotify Connect",true);
-					break;
+						break;
 
 					case("40"):
 						mywiimadapter.setState("mode","Line-In #1",true);
-					break;
+						break;
 
 					case("41"):
 						mywiimadapter.setState("mode","Bluetooth",true);
-					break;
+						break;
 
 					case("43"):
 						mywiimadapter.setState("mode","Optical",true);
-					break;
+						break;
 
 					case("45"):
 						mywiimadapter.setState("mode","co-axial",true);
-					break;
+						break;
 
 					case("47"):
 						mywiimadapter.setState("mode","Line-In #2",true);
-					break;
+						break;
 
 					case("49"):
 						mywiimadapter.setState("mode","HDMI",true);
-					break;
+						break;
 
 					case("51"):
 						mywiimadapter.setState("mode","USBDAC",true);
-					break;
+						break;
 
 					case("99"):
 						mywiimadapter.setState("mode","MR Guest",true);
-				break;
+						break;
 
 				}
 
@@ -719,58 +719,56 @@ async function getWiimData(mywiimadapter)
 					mywiimadapter.setState("album",hexToASCII(json.Album),true);
 					mywiimadapter.setState("title",hexToASCII(json.Title),true);
 					mywiimadapter.setState("artist",hexToASCII(json.Artist),true);
-					}
+				}
 
 			} catch (error) {
 				mywiimadapter.log.info("no track playing -->" + error.message);
-			};
+			}
 		});
 
 	}).on("error", (error) => {
 		mywiimadapter.log.error("error2:" + error.message);
 	});
 
-	var theDate = new Date();
-	var mydate = theDate.toString();
+	const theDate = new Date();
+	const mydate = theDate.toString();
 	mywiimadapter.setState("lastRefresh",mydate.substring(16,25),true);
-	let pollTimeout = setTimeout(function () {getWiimData(mywiimadapter);}, mywiimadapter.config.Refresh_Interval*1000);
+	const pollTimeout = setTimeout(function () {getWiimData(mywiimadapter);}, mywiimadapter.config.Refresh_Interval*1000);
 }
 
 
 async function sendWiimcommand(mywiimadapter, wiimcmd)
-	{
-		let reqtype = "https";
-		if (mywiimadapter.config.Request_Type != "https") {reqtype="http";}
-		var http = require(reqtype);
-		http.get(reqtype+"://" + mywiimadapter.config.IP_Address + "/httpapi.asp?command="+wiimcmd, { validateCertificate: false, rejectUnauthorized: false, requestCert: true }, (err) => {
+{
+	let reqtype = "https";
+	if (mywiimadapter.config.Request_Type != "https") {reqtype="http";}
+	var http = require(reqtype);
+	http.get(reqtype+"://" + mywiimadapter.config.IP_Address + "/httpapi.asp?command="+wiimcmd, { validateCertificate: false, rejectUnauthorized: false, requestCert: true }, (err) => {
 
-mywiimadapter.log.info(reqtype+ "://" + mywiimadapter.config.IP_Address + "/httpapi.asp?command="+wiimcmd);
+		mywiimadapter.log.info(reqtype+ "://" + mywiimadapter.config.IP_Address + "/httpapi.asp?command="+wiimcmd);
 
-			if (!err) {
-
-		} else {
+		if (err) {
 			mywiimadapter.log.info(err);
 			}
 		})
 
 	}
 
-	function hexToASCII(hex) {
+function hexToASCII(hex) {
     // initialize the ASCII code string as empty.
-    	var ascii = "";
-    	for (var i = 0; i < hex.length; i += 2) {
+   	var ascii = "";
+   	for (var i = 0; i < hex.length; i += 2) {
     	// extract two characters from hex string
     	var part = hex.substring(i, i + 2);
- 
-    	// change it into base 16 and
-    	// typecast as the character
-    	var ch = String.fromCharCode(parseInt(part, 16));
- 
-    	// add this char to final ASCII string
-    	ascii = ascii + ch;
-    	}
-    	return ascii;
-    }
+
+		// change it into base 16 and
+		// typecast as the character
+		var ch = String.fromCharCode(parseInt(part, 16));
+
+		// add this char to final ASCII string
+		ascii = ascii + ch;
+		}
+		return ascii;
+	}
 
 
 
