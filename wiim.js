@@ -770,9 +770,6 @@ function hexToASCII(hex) {
 		return ascii;
 	}
 
-
-
-
 if (require.main !== module) {
 	// Export the constructor in compact mode
 	/**
