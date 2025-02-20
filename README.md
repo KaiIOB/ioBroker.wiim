@@ -122,6 +122,10 @@ Currently only the most important features of the API are implemented. Please le
 
 ## Changelog
 
+<### 0.0.3
+* (KaiIOB) migration to setTimeout from setInteral>
+
+
 <### 0.0.2
 * (KaiIOB) Arylic devices added and corrections>
 
