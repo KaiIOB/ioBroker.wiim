@@ -4,6 +4,7 @@
  */
 
 const utils = require("@iobroker/adapter-core");
+var pollTimeout = null;
 
 class Wiim extends utils.Adapter {
 	/**
@@ -26,7 +27,7 @@ class Wiim extends utils.Adapter {
 		// Initialize your adapter here
 		let reqtype = "https";
 		if (this.config.Request_Type != "https") {reqtype="http";}
-		this.log.info(this.getstates);
+		//this.log.info(this.getstates);
 		this.setState("info.connection", false, true);
 		// Reset the connection indicator during startup
 		const http = require(reqtype);
@@ -434,7 +435,8 @@ class Wiim extends utils.Adapter {
 	onUnload(callback) {
 		try {
 
-			//this.clearTimeout(pollTimeout);
+			clearTimeout(pollTimeout);
+			pollTimeout = null;
 			callback();
 		} catch (e) {
 			callback();
@@ -444,7 +446,7 @@ class Wiim extends utils.Adapter {
 	onStateChange(id, state) {
 
 		if (state) {
-	
+
 			switch (id) {
 
 				case id.substring(0,7)+"setShutdown":
@@ -504,7 +506,7 @@ class Wiim extends utils.Adapter {
 
 				case id.substring(0,7)+"volume":
 
-					this.getState(id.substring(0,7)+"volume", (state)=> {
+					this.getState(id.substring(0,7)+"volume", (err, state)=> {
 
 						sendWiimcommand(this, "setPlayerCmd:vol:"+state.val);
 					});
@@ -512,13 +514,14 @@ class Wiim extends utils.Adapter {
 
 
 				case id.substring(0,7)+"play_preset":
-					this.getState(id.substring(0,7)+"play_preset", (state)=> {
+					this.getState(id.substring(0,7)+"play_preset", (err, state)=> {
 						sendWiimcommand(this, "MCUKeyShortClick:"+state.val);
 					});
 					break;
 
 				case id.substring(0,7)+"play_URL":
-					this.getState(id.substring(0,7)+"play_URL", (state)=> {
+					this.getState(id.substring(0,7)+"play_URL", (err, state)=> {
+						this.log.info(state.val);
 						sendWiimcommand(this, "setPlayerCmd:play:"+state.val);
 						this.log.info("setPlayerCmd:play:"+state.val);
 					});
@@ -537,7 +540,7 @@ class Wiim extends utils.Adapter {
 					this.getState(id.substring(0,7)+"setMaster", (err, state)=> {
 
 						sendWiimcommand(this, "ConnectMasterAp:JoinGroupMaster:eth"+state.val);
-						this.log.info("ConnectMasterAp:JoinGroupMaster:eth"+state.val);
+						//this.log.info("ConnectMasterAp:JoinGroupMaster:eth"+state.val);
 					});
 					break;
 
@@ -545,13 +548,13 @@ class Wiim extends utils.Adapter {
 					this.getState(id.substring(0,7)+"leaveSyncGroup", ()=> {
 						sendWiimcommand(this, "ConnectMasterAp:JoinGroupMaster:eth0.0.0.0");
 						sendWiimcommand(this, "ConnectMasterAp:LeaveGroup");
-						this.log.info("ConnectMasterAp:LeaveGroup");
+						//this.log.info("ConnectMasterAp:LeaveGroup");
 					});
 					break;
 
 			}
 
-		} 
+		}
 
 	}
 
@@ -565,18 +568,18 @@ async function getWiimData(mywiimadapter)
 
 	//*********************** request Wiim's playing info and uupdate corresponding datapoints */
 	if (reqtype == "https") {	//only Wiim supports getMetaInfo
-		let url = reqtype+"://"+mywiimadapter.config.IP_Address+"/httpapi.asp?command=getMetaInfo";
+		const url = reqtype+"://"+mywiimadapter.config.IP_Address+"/httpapi.asp?command=getMetaInfo";
 
 		http.get(url,{ validateCertificate: false, rejectUnauthorized: false, requestCert: true },(res) => {
 			let body = "";
 			//write response chunks to body
 			res.on("data", (chunk) => {
 				body += chunk;
-				});
+			});
 
 			res.on("end", () => {
 				try {
-					let json = JSON.parse(body);
+					const json = JSON.parse(body);
 					// write info to statea
 					mywiimadapter.setState("album",json.metaData.album,true);
 					mywiimadapter.setState("title",json.metaData.title,true);
@@ -587,7 +590,7 @@ async function getWiimData(mywiimadapter)
 
 				} catch (error) {
 					mywiimadapter.log.info("no track playing");
-				};
+				}
 			});
 
 		}).on("error", (error) => {
@@ -700,41 +703,41 @@ async function getWiimData(mywiimadapter)
 	const theDate = new Date();
 	const mydate = theDate.toString();
 	mywiimadapter.setState("lastRefresh",mydate.substring(16,25),true);
-	const pollTimeout = setTimeout(function () {getWiimData(mywiimadapter);}, mywiimadapter.config.Refresh_Interval*1000);
+	pollTimeout = setTimeout(function () {getWiimData(mywiimadapter);}, mywiimadapter.config.Refresh_Interval*1000);
 }
 
 async function sendWiimcommand(mywiimadapter, wiimcmd)
 {
 	let reqtype = "https";
 	if (mywiimadapter.config.Request_Type != "https") {reqtype="http";}
-	var http = require(reqtype);
+	const http = require(reqtype);
 	http.get(reqtype+"://" + mywiimadapter.config.IP_Address + "/httpapi.asp?command="+wiimcmd, { validateCertificate: false, rejectUnauthorized: false, requestCert: true }, (err) => {
 
-		mywiimadapter.log.info(reqtype+ "://" + mywiimadapter.config.IP_Address + "/httpapi.asp?command="+wiimcmd);
+		//mywiimadapter.log.info(reqtype+ "://" + mywiimadapter.config.IP_Address + "/httpapi.asp?command="+wiimcmd);
 
 		if (err) {
-			mywiimadapter.log.info(err);
-			}
-		})
+			mywiimadapter.log.info(err.message);
+		}
+	});
 
 	}
 
 function hexToASCII(hex) {
     // initialize the ASCII code string as empty.
-   	var ascii = "";
-   	for (var i = 0; i < hex.length; i += 2) {
-    	// extract two characters from hex string
-    	var part = hex.substring(i, i + 2);
+   	let ascii = "";
+	for (let i = 0; i < hex.length; i += 2) {
+		// extract two characters from hex string
+		let part = hex.substring(i, i + 2);
 
 		// change it into base 16 and
 		// typecast as the character
-		var ch = String.fromCharCode(parseInt(part, 16));
+		let ch = String.fromCharCode(parseInt(part, 16));
 
 		// add this char to final ASCII string
 		ascii = ascii + ch;
-		}
-		return ascii;
 	}
+	return ascii;
+}
 
 if (require.main !== module) {
 	// Export the constructor in compact mode
