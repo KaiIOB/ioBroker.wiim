@@ -4,7 +4,7 @@
  */
 
 const utils = require("@iobroker/adapter-core");
-var pollTimeout = null;
+let pollTimeout = null;
 
 class Wiim extends utils.Adapter {
 	/**
@@ -720,18 +720,18 @@ async function sendWiimcommand(mywiimadapter, wiimcmd)
 		}
 	});
 
-	}
+}
 
 function hexToASCII(hex) {
-    // initialize the ASCII code string as empty.
-   	let ascii = "";
+	// initialize the ASCII code string as empty.
+	let ascii = "";
 	for (let i = 0; i < hex.length; i += 2) {
 		// extract two characters from hex string
-		let part = hex.substring(i, i + 2);
+		const part = hex.substring(i, i + 2);
 
 		// change it into base 16 and
 		// typecast as the character
-		let ch = String.fromCharCode(parseInt(part, 16));
+		const ch = String.fromCharCode(parseInt(part, 16));
 
 		// add this char to final ASCII string
 		ascii = ascii + ch;
