@@ -5,7 +5,6 @@
 
 const utils = require("@iobroker/adapter-core");
 let pollTimeout = null;
-let DevName = "default";
 
 class Wiim extends utils.Adapter {
 	/**
@@ -31,7 +30,7 @@ class Wiim extends utils.Adapter {
 		//this.log.info(this.getstates);
 		this.setState("info.connection", false, true);
 		// Reset the connection indicator during startup
-		var json="";
+		let json="";
 		const http = require(reqtype);
 		const url = reqtype + "://"+this.config.IP_Address+"/httpapi.asp?command=getStatusEx";
 
@@ -60,7 +59,6 @@ class Wiim extends utils.Adapter {
 					this.log.info("Device with firmware " + json.firmware+ " found. Ready to go, greetings to qlink ;-)");
 					this.setState("info.connection", true, true);
 					this.setState("Device_Name",json.DeviceName,true);
-					
 				} catch (error) {
 					this.log.error(error.message);
 				}
@@ -68,8 +66,6 @@ class Wiim extends utils.Adapter {
 
 		}).on("error", (error) => {
 			this.log.error(error.message);});
-
-
 
 		await this.setObjectNotExistsAsync("album", {
 			type: "state",
