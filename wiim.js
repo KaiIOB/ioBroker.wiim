@@ -445,7 +445,7 @@ class Wiim extends utils.Adapter {
 
 	onStateChange(id, state) {
 
-		if (state) {
+		if (state && !state.ack) {
 
 			switch (id) {
 
@@ -616,6 +616,7 @@ async function getWiimData(mywiimadapter)
 				const TotLen = Number(json.totlen);
 				const PliCurr = Number(json.plicurr);
 				mywiimadapter.setState("loop_mode",json.loop,true);
+				mywiimadapter.setState("volume",json.vol,true);
 
 				switch (json.mode) {
 					case("0"):
