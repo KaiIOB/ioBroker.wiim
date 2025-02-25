@@ -21,6 +21,7 @@ The adapter has been tested with:
  	Wiim Mini
   	Arylic up2stream v3
    	Arylic S10+
+	Audiocast M5
 
 Wiim devices use https communication, Arylic devices use http communication.
 At least one feature (playPromptUrl) works only with Arylic devices with firmware >=4.6.415145 
