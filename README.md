@@ -34,7 +34,7 @@ Currently only the most important features of the API are implemented. Please le
 
 	interval for refresh of player data in seconds: time between two requests for updated data
 
-	API request type: Wiim and Arylic use similar APIs, but they differ in the protocol used. For Wiim products https must be chosen, for Arylic products http must be chosen
+	API request type: Wiim and Arylic use similar APIs, but they differ in the protocol used. For Wiim products https must be chosen, for Arylic and other  products http must be chosen
 
 ## Available States
 
