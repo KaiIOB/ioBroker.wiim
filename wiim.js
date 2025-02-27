@@ -26,7 +26,20 @@ class Wiim extends utils.Adapter {
 	async onReady() {
 		// Initialize your adapter here
 		let reqtype = "https";
-		if (this.config.Request_Type != "https") {reqtype="http";}
+		let pingport = 443;
+		if (this.config.Request_Type != "https") {  //if http was selected, port must be 80
+			reqtype="http";
+			pingport = 80;
+		}
+
+		var tcpp = require('tcp-ping');
+  		tcpp.probe(this.config.IP_Address, pingport, (err, available)=> {
+		if (available){	
+    	this.log.info("server responded to ping");}
+		else {this.log.info("server does not seem to be online, no reaction to ping. Are you sure it's up and the IP address is correct?")}
+		});
+
+
 		//this.log.info(this.getstates);
 		this.setState("info.connection", false, true);
 		// Reset the connection indicator during startup
@@ -576,12 +589,52 @@ class Wiim extends utils.Adapter {
 
 async function getWiimData(mywiimadapter)
 {
+	var pingport = 443;
 	const reqtype = mywiimadapter.config.Request_Type;
-	const http = require(reqtype);
+	if (reqtype == "http"){
+		pingport = 80;
+	}
+	var tcpp = require('tcp-ping');
+	tcpp.probe(mywiimadapter.config.IP_Address, pingport, (err, available)=> {
+  	//mywiimadapter.log.info("ping result:" + available);
+  	if (available){
+	
 
-	//*********************** request Wiim's playing info and uupdate corresponding datapoints */
-	if (reqtype == "https") {	//only Wiim supports getMetaInfo
-		const url = reqtype+"://"+mywiimadapter.config.IP_Address+"/httpapi.asp?command=getMetaInfo";
+		const http = require(reqtype);
+
+		//*********************** request Wiim's playing info and uupdate corresponding datapoints */
+		if (reqtype == "https") {	//only Wiim supports getMetaInfo
+			const url = reqtype+"://"+mywiimadapter.config.IP_Address+"/httpapi.asp?command=getMetaInfo";
+
+			http.get(url,{ validateCertificate: false, rejectUnauthorized: false, requestCert: true },(res) => {
+				let body = "";
+				//write response chunks to body
+				res.on("data", (chunk) => {
+					body += chunk;
+				});
+
+				res.on("end", () => {
+					try {
+						const json = JSON.parse(body);
+						// write info to statea
+						mywiimadapter.setState("album",json.metaData.album,true);
+						mywiimadapter.setState("title",json.metaData.title,true);
+						mywiimadapter.setState("artist",json.metaData.artist,true);
+						mywiimadapter.setState("albumArtURI",json.metaData.albumArtURI,true);
+						mywiimadapter.setState("sampleRate",json.metaData.sampleRate,true);
+						mywiimadapter.setState("bitDepth",json.metaData.bitDepth,true);
+
+					} catch (error) {
+						//mywiimadapter.log.info("no track playing");
+					}
+				});
+
+			}).on("error", (error) => {
+				mywiimadapter.log.error("error1:" + error.message);
+			});
+		}
+
+		const url = reqtype + "://"+mywiimadapter.config.IP_Address+"/httpapi.asp?command=getPlayerStatus";
 
 		http.get(url,{ validateCertificate: false, rejectUnauthorized: false, requestCert: true },(res) => {
 			let body = "";
@@ -594,130 +647,103 @@ async function getWiimData(mywiimadapter)
 				try {
 					const json = JSON.parse(body);
 					// write info to statea
-					mywiimadapter.setState("album",json.metaData.album,true);
-					mywiimadapter.setState("title",json.metaData.title,true);
-					mywiimadapter.setState("artist",json.metaData.artist,true);
-					mywiimadapter.setState("albumArtURI",json.metaData.albumArtURI,true);
-					mywiimadapter.setState("sampleRate",json.metaData.sampleRate,true);
-					mywiimadapter.setState("bitDepth",json.metaData.bitDepth,true);
+					const Position = Number(json.curpos);
+					const Offset_PTS = Number (json.offset_pts);
+					const TotLen = Number(json.totlen);
+					const PliCurr = Number(json.plicurr);
+					mywiimadapter.setState("loop_mode",json.loop,true);
+					mywiimadapter.setState("volume",json.vol,true);
+
+					switch (json.mode) {
+						case("0"):
+							mywiimadapter.setState("mode","idling",true);
+							break;
+
+						case("1"):
+							mywiimadapter.setState("mode","Airplay",true);
+							break;
+
+						case("2"):
+							mywiimadapter.setState("mode","DLNA",true);
+							break;
+
+						case("10"):
+							mywiimadapter.setState("mode","Network",true);
+							break;
+
+						case("11"):
+							mywiimadapter.setState("mode","UDISK",true);
+							break;
+
+						case("20"):
+							mywiimadapter.setState("mode","HTTPAPI",true);
+							break;
+
+						case("31"):
+							mywiimadapter.setState("mode","Spotify Connect",true);
+							break;
+
+						case("40"):
+							mywiimadapter.setState("mode","Line-In #1",true);
+							break;
+
+						case("41"):
+							mywiimadapter.setState("mode","Bluetooth",true);
+							break;
+
+						case("43"):
+							mywiimadapter.setState("mode","Optical",true);
+							break;
+
+						case("45"):
+							mywiimadapter.setState("mode","co-axial",true);
+							break;
+
+						case("47"):
+							mywiimadapter.setState("mode","Line-In #2",true);
+							break;
+
+						case("49"):
+							mywiimadapter.setState("mode","HDMI",true);
+							break;
+
+						case("51"):
+							mywiimadapter.setState("mode","USBDAC",true);
+							break;
+
+						case("99"):
+							mywiimadapter.setState("mode","MR Guest",true);
+							break;
+
+					}
+
+					mywiimadapter.setState("curpos",Position,false);
+					mywiimadapter.setState("offset_pts",Offset_PTS,true);
+					mywiimadapter.setState("tracklength",TotLen,false);
+					mywiimadapter.setState("plicurr",PliCurr,false);
+					if (reqtype == "http")  //arylic provide album, title and artist only as hex format
+					{
+						mywiimadapter.setState("album",hexToASCII(json.Album),true);
+						mywiimadapter.setState("title",hexToASCII(json.Title),true);
+						mywiimadapter.setState("artist",hexToASCII(json.Artist),true);
+					}
 
 				} catch (error) {
-					mywiimadapter.log.info("no track playing");
+					mywiimadapter.log.info("no track playing -->" + error.message);
 				}
 			});
 
 		}).on("error", (error) => {
-			mywiimadapter.log.error("error1:" + error.message);
+			mywiimadapter.log.error("error2:" + error.message);
 		});
+
+		const theDate = new Date();
+		const mydate = theDate.toString();
+		mywiimadapter.setState("lastRefresh",mydate.substring(16,25),true);
+		
 	}
-
-	const url = reqtype + "://"+mywiimadapter.config.IP_Address+"/httpapi.asp?command=getPlayerStatus";
-
-	http.get(url,{ validateCertificate: false, rejectUnauthorized: false, requestCert: true },(res) => {
-		let body = "";
-		//write response chunks to body
-		res.on("data", (chunk) => {
-			body += chunk;
-		});
-
-		res.on("end", () => {
-			try {
-				const json = JSON.parse(body);
-				// write info to statea
-				const Position = Number(json.curpos);
-				const Offset_PTS = Number (json.offset_pts);
-				const TotLen = Number(json.totlen);
-				const PliCurr = Number(json.plicurr);
-				mywiimadapter.setState("loop_mode",json.loop,true);
-				mywiimadapter.setState("volume",json.vol,true);
-
-				switch (json.mode) {
-					case("0"):
-						mywiimadapter.setState("mode","idling",true);
-						break;
-
-					case("1"):
-						mywiimadapter.setState("mode","Airplay",true);
-						break;
-
-					case("2"):
-						mywiimadapter.setState("mode","DLNA",true);
-						break;
-
-					case("10"):
-						mywiimadapter.setState("mode","Network",true);
-						break;
-
-					case("11"):
-						mywiimadapter.setState("mode","UDISK",true);
-						break;
-
-					case("20"):
-						mywiimadapter.setState("mode","HTTPAPI",true);
-						break;
-
-					case("31"):
-						mywiimadapter.setState("mode","Spotify Connect",true);
-						break;
-
-					case("40"):
-						mywiimadapter.setState("mode","Line-In #1",true);
-						break;
-
-					case("41"):
-						mywiimadapter.setState("mode","Bluetooth",true);
-						break;
-
-					case("43"):
-						mywiimadapter.setState("mode","Optical",true);
-						break;
-
-					case("45"):
-						mywiimadapter.setState("mode","co-axial",true);
-						break;
-
-					case("47"):
-						mywiimadapter.setState("mode","Line-In #2",true);
-						break;
-
-					case("49"):
-						mywiimadapter.setState("mode","HDMI",true);
-						break;
-
-					case("51"):
-						mywiimadapter.setState("mode","USBDAC",true);
-						break;
-
-					case("99"):
-						mywiimadapter.setState("mode","MR Guest",true);
-						break;
-
-				}
-
-				mywiimadapter.setState("curpos",Position,false);
-				mywiimadapter.setState("offset_pts",Offset_PTS,true);
-				mywiimadapter.setState("tracklength",TotLen,false);
-				mywiimadapter.setState("plicurr",PliCurr,false);
-				if (reqtype == "http")  //arylic provide album, title and artist only as hex format
-				{
-					mywiimadapter.setState("album",hexToASCII(json.Album),true);
-					mywiimadapter.setState("title",hexToASCII(json.Title),true);
-					mywiimadapter.setState("artist",hexToASCII(json.Artist),true);
-				}
-
-			} catch (error) {
-				mywiimadapter.log.info("no track playing -->" + error.message);
-			}
-		});
-
-	}).on("error", (error) => {
-		mywiimadapter.log.error("error2:" + error.message);
-	});
-
-	const theDate = new Date();
-	const mydate = theDate.toString();
-	mywiimadapter.setState("lastRefresh",mydate.substring(16,25),true);
-	pollTimeout = setTimeout(function () {getWiimData(mywiimadapter);}, mywiimadapter.config.Refresh_Interval*1000);
+})
+pollTimeout = setTimeout(function () {getWiimData(mywiimadapter);}, mywiimadapter.config.Refresh_Interval*1000);
 }
 
 async function sendWiimcommand(mywiimadapter, wiimcmd)
