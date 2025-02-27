@@ -32,9 +32,9 @@ class Wiim extends utils.Adapter {
 			pingport = 80;
 		}
 
-		let tcpp = require("tcp-ping");
+		const tcpp = require("tcp-ping");
 		tcpp.probe(this.config.IP_Address, pingport, (err, available)=> {
-			if (available){	
+			if (available){
 				this.log.info("server responded to ping");}
 			else {this.log.info("server does not seem to be online, no reaction to ping. Are you sure it's up and the IP address is correct?");}
 		});
@@ -594,10 +594,10 @@ async function getWiimData(mywiimadapter)
 	if (reqtype == "http"){
 		pingport = 80;
 	}
-	let tcpp = require("tcp-ping");
+	const tcpp = require("tcp-ping");
 	tcpp.probe(mywiimadapter.config.IP_Address, pingport, (err, available)=> {
 	//mywiimadapter.log.info("ping result:" + available);
-	if (available){
+		if (available){
 
 
 			const http = require(reqtype);
