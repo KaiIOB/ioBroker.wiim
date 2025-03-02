@@ -2,16 +2,6 @@
 	"i18n": true,
 	"type": "panel",
 	"items": {
-		"IP_Address": {
-			"type": "text",
-			"label": "IP address of device",
-			"newLine": true,
-			"xs": 12,
-            "sm": 12,
-            "md": 4,
-            "lg": 3,
-            "xl": 3
-		},
 		"Refresh_Interval": {
 			"type": "number",
 			"label": "interval for refresh of player data in seconds",
@@ -21,16 +11,7 @@
             "md": 4,
             "lg": 3,
             "xl": 3
-		},
-		"Request_Type": {
-			"type": "text",
-			"label": "API request type: https for Wiim products, http for Arylic products",
-			"newLine": true,
-			"xs": 12,
-            "sm": 12,
-            "md": 4,
-            "lg": 3,
-            "xl": 3
 		}
+
 	}
 }
