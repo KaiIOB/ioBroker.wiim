@@ -31,22 +31,21 @@ class Wiim extends utils.Adapter {
 		// Initialize your adapter here
 		const mdns = require("mdns");
 		const ping = require("tcp-ping");
+
+try{
 		const linkplayServiceType = mdns.tcp("linkplay");
 		const mDNSSearchBrowser = mdns.createBrowser(linkplayServiceType);
 		const searchDurationInMilliseconds = 5000;
 		mDNSSearchBrowser.on("serviceUp", service => {
 			if (service && service.name) {
-				//service.names.forEach(ipAddress => {
 					foundServerIPs.push(service.addresses[0]);
 					foundServerNames.push(service.name);
-					//}
-				//);
 			}
 		});
 		mDNSSearchBrowser.on("error", error => {
 			this.log.error("Error during mDNS search:", error);
 			});
-		mDNSSearchBrowser.start();
+			mDNSSearchBrowser.start();
 		setTimeout(() => {
 			mDNSSearchBrowser.stop(); // Stops all mDNS browsers
 			if (foundServerIPs.length > 0) {
@@ -54,10 +53,7 @@ class Wiim extends utils.Adapter {
 				foundServerIPs.forEach(ipAddress => {
 					counter++;
 				});
-
 		for (let i = 0; i< foundServerNames.length; i++) {
-
-
 			isJson("http://" + foundServerIPs[i]+"/httpapi.asp?command=getStatusEx")
 				.then (result => {
 					if (result) {
@@ -68,7 +64,6 @@ class Wiim extends utils.Adapter {
 						myfunction(this, foundServerNames[i], foundServerIPs[i], 443, "https");
 						foundReqTypes[i] = "https";
 					}
-
 				})
 				.catch (error => {
 					this.log.info("Linkplay server query failed");
@@ -83,11 +78,14 @@ class Wiim extends utils.Adapter {
 		this.log.info("No Linkplay servers found in the network.");
 		}
 		}, searchDurationInMilliseconds);
-
-		
+	} catch (err) {
+		this.log.info("Scan for Linkplay servers failed, error message: " + err);
+	}
 
 
 	}
+
+	
 
 
 
