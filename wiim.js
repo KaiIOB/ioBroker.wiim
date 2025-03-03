@@ -70,6 +70,9 @@ class Wiim extends utils.Adapter {
 					}
 
 				})
+				.catch (error => {
+					this.log.info("Linkplay server query failed");
+				})
 					
 
 			 
