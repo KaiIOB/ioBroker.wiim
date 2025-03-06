@@ -210,7 +210,7 @@ async function getWiimData(mywiimadapter, reqtype, ServName, IP_Address)
 	tcpp.probe(IP_Address, pingport, (err, available)=> {
 		if (available){
 
-			const http = require(reqtype);
+			const http = require("node:"+ reqtype);
 			//*********************** request Wiim's playing info and uupdate corresponding datapoints */
 			if (reqtype == "https") {	//only Wiim supports getMetaInfo
 				const url = reqtype+"://"+IP_Address+"/httpapi.asp?command=getMetaInfo";
