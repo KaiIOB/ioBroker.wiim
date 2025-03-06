@@ -45,7 +45,7 @@ class Wiim extends utils.Adapter {
 			clearInterval(myInterval);
 			this.log.info(noStreamers + " streamers found, will now be set up");
 			for (let i = 0; i< foundStreamerNames.length; i++) {
-				const dns = require('dns')
+				const dns = require("dns")
 				dns.lookup(foundStreamerIPs[i], (err, result)=> {
 					foundStreamerIPs[i] =result;
 					this.log.info(foundStreamerNames[i] + ": " + foundStreamerIPs[i]);
@@ -214,7 +214,6 @@ async function getWiimData(mywiimadapter, reqtype, ServName, IP_Address)
 			//*********************** request Wiim's playing info and uupdate corresponding datapoints */
 			if (reqtype == "https") {	//only Wiim supports getMetaInfo
 				const url = reqtype+"://"+IP_Address+"/httpapi.asp?command=getMetaInfo";
-
 				http.get(url,{ validateCertificate: false, rejectUnauthorized: false, requestCert: true },(res) => {
 					let body = "";
 					//write response chunks to body
@@ -244,7 +243,6 @@ async function getWiimData(mywiimadapter, reqtype, ServName, IP_Address)
 			}
 
 			const url = reqtype + "://"+IP_Address+"/httpapi.asp?command=getPlayerStatus";
-
 			http.get(url,{ validateCertificate: false, rejectUnauthorized: false, requestCert: true },(res) => {
 				let body = "";
 				//write response chunks to body
