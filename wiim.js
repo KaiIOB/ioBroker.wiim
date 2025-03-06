@@ -4,8 +4,8 @@
  */
 
 const utils = require("@iobroker/adapter-core");
-const foundServerIPs = [];
-const foundServerNames =[];
+const foundStreamerIPs = [];
+const foundStreamerNames =[];
 const foundReqTypes = [];
 let pollTimeout = null;
 
@@ -29,65 +29,49 @@ class Wiim extends utils.Adapter {
 	 */
 	async onReady() {
 		// Initialize your adapter here
-		const mdns = require("mdns");
-		const ping = require("tcp-ping");
 
-try{
-		const linkplayServiceType = mdns.tcp("linkplay");
-		const mDNSSearchBrowser = mdns.createBrowser(linkplayServiceType);
-		const searchDurationInMilliseconds = 5000;
-		mDNSSearchBrowser.on("serviceUp", service => {
-			if (service && service.name) {
-					foundServerIPs.push(service.addresses[0]);
-					foundServerNames.push(service.name);
-			}
-		});
-		mDNSSearchBrowser.on("error", error => {
-			this.log.error("Error during mDNS search:", error);
-			});
-			mDNSSearchBrowser.start();
-		setTimeout(() => {
-			mDNSSearchBrowser.stop(); // Stops all mDNS browsers
-			if (foundServerIPs.length > 0) {
-				let counter = 1;
-				foundServerIPs.forEach(ipAddress => {
-					counter++;
-				});
-		for (let i = 0; i< foundServerNames.length; i++) {
-			isJson("http://" + foundServerIPs[i]+"/httpapi.asp?command=getStatusEx")
-				.then (result => {
-					if (result) {
-						myfunction(this, foundServerNames[i], foundServerIPs[i], 80, "http");
-						foundReqTypes[i] = "http"; 
-					} 
-					else {
-						myfunction(this, foundServerNames[i], foundServerIPs[i], 443, "https");
-						foundReqTypes[i] = "https";
-					}
-				})
-				.catch (error => {
-					this.log.info("Linkplay server query failed");
-				})
-					
+		const ping = require("tcp-ping");		
+		var bonjour = require('bonjour')()
 
-			 
-		}
-
-
-		} else {
-		this.log.info("No Linkplay servers found in the network.");
-		}
-		}, searchDurationInMilliseconds);
-	} catch (err) {
-		this.log.info("Scan for Linkplay servers failed, error message: " + err);
-	}
-
-
-	}
-
+		let myservice;
+		bonjour.find({ type: 'linkplay' }, service => {
+			foundStreamerIPs.push(service.host.substring(0,service.host.indexOf(".")));
+			foundStreamerNames.push(service.host.substring(0,service.host.indexOf(".")));			
+		})
 	
+		let myInterval = setInterval(() => {
+			const noStreamers = foundStreamerIPs.length;
+			if (noStreamers > 0) {
+			clearInterval(myInterval);
+			this.log.info(noStreamers + " streamers found, will now be set up");
+			for (let i = 0; i< foundStreamerNames.length; i++) {
+				const dns = require('dns')
+				dns.lookup(foundStreamerIPs[i], (err, result)=> {
+					foundStreamerIPs[i] =result;
+					this.log.info(foundStreamerNames[i] + ": " + foundStreamerIPs[i]);
+				})
 
-
+				isJson("http://" + foundStreamerIPs[i]+"/httpapi.asp?command=getStatusEx")
+					.then (result => {
+						if (result) {
+							DataPointIni(this, foundStreamerNames[i], foundStreamerIPs[i], 80, "http");
+							foundReqTypes[i] = "http"; 
+						} 
+						else {
+							DataPointIni(this, foundStreamerNames[i], foundStreamerIPs[i], 443, "https");
+							foundReqTypes[i] = "https";
+						}
+						
+					})
+					.catch (error => {
+						this.log.info("Linkplay streamer query failed");
+					})
+				}
+			}
+			else {this.log.info("No streamers detected after 10 seconds. If you are sure streamers are up and running, please open the control app, to trigger broadcast.")}
+			}, 10000);
+		
+	}
 
 	/**
 	 * Is called when adapter shuts down - callback has to be called under any circumstances!
@@ -107,8 +91,8 @@ try{
 	onStateChange(id, state) {
 		if (state && !state.ack) {
 			const statename = id.split(".");
-			const index = foundServerNames.indexOf(statename[2]);
-			const IP_Address = foundServerIPs[index];
+			const index = foundStreamerNames.indexOf(statename[2]);
+			const IP_Address = foundStreamerIPs[index];
 			const reqtype = foundReqTypes[index];
 			const mysubstring = statename[0]+"."+statename[1]+"."+ statename[2]+".";
 			switch (id) {
@@ -162,11 +146,9 @@ try{
 					sendWiimcommand(this, "setPlayerCmd:next",IP_Address, reqtype);
 					break;
 
-
 				case mysubstring+"previous":
 					sendWiimcommand(this, "setPlayerCmd:previous",IP_Address, reqtype);
 					break;
-
 
 				case mysubstring+"volume":
 
@@ -175,7 +157,6 @@ try{
 						sendWiimcommand(this, "setPlayerCmd:vol:"+state.val,IP_Address, reqtype);
 					});
 					break;
-
 
 				case mysubstring+"play_preset":
 					this.getState(mysubstring+"play_preset", (err, state)=> {
@@ -188,8 +169,6 @@ try{
 						sendWiimcommand(this, "setPlayerCmd:play:"+state.val,IP_Address, reqtype);
 					});
 					break;
-
-
 
 				case id.mysubstring+"toggle_loop_mode":
 					this.getState(mysubstring+"toggle_loop_mode", ()=> {
@@ -231,9 +210,7 @@ async function getWiimData(mywiimadapter, reqtype, ServName, IP_Address)
 	tcpp.probe(IP_Address, pingport, (err, available)=> {
 		if (available){
 
-
 			const http = require(reqtype);
-
 			//*********************** request Wiim's playing info and uupdate corresponding datapoints */
 			if (reqtype == "https") {	//only Wiim supports getMetaInfo
 				const url = reqtype+"://"+IP_Address+"/httpapi.asp?command=getMetaInfo";
@@ -262,7 +239,7 @@ async function getWiimData(mywiimadapter, reqtype, ServName, IP_Address)
 					});
 
 				}).on("error", (error) => {
-					mywiimadapter.log.info("error1:" + error.message);
+					//mywiimadapter.log.info("error1:" + error.message);
 				});
 			}
 
@@ -366,7 +343,7 @@ async function getWiimData(mywiimadapter, reqtype, ServName, IP_Address)
 				});
 
 			}).on("error", (error) => {
-				mywiimadapter.log.info("error2:" + error.message);
+				//mywiimadapter.log.info("error2:" + error.message);
 			});
 
 			const theDate = new Date();
@@ -383,8 +360,6 @@ async function sendWiimcommand(mywiimadapter, wiimcmd, IP_Address, reqtype)
 	const http = require(reqtype);
 	http.get(reqtype+"://" + IP_Address + "/httpapi.asp?command="+wiimcmd, { validateCertificate: false, rejectUnauthorized: false, requestCert: true }, (err) => {
 
-
-
 		if (err) {
 			mywiimadapter.log.info(err.message);
 		}
@@ -394,24 +369,21 @@ async function sendWiimcommand(mywiimadapter, wiimcmd, IP_Address, reqtype)
 
 
 
-async function myfunction (mywiimadapter,ServName,myIPAddress, pingport, reqtype) {
-
+async function DataPointIni (mywiimadapter,ServName,myIPAddress, pingport, reqtype) {
 
 	const tcpp = require("tcp-ping");
 
 	tcpp.probe(myIPAddress, pingport, (err, available)=> {
 		if (available){
-			mywiimadapter.log.info("server "+ServName+":"+pingport+ " responded to ping");}
-		else {mywiimadapter.log.info("server " + ServName+":"+pingport + " does not seem to be online, no reaction to ping. Are you sure it's up and the IP address is correct?");}
+			mywiimadapter.log.info("streamer "+ServName+":"+pingport+ " responded to ping");}
+		else {mywiimadapter.log.info("streamer " + ServName+":"+pingport + " does not seem to be online, no reaction to ping. Are you sure it's up and the IP address is correct?");}
 	});
-
 
 	mywiimadapter.setState("info.connection", false, true);
 	// Reset the connection indicator during startup
 	let json="";
 	const http = require(reqtype);
 	const url = reqtype + "://"+myIPAddress+"/httpapi.asp?command=getStatusEx";
-
 
 	await mywiimadapter.setObjectNotExistsAsync(ServName+".Device_Name", {
 		type: "state",
@@ -791,7 +763,6 @@ async function myfunction (mywiimadapter,ServName,myIPAddress, pingport, reqtype
 		native: {},
 	});
 
-
 	mywiimadapter.subscribeStates(ServName + ".album", { val: true, ack: true });
 	mywiimadapter.subscribeStates(ServName + ".title", { val: true, ack: true });
 	mywiimadapter.subscribeStates(ServName + ".artist", { val: true, ack: true });
@@ -820,9 +791,6 @@ async function myfunction (mywiimadapter,ServName,myIPAddress, pingport, reqtype
 
 }
 
-
-
-
 async function isJson(url) {
 	try {
 		const res = await fetch(url);
@@ -833,19 +801,11 @@ async function isJson(url) {
 		}
 }
 
-
 function hexToASCII(hex) {
-	// initialize the ASCII code string as empty.
 	let ascii = "";
 	for (let i = 0; i < hex.length; i += 2) {
-		// extract two characters from hex string
 		const part = hex.substring(i, i + 2);
-
-		// change it into base 16 and
-		// typecast as the character
 		const ch = String.fromCharCode(parseInt(part, 16));
-
-		// add this char to final ASCII string
 		ascii = ascii + ch;
 	}
 	return ascii;

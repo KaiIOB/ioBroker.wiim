@@ -30,11 +30,8 @@ Currently only the most important features of the API are implemented. Please le
 
 ## Adapter Configuration
 
-	IP address of device: IP of the device you intend to control, can be found in wiim app
-
 	interval for refresh of player data in seconds: time between two requests for updated data
 
-	API request type: Wiim and Arylic use similar APIs, but they differ in the protocol used. For Wiim products https must be chosen, for Arylic and other  products http must be chosen
 
 ## Available States
 
@@ -122,6 +119,10 @@ Currently only the most important features of the API are implemented. Please le
 
 
 ## Changelog
+
+<### 0.2.0
+* (KaiIOB) introduction of bonjour auto-detect of streamers>
+
 
 <### 0.1.0
 * (KaiIOB) main functions implemented and code clean-up>
