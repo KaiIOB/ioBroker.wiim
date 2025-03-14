@@ -52,15 +52,14 @@ class Wiim extends utils.Adapter {
 						
 						dns.lookup(foundStreamerNames[i], (err, result)=> {
 							if (!err) {
-								foundStreamerIPs[i] =result;
-								// this.log.info(foundStreamerNames[i]+ " has address " + foundStreamerIPs[i]);
-								
-							}
-							
-							clearInterval(innerInterval);
-						} 
-					)
-					isJson("http://" + foundStreamerNames[i]+"/httpapi.asp?command=getStatusEx")
+								let finalInterval = setInterval(()=>{
+
+									if (result === undefined)
+									{this.log.info("IP address not yet resolved...will wait for 5sec")}
+									else
+									{foundStreamerIPs[i] =result;
+										this.log.info("das result ist: " + result);
+										isJson("http://" + foundStreamerNames[i]+"/httpapi.asp?command=getStatusEx")
 					.then (result => {
 							if (result) { //hier muss JSON ausgewertet werden => IP_address muss ermittelt werden
 								this.log.info("streamer " + foundStreamerNames[i] + "(" + foundStreamerIPs[i]+")"+" uses http, assuming generic Linkplay product");
@@ -80,7 +79,19 @@ class Wiim extends utils.Adapter {
 				.catch (error => {
 							this.log.info("Linkplay streamer query failed");
 							}
-						)		
+						)
+										clearInterval(finalInterval);
+									}
+								},5000)
+								
+								// this.log.info(foundStreamerNames[i]+ " has address " + foundStreamerIPs[i]);
+								
+							}
+							
+							clearInterval(innerInterval);
+						} 
+					)
+							
 				}, 5000)
 
 
