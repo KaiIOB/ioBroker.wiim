@@ -45,14 +45,19 @@ class Wiim extends utils.Adapter {
 			this.log.info(noStreamers + " streamers found, will now be set up");
 			for (let i = 0; i< foundStreamerNames.length; i++) {
 					const dns = require("node:dns")
-					let innerInterval = setInterval(() => {
-					dns.lookup(foundStreamerNames[i], (err, result)=> {
-						if (!err) {
-						foundStreamerIPs[i] =result;
-						//this.log.info(foundStreamerNames[i]+ " has address " + foundStreamerIPs[i]);
-						}
-						clearInterval(innerInterval);
 
+					let innerInterval = setInterval(() => {
+						
+
+						
+						dns.lookup(foundStreamerNames[i], (err, result)=> {
+							if (!err) {
+								foundStreamerIPs[i] =result;
+								// this.log.info(foundStreamerNames[i]+ " has address " + foundStreamerIPs[i]);
+								
+							}
+							
+							clearInterval(innerInterval);
 						} 
 					)
 					isJson("http://" + foundStreamerNames[i]+"/httpapi.asp?command=getStatusEx")
@@ -60,12 +65,12 @@ class Wiim extends utils.Adapter {
 							if (result) { //hier muss JSON ausgewertet werden => IP_address muss ermittelt werden
 								this.log.info("streamer " + foundStreamerNames[i] + "(" + foundStreamerIPs[i]+")"+" uses http, assuming generic Linkplay product");
 								
-								DataPointIni(this, foundStreamerNames[i], foundStreamerIPs[i], 80, "http");
+								DataPointIni(this, i, 80, "http");
 								foundReqTypes[i] = "http";
 								
 								} 
 							else {
-								DataPointIni(this, foundStreamerNames[i], foundStreamerIPs[i], 443, "https");
+								DataPointIni(this, i, 443, "https");
 								foundReqTypes[i] = "https";
 								this.log.info("streamer " + foundStreamerNames[i] + "(" + foundStreamerIPs[i]+")" + " uses https, assuming Wiim product");
 								}
@@ -385,8 +390,10 @@ async function sendWiimcommand(mywiimadapter, wiimcmd, IP_Address, reqtype)
 
 
 
-async function DataPointIni (mywiimadapter,ServName,myIPAddress, pingport, reqtype) {
+async function DataPointIni (mywiimadapter,StreamerIndex, pingport, reqtype) {
 
+	const ServName = foundStreamerNames[StreamerIndex]; 
+	const myIPAddress = foundStreamerIPs[StreamerIndex];
 	//const tcpp = require("tcp-ping");
 
 	//tcpp.probe(myIPAddress, pingport, (err, available)=> {
@@ -818,29 +825,16 @@ async function isJson(url) {
 	} 
 
 
-	
-	async function getIPAddressSimple(hostname, mywiimadapter) {
+	async function getIPAddressSimple(hostname) {
 		try {
 		const address = await dns.promises.lookup(hostname);
 		return address.address;
 		} catch (err) {
-		this.log.info("Error retrieving IP-Address:", err);
+		//console.error('Fehler beim Ermitteln der IP-Adresse:', err);
 		return null;
 		}
 		}
 
-//async function getStreamerData(mywiimadapter, reqtype, IP_Address, request){
-//	let url = reqtype+ "://" +IP_Address+request;
-//	let body = "";
-//	mywiimadapter.log.info("created request: " + url);
-//	http.get(url,{ validateCertificate: false, rejectUnauthorized: false, requestCert: true },(res) => {
-	
-		//write response chunks to body
-//		res.on("data", (chunk) => {
-//			body += chunk;
-//		})})
-		
-//	return body;}
 
 
 
