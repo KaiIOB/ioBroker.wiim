@@ -31,46 +31,62 @@ class Wiim extends utils.Adapter {
 		// Initialize your adapter here
 
 		const ping = require("tcp-ping");		
-		var bonjour = require('bonjour')()
-
+		var bonjour = require("bonjour")()
+		var bonjourcounter= 0;
 		let myservice;
-		bonjour.find({ type: 'linkplay' }, service => {
-			foundStreamerIPs.push(service.host.substring(0,service.host.indexOf(".")));
+		bonjour.find({ type: "linkplay" }, service => {
 			foundStreamerNames.push(service.host.substring(0,service.host.indexOf(".")));			
 		})
-	
-		let myInterval = setInterval(() => {
-			const noStreamers = foundStreamerIPs.length;
+
+		let outerInterval = setInterval(() => {
+			const noStreamers = foundStreamerNames.length;
 			if (noStreamers > 0) {
-			clearInterval(myInterval);
+			clearInterval(outerInterval);
 			this.log.info(noStreamers + " streamers found, will now be set up");
 			for (let i = 0; i< foundStreamerNames.length; i++) {
-				const dns = require("dns")
-				dns.lookup(foundStreamerIPs[i], (err, result)=> {
-					foundStreamerIPs[i] =result;
-					this.log.info(foundStreamerNames[i] + ": " + foundStreamerIPs[i]);
-				})
-
-				isJson("http://" + foundStreamerIPs[i]+"/httpapi.asp?command=getStatusEx")
-					.then (result => {
-						if (result) {
-							DataPointIni(this, foundStreamerNames[i], foundStreamerIPs[i], 80, "http");
-							foundReqTypes[i] = "http"; 
-						} 
-						else {
-							DataPointIni(this, foundStreamerNames[i], foundStreamerIPs[i], 443, "https");
-							foundReqTypes[i] = "https";
+					const dns = require("node:dns")
+					let innerInterval = setInterval(() => {
+					dns.lookup(foundStreamerNames[i], (err, result)=> {
+						if (!err) {
+						foundStreamerIPs[i] =result;
+						//this.log.info(foundStreamerNames[i]+ " has address " + foundStreamerIPs[i]);
 						}
-						
-					})
-					.catch (error => {
-						this.log.info("Linkplay streamer query failed");
-					})
+						clearInterval(innerInterval);
+
+						} 
+					)
+					isJson("http://" + foundStreamerNames[i]+"/httpapi.asp?command=getStatusEx")
+					.then (result => {
+							if (result) { //hier muss JSON ausgewertet werden => IP_address muss ermittelt werden
+								this.log.info("streamer " + foundStreamerNames[i] + "(" + foundStreamerIPs[i]+")"+" uses http, assuming generic Linkplay product");
+								
+								DataPointIni(this, foundStreamerNames[i], foundStreamerIPs[i], 80, "http");
+								foundReqTypes[i] = "http";
+								
+								} 
+							else {
+								DataPointIni(this, foundStreamerNames[i], foundStreamerIPs[i], 443, "https");
+								foundReqTypes[i] = "https";
+								this.log.info("streamer " + foundStreamerNames[i] + "(" + foundStreamerIPs[i]+")" + " uses https, assuming Wiim product");
+								}
+								//this.log.info(foundReqTypes); 
+							}
+						)
+				.catch (error => {
+							this.log.info("Linkplay streamer query failed");
+							}
+						)		
+				}, 5000)
+
+
+					
+
 				}
+
 			}
 			else {this.log.info("No streamers detected after 10 seconds. If you are sure streamers are up and running, please open the control app, to trigger broadcast.")}
 			}, 10000);
-		
+			
 	}
 
 	/**
@@ -93,6 +109,7 @@ class Wiim extends utils.Adapter {
 			const statename = id.split(".");
 			const index = foundStreamerNames.indexOf(statename[2]);
 			const IP_Address = foundStreamerIPs[index];
+			const ServName = foundStreamerNames[index];
 			const reqtype = foundReqTypes[index];
 			const mysubstring = statename[0]+"."+statename[1]+"."+ statename[2]+".";
 			switch (id) {
@@ -207,7 +224,7 @@ async function getWiimData(mywiimadapter, reqtype, ServName, IP_Address)
 		pingport = 80;
 	}
 	const tcpp = require("tcp-ping");
-	tcpp.probe(IP_Address, pingport, (err, available)=> {
+	tcpp.probe(ServName, pingport, (err, available)=> {
 		if (available){
 
 			const http = require("node:"+ reqtype);
@@ -232,7 +249,7 @@ async function getWiimData(mywiimadapter, reqtype, ServName, IP_Address)
 							mywiimadapter.setState(ServName + ".sampleRate",json.metaData.sampleRate,true);
 							mywiimadapter.setState(ServName + ".bitDepth",json.metaData.bitDepth,true);
 
-						} catch (error) {
+						} catch (error) {mywiimadapter.log.info("something went wrong for " + ServName)
 
 						}
 					});
@@ -243,6 +260,7 @@ async function getWiimData(mywiimadapter, reqtype, ServName, IP_Address)
 			}
 
 			const url = reqtype + "://"+IP_Address+"/httpapi.asp?command=getPlayerStatus";
+			//mywiimadapter.log.info("==================> " + reqtype + "://"+IP_Address+"/httpapi.asp?command=getPlayerStatus");
 			http.get(url,{ validateCertificate: false, rejectUnauthorized: false, requestCert: true },(res) => {
 				let body = "";
 				//write response chunks to body
@@ -358,8 +376,8 @@ async function sendWiimcommand(mywiimadapter, wiimcmd, IP_Address, reqtype)
 	const http = require(reqtype);
 	http.get(reqtype+"://" + IP_Address + "/httpapi.asp?command="+wiimcmd, { validateCertificate: false, rejectUnauthorized: false, requestCert: true }, (err) => {
 
-		if (err) {
-			mywiimadapter.log.info(err.message);
+		if (!err) {
+			mywiimadapter.log.info(err);
 		}
 	});
 
@@ -369,19 +387,19 @@ async function sendWiimcommand(mywiimadapter, wiimcmd, IP_Address, reqtype)
 
 async function DataPointIni (mywiimadapter,ServName,myIPAddress, pingport, reqtype) {
 
-	const tcpp = require("tcp-ping");
+	//const tcpp = require("tcp-ping");
 
-	tcpp.probe(myIPAddress, pingport, (err, available)=> {
-		if (available){
-			mywiimadapter.log.info("streamer "+ServName+":"+pingport+ " responded to ping");}
-		else {mywiimadapter.log.info("streamer " + ServName+":"+pingport + " does not seem to be online, no reaction to ping. Are you sure it's up and the IP address is correct?");}
-	});
+	//tcpp.probe(myIPAddress, pingport, (err, available)=> {
+	//	if (available){
+	//		mywiimadapter.log.info("streamer "+ServName+":"+pingport+ " responded to ping");}
+	//	else {mywiimadapter.log.info("streamer " + ServName+":"+pingport + " does not seem to be online, no reaction to ping. Are you sure it's up and the IP address is correct?");}
+	//});
 
 	mywiimadapter.setState("info.connection", false, true);
 	// Reset the connection indicator during startup
 	let json="";
 	const http = require(reqtype);
-	const url = reqtype + "://"+myIPAddress+"/httpapi.asp?command=getStatusEx";
+	const url = reqtype + "://"+ServName+"/httpapi.asp?command=getStatusEx";
 
 	await mywiimadapter.setObjectNotExistsAsync(ServName+".Device_Name", {
 		type: "state",
@@ -405,16 +423,16 @@ async function DataPointIni (mywiimadapter,ServName,myIPAddress, pingport, reqty
 		res.on("end", () => {
 			try {
 				json = JSON.parse(body);
-				mywiimadapter.log.info("Device with firmware " + json.firmware+ " found. Ready to go!");
+				mywiimadapter.log.info(ServName + " has firmware " + json.firmware+ ". Ready to go!");
 				mywiimadapter.setState("info.connection", true, true);
 				mywiimadapter.setState(ServName + ".Device_Name",json.DeviceName,true);
 			} catch (error) {
-				this.log.error(error.message);
+				this.log.error("error4: " + error.message);
 			}
 		});
 
 	}).on("error", (error) => {
-		mywiimadapter.log.error(error.message);});
+		mywiimadapter.log.error("error3: " + error.message);});
 
 	await mywiimadapter.setObjectNotExistsAsync(ServName+".album", {
 		type: "state",
@@ -792,12 +810,39 @@ async function DataPointIni (mywiimadapter,ServName,myIPAddress, pingport, reqty
 async function isJson(url) {
 	try {
 		const res = await fetch(url);
-		const data = await res.json();
+		if(!res.ok) {throw new Error("anfrage gescheitert! " + res.status);}
 		return true;
-	} catch (e) {
-		return false;
+	} catch (error) {return false;}
+		const data = await res.json();
+		return res;
+	} 
+
+
+	
+	async function getIPAddressSimple(hostname, mywiimadapter) {
+		try {
+		const address = await dns.promises.lookup(hostname);
+		return address.address;
+		} catch (err) {
+		this.log.info("Error retrieving IP-Address:", err);
+		return null;
 		}
-}
+		}
+
+//async function getStreamerData(mywiimadapter, reqtype, IP_Address, request){
+//	let url = reqtype+ "://" +IP_Address+request;
+//	let body = "";
+//	mywiimadapter.log.info("created request: " + url);
+//	http.get(url,{ validateCertificate: false, rejectUnauthorized: false, requestCert: true },(res) => {
+	
+		//write response chunks to body
+//		res.on("data", (chunk) => {
+//			body += chunk;
+//		})})
+		
+//	return body;}
+
+
 
 function hexToASCII(hex) {
 	let ascii = "";
