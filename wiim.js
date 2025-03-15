@@ -33,64 +33,67 @@ class Wiim extends utils.Adapter {
 		const ping = require("tcp-ping");		
 		var bonjour = require("bonjour")()
 		var bonjourcounter= 0;
-		let myservice;
+		var bonjourfinished =false;
+		
+		this.log.info("********************* Starting bonjour streamer discovery ************************** ")
 		bonjour.find({ type: "linkplay" }, service => {
-			foundStreamerNames.push(service.host.substring(0,service.host.indexOf(".")));			
+			foundStreamerNames.push(service.host.substring(0,service.host.indexOf(".")));
+			foundStreamerIPs.push(service.addresses);
+			let bonjourInterval = this.setInterval(()=> {
+				if (bonjourcounter >= 5 && foundStreamerNames.length >=0) {
+					clearInterval(bonjourInterval);
+					bonjourfinished = true;
+				}
+				bonjourcounter++; 
+			},4000)
+			
 		})
+
+		var splitfinished = false;
+		let evalInterval = this.setInterval(()=>{
+			if (bonjourfinished)
+			{
+				for (let n=0; n <foundStreamerNames.length; n++)
+				{
+					const IPString = foundStreamerIPs[n]+ "";
+					foundStreamerIPs[n] = IPString.substring(0, IPString.indexOf(","));
+					splitfinished = true;
+				}
+				this.clearInterval(evalInterval);
+			}
+		} , 3000)
+
 
 		let outerInterval = setInterval(() => {
 			const noStreamers = foundStreamerNames.length;
-			if (noStreamers > 0) {
+			if (noStreamers > 0 && splitfinished) {
 			clearInterval(outerInterval);
-			this.log.info(noStreamers + " streamers found, will now be set up");
 			for (let i = 0; i< foundStreamerNames.length; i++) {
-					const dns = require("node:dns")
 
 					let innerInterval = setInterval(() => {
-						
-
-						
-						dns.lookup(foundStreamerNames[i], (err, result)=> {
-							if (!err) {
-								let finalInterval = setInterval(()=>{
-
-									if (result === undefined)
-									{this.log.info("IP address not yet resolved...will wait for 5sec")}
-									else
-									{foundStreamerIPs[i] =result;
-										this.log.info("das result ist: " + result);
-										isJson("http://" + foundStreamerNames[i]+"/httpapi.asp?command=getStatusEx")
-					.then (result => {
-							if (result) { //hier muss JSON ausgewertet werden => IP_address muss ermittelt werden
-								this.log.info("streamer " + foundStreamerNames[i] + "(" + foundStreamerIPs[i]+")"+" uses http, assuming generic Linkplay product");
-								
-								DataPointIni(this, i, 80, "http");
-								foundReqTypes[i] = "http";
-								
-								} 
-							else {
-								DataPointIni(this, i, 443, "https");
-								foundReqTypes[i] = "https";
-								this.log.info("streamer " + foundStreamerNames[i] + "(" + foundStreamerIPs[i]+")" + " uses https, assuming Wiim product");
-								}
+						var loopcounter = 0;
+						isJson("http://" + foundStreamerIPs[i]+"/httpapi.asp?command=getStatusEx")
+								.then (result => {
+									if (result) { //hier muss JSON ausgewertet werden => IP_address muss ermittelt werden
+										this.log.info("streamer " + foundStreamerNames[i] + "(" + foundStreamerIPs[i]+")"+" uses http, assuming generic Linkplay product");
+										DataPointIni(this, i, 80, "http");
+										foundReqTypes[i] = "http";
+										} 
+									else {
+										DataPointIni(this, i, 443, "https");
+										foundReqTypes[i] = "https";
+										this.log.info("streamer " + foundStreamerNames[i] + "(" + foundStreamerIPs[i]+")" + " uses https, assuming Wiim product");
+										}
 								//this.log.info(foundReqTypes); 
-							}
-						)
-				.catch (error => {
-							this.log.info("Linkplay streamer query failed");
-							}
-						)
-										clearInterval(finalInterval);
-									}
-								},5000)
-								
-								// this.log.info(foundStreamerNames[i]+ " has address " + foundStreamerIPs[i]);
-								
-							}
+								}
+								)
+								.catch (error => {
+								this.log.info("Linkplay streamer query failed");
+								})
 							
-							clearInterval(innerInterval);
-						} 
-					)
+					
+							clearInterval(innerInterval); 
+					
 							
 				}, 5000)
 
@@ -102,7 +105,6 @@ class Wiim extends utils.Adapter {
 			}
 			else {this.log.info("No streamers detected after 10 seconds. If you are sure streamers are up and running, please open the control app, to trigger broadcast.")}
 			}, 10000);
-			
 	}
 
 	/**
@@ -441,7 +443,7 @@ async function DataPointIni (mywiimadapter,StreamerIndex, pingport, reqtype) {
 		res.on("end", () => {
 			try {
 				json = JSON.parse(body);
-				mywiimadapter.log.info(ServName + " has firmware " + json.firmware+ ". Ready to go!");
+				//mywiimadapter.log.info(ServName + " has firmware " + json.firmware+ ". Ready to go!");
 				mywiimadapter.setState("info.connection", true, true);
 				mywiimadapter.setState(ServName + ".Device_Name",json.DeviceName,true);
 			} catch (error) {
@@ -450,7 +452,7 @@ async function DataPointIni (mywiimadapter,StreamerIndex, pingport, reqtype) {
 		});
 
 	}).on("error", (error) => {
-		mywiimadapter.log.error("error3: " + error.message);});
+		console.log("error3: " + error.message);});
 
 	await mywiimadapter.setObjectNotExistsAsync(ServName+".album", {
 		type: "state",
@@ -831,22 +833,9 @@ async function isJson(url) {
 		if(!res.ok) {throw new Error("anfrage gescheitert! " + res.status);}
 		return true;
 	} catch (error) {return false;}
-		const data = await res.json();
-		return res;
+		//const data = await res.json();
+		//return res;
 	} 
-
-
-	async function getIPAddressSimple(hostname) {
-		try {
-		const address = await dns.promises.lookup(hostname);
-		return address.address;
-		} catch (err) {
-		//console.error('Fehler beim Ermitteln der IP-Adresse:', err);
-		return null;
-		}
-		}
-
-
 
 
 function hexToASCII(hex) {
@@ -858,6 +847,7 @@ function hexToASCII(hex) {
 	}
 	return ascii;
 }
+
 
 if (require.main !== module) {
 	// Export the constructor in compact mode
