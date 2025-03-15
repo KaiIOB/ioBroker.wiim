@@ -237,13 +237,8 @@ class Wiim extends utils.Adapter {
 
 async function getWiimData(mywiimadapter, reqtype, ServName, IP_Address)
 {
-	let pingport = 443;
-	if (reqtype == "http"){
-		pingport = 80;
-	}
-	const tcpp = require("tcp-ping");
-	tcpp.probe(ServName, pingport, (err, available)=> {
-		if (available){
+
+		
 
 			const http = require("node:"+ reqtype);
 			//*********************** request Wiim's playing info and uupdate corresponding datapoints */
@@ -384,8 +379,6 @@ async function getWiimData(mywiimadapter, reqtype, ServName, IP_Address)
 			const mydate = theDate.toString();
 			mywiimadapter.setState(ServName + ".lastRefresh",mydate.substring(16,25),true);
 
-		}
-	});
 	pollTimeout = setTimeout(function () {getWiimData(mywiimadapter,reqtype, ServName, IP_Address);}, mywiimadapter.config.Refresh_Interval*1000);
 }
 
@@ -408,13 +401,6 @@ async function DataPointIni (mywiimadapter,StreamerIndex, pingport) {
 	const ServName = foundStreamerNames[StreamerIndex]; 
 	const myIPAddress = foundStreamerIPs[StreamerIndex];
 	const reqtype = foundReqTypes[StreamerIndex];
-;	//const tcpp = require("tcp-ping");
-
-	//tcpp.probe(myIPAddress, pingport, (err, available)=> {
-	//	if (available){
-	//		mywiimadapter.log.info("streamer "+ServName+":"+pingport+ " responded to ping");}
-	//	else {mywiimadapter.log.info("streamer " + ServName+":"+pingport + " does not seem to be online, no reaction to ping. Are you sure it's up and the IP address is correct?");}
-	//});
 
 	mywiimadapter.setState("info.connection", false, true);
 	// Reset the connection indicator during startup
