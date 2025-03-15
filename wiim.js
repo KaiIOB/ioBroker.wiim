@@ -76,12 +76,12 @@ class Wiim extends utils.Adapter {
 								.then (result => {
 									if (result) { //hier muss JSON ausgewertet werden => IP_address muss ermittelt werden
 										this.log.info("streamer " + foundStreamerNames[i] + "(" + foundStreamerIPs[i]+")"+" uses http, assuming generic Linkplay product");
-										DataPointIni(this, i, 80, "http");
 										foundReqTypes[i] = "http";
+										DataPointIni(this, i, 80);
 										} 
 									else {
-										DataPointIni(this, i, 443, "https");
 										foundReqTypes[i] = "https";
+										DataPointIni(this, i, 443);
 										this.log.info("streamer " + foundStreamerNames[i] + "(" + foundStreamerIPs[i]+")" + " uses https, assuming Wiim product");
 										}
 								//this.log.info(foundReqTypes); 
@@ -403,11 +403,12 @@ async function sendWiimcommand(mywiimadapter, wiimcmd, IP_Address, reqtype)
 
 
 
-async function DataPointIni (mywiimadapter,StreamerIndex, pingport, reqtype) {
+async function DataPointIni (mywiimadapter,StreamerIndex, pingport) {
 
 	const ServName = foundStreamerNames[StreamerIndex]; 
 	const myIPAddress = foundStreamerIPs[StreamerIndex];
-	//const tcpp = require("tcp-ping");
+	const reqtype = foundReqTypes[StreamerIndex];
+;	//const tcpp = require("tcp-ping");
 
 	//tcpp.probe(myIPAddress, pingport, (err, available)=> {
 	//	if (available){
