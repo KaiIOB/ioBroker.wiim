@@ -419,7 +419,7 @@ async function DataPointIni (mywiimadapter,StreamerIndex, pingport, reqtype) {
 	// Reset the connection indicator during startup
 	let json="";
 	const http = require(reqtype);
-	const url = reqtype + "://"+ServName+"/httpapi.asp?command=getStatusEx";
+	const url = reqtype + "://"+myIPAddress+"/httpapi.asp?command=getStatusEx";
 
 	await mywiimadapter.setObjectNotExistsAsync(ServName+".Device_Name", {
 		type: "state",
@@ -452,7 +452,7 @@ async function DataPointIni (mywiimadapter,StreamerIndex, pingport, reqtype) {
 		});
 
 	}).on("error", (error) => {
-		console.log("error3: " + error.message);});
+		this.info.log("error3: " + error.message);});
 
 	await mywiimadapter.setObjectNotExistsAsync(ServName+".album", {
 		type: "state",
