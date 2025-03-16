@@ -30,8 +30,8 @@ class Wiim extends utils.Adapter {
 	async onReady() {
 		// Initialize your adapter here
 
-		
-		let bonjour = require("bonjour")();
+
+		const bonjour = require("bonjour")();
 		let bonjourcounter= 0;
 		let bonjourfinished =false;
 
@@ -78,7 +78,7 @@ class Wiim extends utils.Adapter {
 									this.log.info("streamer " + foundStreamerNames[i] + "(" + foundStreamerIPs[i]+")"+" uses http, assuming generic Linkplay product");
 									foundReqTypes[i] = "http";
 									DataPointIni(this, i);
-								} 
+								}
 								else {
 									foundReqTypes[i] = "https";
 									DataPointIni(this, i);
@@ -87,15 +87,15 @@ class Wiim extends utils.Adapter {
 
 							}
 							)
-								.catch (error => {
-								this.log.info("Linkplay streamer query failed: + error");
-								});
+							.catch (error => {
+								this.log.info("Linkplay streamer query failed: "+ error.message);
+							});
 
 
-							clearInterval(innerInterval);
+						clearInterval(innerInterval);
 
-			
-				}, 5000);
+		
+					}, 5000);
 
 
 
@@ -241,7 +241,7 @@ async function getWiimData(mywiimadapter, reqtype, ServName, IP_Address)
 
 
 	const http = require("node:"+ reqtype);
-			//*********************** request Wiim's playing info and uupdate corresponding datapoints */
+	//*********************** request Wiim's playing info and uupdate corresponding datapoints */
 	if (reqtype == "https") {	//only Wiim supports getMetaInfo
 		const url = reqtype+"://"+IP_Address+"/httpapi.asp?command=getMetaInfo";
 		http.get(url,{ validateCertificate: false, rejectUnauthorized: false, requestCert: true },(res) => {
@@ -262,7 +262,7 @@ async function getWiimData(mywiimadapter, reqtype, ServName, IP_Address)
 					mywiimadapter.setState(ServName + ".sampleRate",json.metaData.sampleRate,true);
 					mywiimadapter.setState(ServName + ".bitDepth",json.metaData.bitDepth,true);
 
-						} catch (error) {mywiimadapter.log.info("something went wrong for " + ServName);
+				} catch (error) {mywiimadapter.log.info("something went wrong for " + ServName);
 
 				}
 			});
