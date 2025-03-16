@@ -1,9 +1,9 @@
 {
     "common": {
         "name": "wiim",
-        "version": "0.1.0",
+        "version": "0.2.0",
         "news": {
-            "0.1.0": {
+            "0.2.0": {
                 "en": "improved beta",
                 "de": "verbesserte beta",
                 "ru": "Начальная версия",
