@@ -94,7 +94,7 @@ class Wiim extends utils.Adapter {
 
 						clearInterval(innerInterval);
 
-		
+
 					}, 5000);
 
 
