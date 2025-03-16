@@ -1,4 +1,4 @@
- "use strict";
+"use strict";
 /*
  * Created with @iobroker/create-adapter v2.3.0
  */
@@ -30,27 +30,27 @@ class Wiim extends utils.Adapter {
 	async onReady() {
 		// Initialize your adapter here
 
-		const ping = require("tcp-ping");		
-		var bonjour = require("bonjour")()
-		var bonjourcounter= 0;
-		var bonjourfinished =false;
 		
-		this.log.info("********************* Starting bonjour streamer discovery ************************** ")
+		let bonjour = require("bonjour")();
+		let bonjourcounter= 0;
+		let bonjourfinished =false;
+
+		this.log.info("********************* Starting bonjour streamer discovery ************************** ");
 		bonjour.find({ type: "linkplay" }, service => {
 			foundStreamerNames.push(service.host.substring(0,service.host.indexOf(".")));
 			foundStreamerIPs.push(service.addresses);
-			let bonjourInterval = this.setInterval(()=> {
+			const bonjourInterval = this.setInterval(()=> {
 				if (bonjourcounter >= 5 && foundStreamerNames.length >=0) {
 					clearInterval(bonjourInterval);
 					bonjourfinished = true;
 				}
-				bonjourcounter++; 
-			},4000)
-			
-		})
+				bonjourcounter++;
+			},4000);
 
-		var splitfinished = false;
-		let evalInterval = this.setInterval(()=>{
+		});
+
+		let splitfinished = false;
+		const evalInterval = this.setInterval(()=>{
 			if (bonjourfinished)
 			{
 				for (let n=0; n <foundStreamerNames.length; n++)
@@ -61,50 +61,50 @@ class Wiim extends utils.Adapter {
 				}
 				this.clearInterval(evalInterval);
 			}
-		} , 3000)
+		} , 3000);
 
 
-		let outerInterval = setInterval(() => {
+		const outerInterval = setInterval(() => {
 			const noStreamers = foundStreamerNames.length;
 			if (noStreamers > 0 && splitfinished) {
-			clearInterval(outerInterval);
-			for (let i = 0; i< foundStreamerNames.length; i++) {
+				clearInterval(outerInterval);
+				for (let i = 0; i< foundStreamerNames.length; i++) {
 
-					let innerInterval = setInterval(() => {
-						var loopcounter = 0;
+					const innerInterval = setInterval(() => {
+
 						isJson("http://" + foundStreamerIPs[i]+"/httpapi.asp?command=getStatusEx")
-								.then (result => {
-									if (result) { //hier muss JSON ausgewertet werden => IP_address muss ermittelt werden
-										this.log.info("streamer " + foundStreamerNames[i] + "(" + foundStreamerIPs[i]+")"+" uses http, assuming generic Linkplay product");
-										foundReqTypes[i] = "http";
-										DataPointIni(this, i, 80);
-										} 
-									else {
-										foundReqTypes[i] = "https";
-										DataPointIni(this, i, 443);
-										this.log.info("streamer " + foundStreamerNames[i] + "(" + foundStreamerIPs[i]+")" + " uses https, assuming Wiim product");
-										}
-								//this.log.info(foundReqTypes); 
+							.then (result => {
+								if (result) { //hier muss JSON ausgewertet werden => IP_address muss ermittelt werden
+									this.log.info("streamer " + foundStreamerNames[i] + "(" + foundStreamerIPs[i]+")"+" uses http, assuming generic Linkplay product");
+									foundReqTypes[i] = "http";
+									DataPointIni(this, i);
+								} 
+								else {
+									foundReqTypes[i] = "https";
+									DataPointIni(this, i);
+									this.log.info("streamer " + foundStreamerNames[i] + "(" + foundStreamerIPs[i]+")" + " uses https, assuming Wiim product");
 								}
-								)
+
+							}
+							)
 								.catch (error => {
-								this.log.info("Linkplay streamer query failed");
-								})
-							
-					
-							clearInterval(innerInterval); 
-					
-							
-				}, 5000)
+								this.log.info("Linkplay streamer query failed: + error");
+								});
 
 
-					
+							clearInterval(innerInterval);
+
+			
+				}, 5000);
+
+
+
 
 				}
 
 			}
-			else {this.log.info("No streamers detected after 10 seconds. If you are sure streamers are up and running, please open the control app, to trigger broadcast.")}
-			}, 10000);
+			else {this.log.info("No streamers detected after 10 seconds. If you are sure streamers are up and running, please open the control app, to trigger broadcast.");}
+		}, 10000);
 	}
 
 	/**
@@ -122,12 +122,12 @@ class Wiim extends utils.Adapter {
 		}
 	}
 
+
 	onStateChange(id, state) {
 		if (state && !state.ack) {
 			const statename = id.split(".");
 			const index = foundStreamerNames.indexOf(statename[2]);
 			const IP_Address = foundStreamerIPs[index];
-			const ServName = foundStreamerNames[index];
 			const reqtype = foundReqTypes[index];
 			const mysubstring = statename[0]+"."+statename[1]+"."+ statename[2]+".";
 			switch (id) {
@@ -238,146 +238,146 @@ class Wiim extends utils.Adapter {
 async function getWiimData(mywiimadapter, reqtype, ServName, IP_Address)
 {
 
-		
 
-			const http = require("node:"+ reqtype);
+
+	const http = require("node:"+ reqtype);
 			//*********************** request Wiim's playing info and uupdate corresponding datapoints */
-			if (reqtype == "https") {	//only Wiim supports getMetaInfo
-				const url = reqtype+"://"+IP_Address+"/httpapi.asp?command=getMetaInfo";
-				http.get(url,{ validateCertificate: false, rejectUnauthorized: false, requestCert: true },(res) => {
-					let body = "";
-					//write response chunks to body
-					res.on("data", (chunk) => {
-						body += chunk;
-					});
-
-					res.on("end", () => {
-						try {
-							const json = JSON.parse(body);
-							// write info to statea
-							mywiimadapter.setState(ServName + ".album",json.metaData.album,true);
-							mywiimadapter.setState(ServName + ".title",json.metaData.title,true);
-							mywiimadapter.setState(ServName + ".artist",json.metaData.artist,true);
-							mywiimadapter.setState(ServName + ".albumArtURI",json.metaData.albumArtURI,true);
-							mywiimadapter.setState(ServName + ".sampleRate",json.metaData.sampleRate,true);
-							mywiimadapter.setState(ServName + ".bitDepth",json.metaData.bitDepth,true);
-
-						} catch (error) {mywiimadapter.log.info("something went wrong for " + ServName)
-
-						}
-					});
-
-				}).on("error", (error) => {
-					//mywiimadapter.log.info("error1:" + error.message);
-				});
-			}
-
-			const url = reqtype + "://"+IP_Address+"/httpapi.asp?command=getPlayerStatus";
-			//mywiimadapter.log.info("==================> " + reqtype + "://"+IP_Address+"/httpapi.asp?command=getPlayerStatus");
-			http.get(url,{ validateCertificate: false, rejectUnauthorized: false, requestCert: true },(res) => {
-				let body = "";
-				//write response chunks to body
-				res.on("data", (chunk) => {
-					body += chunk;
-				});
-
-				res.on("end", () => {
-					try {
-						const json = JSON.parse(body);
-						// write info to statea
-						const Position = Number(json.curpos);
-						const Offset_PTS = Number (json.offset_pts);
-						const TotLen = Number(json.totlen);
-						const PliCurr = Number(json.plicurr);
-						mywiimadapter.setState(ServName + ".loop_mode",json.loop,true);
-						mywiimadapter.setState(ServName + ".volume",json.vol,true);
-
-						switch (json.mode) {
-							case("0"):
-								mywiimadapter.setState(ServName + ".mode","idling",true);
-								break;
-
-							case("1"):
-								mywiimadapter.setState(ServName + ".mode","Airplay",true);
-								break;
-
-							case("2"):
-								mywiimadapter.setState(ServName + ".mode","DLNA",true);
-								break;
-
-							case("10"):
-								mywiimadapter.setState(ServName + ".mode","Network",true);
-								break;
-
-							case("11"):
-								mywiimadapter.setState(ServName + ".mode","UDISK",true);
-								break;
-
-							case("20"):
-								mywiimadapter.setState(ServName + ".mode","HTTPAPI",true);
-								break;
-
-							case("31"):
-								mywiimadapter.setState(ServName + ".mode","Spotify Connect",true);
-								break;
-
-							case("40"):
-								mywiimadapter.setState(ServName + ".mode","Line-In #1",true);
-								break;
-
-							case("41"):
-								mywiimadapter.setState(ServName + ".mode","Bluetooth",true);
-								break;
-
-							case("43"):
-								mywiimadapter.setState(ServName + ".mode","Optical",true);
-								break;
-
-							case("45"):
-								mywiimadapter.setState(ServName + ".mode","co-axial",true);
-								break;
-
-							case("47"):
-								mywiimadapter.setState(ServName + ".mode","Line-In #2",true);
-								break;
-
-							case("49"):
-								mywiimadapter.setState(ServName + ".mode","HDMI",true);
-								break;
-
-							case("51"):
-								mywiimadapter.setState(ServName + ".mode","USBDAC",true);
-								break;
-
-							case("99"):
-								mywiimadapter.setState(ServName + ".mode","MR Guest",true);
-								break;
-
-						}
-
-						mywiimadapter.setState(ServName + ".curpos",Position,false);
-						mywiimadapter.setState(ServName + ".offset_pts",Offset_PTS,true);
-						mywiimadapter.setState(ServName + ".tracklength",TotLen,false);
-						mywiimadapter.setState(ServName + ".plicurr",PliCurr,false);
-						if (reqtype == "http")  //arylic provide album, title and artist only as hex format
-						{
-							mywiimadapter.setState(ServName + ".album",hexToASCII(json.Album),true);
-							mywiimadapter.setState(ServName + ".title",hexToASCII(json.Title),true);
-							mywiimadapter.setState(ServName + ".artist",hexToASCII(json.Artist),true);
-						}
-
-					} catch (error) {
-						mywiimadapter.log.info("no track playing -->" + error.message);
-					}
-				});
-
-			}).on("error", (error) => {
-				//mywiimadapter.log.info("error2:" + error.message);
+	if (reqtype == "https") {	//only Wiim supports getMetaInfo
+		const url = reqtype+"://"+IP_Address+"/httpapi.asp?command=getMetaInfo";
+		http.get(url,{ validateCertificate: false, rejectUnauthorized: false, requestCert: true },(res) => {
+			let body = "";
+			//write response chunks to body
+			res.on("data", (chunk) => {
+				body += chunk;
 			});
 
-			const theDate = new Date();
-			const mydate = theDate.toString();
-			mywiimadapter.setState(ServName + ".lastRefresh",mydate.substring(16,25),true);
+			res.on("end", () => {
+				try {
+					const json = JSON.parse(body);
+					// write info to states
+					mywiimadapter.setState(ServName + ".album",json.metaData.album,true);
+					mywiimadapter.setState(ServName + ".title",json.metaData.title,true);
+					mywiimadapter.setState(ServName + ".artist",json.metaData.artist,true);
+					mywiimadapter.setState(ServName + ".albumArtURI",json.metaData.albumArtURI,true);
+					mywiimadapter.setState(ServName + ".sampleRate",json.metaData.sampleRate,true);
+					mywiimadapter.setState(ServName + ".bitDepth",json.metaData.bitDepth,true);
+
+						} catch (error) {mywiimadapter.log.info("something went wrong for " + ServName);
+
+				}
+			});
+
+		}).on("error", (error) => {
+			mywiimadapter.log.info("error1:" + error.message);
+		});
+	}
+
+	const url = reqtype + "://"+IP_Address+"/httpapi.asp?command=getPlayerStatus";
+	//mywiimadapter.log.info("==================> " + reqtype + "://"+IP_Address+"/httpapi.asp?command=getPlayerStatus");
+	http.get(url,{ validateCertificate: false, rejectUnauthorized: false, requestCert: true },(res) => {
+		let body = "";
+		//write response chunks to body
+		res.on("data", (chunk) => {
+			body += chunk;
+		});
+
+		res.on("end", () => {
+			try {
+				const json = JSON.parse(body);
+				// write info to statea
+				const Position = Number(json.curpos);
+				const Offset_PTS = Number (json.offset_pts);
+				const TotLen = Number(json.totlen);
+				const PliCurr = Number(json.plicurr);
+				mywiimadapter.setState(ServName + ".loop_mode",json.loop,true);
+				mywiimadapter.setState(ServName + ".volume",json.vol,true);
+
+				switch (json.mode) {
+					case("0"):
+						mywiimadapter.setState(ServName + ".mode","idling",true);
+						break;
+
+					case("1"):
+						mywiimadapter.setState(ServName + ".mode","Airplay",true);
+						break;
+
+					case("2"):
+						mywiimadapter.setState(ServName + ".mode","DLNA",true);
+						break;
+
+					case("10"):
+						mywiimadapter.setState(ServName + ".mode","Network",true);
+						break;
+
+					case("11"):
+						mywiimadapter.setState(ServName + ".mode","UDISK",true);
+						break;
+
+					case("20"):
+						mywiimadapter.setState(ServName + ".mode","HTTPAPI",true);
+						break;
+
+					case("31"):
+						mywiimadapter.setState(ServName + ".mode","Spotify Connect",true);
+						break;
+
+					case("40"):
+						mywiimadapter.setState(ServName + ".mode","Line-In #1",true);
+						break;
+
+					case("41"):
+						mywiimadapter.setState(ServName + ".mode","Bluetooth",true);
+						break;
+
+					case("43"):
+						mywiimadapter.setState(ServName + ".mode","Optical",true);
+						break;
+
+					case("45"):
+						mywiimadapter.setState(ServName + ".mode","co-axial",true);
+						break;
+
+					case("47"):
+						mywiimadapter.setState(ServName + ".mode","Line-In #2",true);
+						break;
+
+					case("49"):
+						mywiimadapter.setState(ServName + ".mode","HDMI",true);
+						break;
+
+					case("51"):
+						mywiimadapter.setState(ServName + ".mode","USBDAC",true);
+						break;
+
+					case("99"):
+						mywiimadapter.setState(ServName + ".mode","MR Guest",true);
+						break;
+
+				}
+
+				mywiimadapter.setState(ServName + ".curpos",Position,false);
+				mywiimadapter.setState(ServName + ".offset_pts",Offset_PTS,true);
+				mywiimadapter.setState(ServName + ".tracklength",TotLen,false);
+				mywiimadapter.setState(ServName + ".plicurr",PliCurr,false);
+				if (reqtype == "http")  //arylic provide album, title and artist only as hex format
+				{
+					mywiimadapter.setState(ServName + ".album",hexToASCII(json.Album),true);
+					mywiimadapter.setState(ServName + ".title",hexToASCII(json.Title),true);
+					mywiimadapter.setState(ServName + ".artist",hexToASCII(json.Artist),true);
+				}
+
+			} catch (error) {
+				mywiimadapter.log.info("no track playing -->" + error.message);
+			}
+		});
+
+	}).on("error", (error) => {
+		mywiimadapter.log.info("error2:" + error.message);
+	});
+
+	const theDate = new Date();
+	const mydate = theDate.toString();
+	mywiimadapter.setState(ServName + ".lastRefresh",mydate.substring(16,25),true);
 
 	pollTimeout = setTimeout(function () {getWiimData(mywiimadapter,reqtype, ServName, IP_Address);}, mywiimadapter.config.Refresh_Interval*1000);
 }
@@ -396,9 +396,9 @@ async function sendWiimcommand(mywiimadapter, wiimcmd, IP_Address, reqtype)
 
 
 
-async function DataPointIni (mywiimadapter,StreamerIndex, pingport) {
+async function DataPointIni (mywiimadapter,StreamerIndex) {
 
-	const ServName = foundStreamerNames[StreamerIndex]; 
+	const ServName = foundStreamerNames[StreamerIndex];
 	const myIPAddress = foundStreamerIPs[StreamerIndex];
 	const reqtype = foundReqTypes[StreamerIndex];
 
@@ -820,9 +820,9 @@ async function isJson(url) {
 		if(!res.ok) {throw new Error("anfrage gescheitert! " + res.status);}
 		return true;
 	} catch (error) {return false;}
-		//const data = await res.json();
-		//return res;
-	} 
+	//const data = await res.json();
+	//return res;
+}
 
 
 function hexToASCII(hex) {
