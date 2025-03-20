@@ -230,9 +230,8 @@ async function getWiimData(mywiimadapter, reqtype, ServName, IP_Address) {
                     mywiimadapter.setState(`${ServName}.bitDepth`, json.metaData.bitDepth, true);
                 } catch (error) {
                     mywiimadapter.log.info(`something went wrong for ${ServName}at ${IP_Address} :${error.message}`);
-                    mywiimadapter.log.info(`The request sent to the server was: ${url}` );
+                    mywiimadapter.log.info(`The request sent to the server was: ${url}`);
                     mywiimadapter.log.info(`The response was: ${body}`);
-
                 }
             });
         }).on('error', error => {
