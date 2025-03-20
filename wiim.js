@@ -231,7 +231,8 @@ async function getWiimData(mywiimadapter, reqtype, ServName, IP_Address) {
                 } catch (error) {
                     mywiimadapter.log.info(`something went wrong for ${ServName}at ${IP_Address} :${error.message}`);
                     mywiimadapter.log.info(`The request sent to the server was: ${url}`);
-                    mywiimadapter.log.info(`The response was: ${body}`);}
+                    mywiimadapter.log.info(`The response was: ${body}`);
+                }
             });
         }).on('error', error => {
             mywiimadapter.log.info(`error1:${error.message}`);
