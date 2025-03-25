@@ -22,10 +22,20 @@ The adapter has been tested with:
   	Arylic up2stream v3
    	Arylic S10+
 	Audiocast M5
+	August WR320B (after firmware upgrade to 4.6.415156.0)
 
 Wiim devices use https communication, Arylic devices use http communication.
 At least one feature (playPromptUrl) works only with Arylic devices with firmware >=4.6.415145 
 Currently only the most important features of the API are implemented. Please let me know if other features are useful to you.
+
+You can find information on the devices here:
+
+WiiM: 		https://www.wiimhome.com/wiimvibelink/overview
+Arylic:		https://www.arylic.com/
+Audiocast:	https://audiocast.io/
+			remark: Audicast M5 is sold under many different generic brands, I assume they all work with the adapter
+August:		https://augustint.com/
+			remark: the WR320B seems to be discontinued
 
 
 ## Adapter Configuration
@@ -50,7 +60,7 @@ Currently only the most important features of the API are implemented. Please le
 		albumArtURI: URL of the cover art of the album played, string, read-only
 				string that can be used to display the cover art of the current title, e.g.:
 					"https://i.scdn.co/image/ab67616d0000b273ca8a324a5d0fce617bb2613d"
-
+					Unfortunately, the generic Linkplay devices do not provide this information via http API....
 
 		sampleRate: sample rate of file played, number, read-only
 				number which can be used to display the current sample rate, e.g.;
