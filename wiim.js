@@ -244,15 +244,16 @@ async function getWiimData(mywiimadapter, reqtype, ServName, IP_Address) {
     else {
         const UPnPClient = require('node-upnp');
         const client = new UPnPClient({
-        url: 'http://192.168.0.130:49152/description.xml'
+            url: 'http://' + IP_Address + ':49152/description.xml',
         });
         const volume = await client.call('AVTransport', 'GetInfoEx', {
-        InstanceID: 0,
+            InstanceID: 0,
         });
-        var mytext = volume.TrackMetaData.replace(/&gt;/g, ">").replace(/&lt;/g, "<").replace(/&quot;/g, '"');
+        var mytext = volume.TrackMetaData
+            .replace(/&gt;/g, ">").replace(/&lt;/g, "<").replace(/&quot;/g, '"');
         var tagposbegin = mytext.indexOf('<upnp:albumArtURI>') + 18;
         var tagposend = mytext.indexOf('</upnp:albumArtURI>');
-        mywiimadapter.setState(`${ServName}.albumArtURI`, mytext.substring(tagposbegin, tagposend),true);
+        mywiimadapter.setState(`${ServName}.albumArtURI`, mytext.substring(tagposbegin, tagposend), true);
     }
 
     const url = `${reqtype}://${IP_Address}/httpapi.asp?command=getPlayerStatus`;
