@@ -240,9 +240,7 @@ async function getWiimData(mywiimadapter, reqtype, ServName, IP_Address) {
         }).on('error', error => {
             mywiimadapter.log.info(`error1:${error.message}`);
         });
-        }
-    else
-        {          // if the streamer is a generic linkplay device, upnp is used to geht the album Art URI
+    } else {          // if the streamer is a generic linkplay device, upnp is used to geht the album Art URI
         const UPnPClient = require('node-upnp');
         const client = new UPnPClient({
             url: `http://${IP_Address}:49152/description.xml`,
@@ -250,9 +248,7 @@ async function getWiimData(mywiimadapter, reqtype, ServName, IP_Address) {
         const volume = await client.call('AVTransport', 'GetInfoEx', {
             InstanceID: 0,
         });
-        var mytext = volume.TrackMetaData
-            .replace(/&gt;/g, '>')
-            .replace(/&lt;/g, '<')
+        var mytext = volume.TrackMetaData.replace(/&gt;/g, '>').replace(/&lt;/g, '<')
         var tagposbegin = mytext.indexOf('<upnp:albumArtURI>') + 18;
         var tagposend = mytext.indexOf('</upnp:albumArtURI>');
         mywiimadapter.setState(`${ServName}.albumArtURI`, mytext.substring(tagposbegin, tagposend), true);
