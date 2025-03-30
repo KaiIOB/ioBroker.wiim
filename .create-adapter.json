@@ -17,23 +17,12 @@
 	"connectionIndicator": "yes",
 	"adapterSettings": [
 		{
-			"key": "IP_Address",
-			"label": "IP address of device",
-			"inputType": "text",
-			"defaultValue": "0.0.0.0"
-		},
-		{
 			"key": "Refresh_Interval",
 			"label": "interval for refresh of player data in seconds",
 			"inputType": "number",
 			"defaultValue": "15"
 		},
-		{
-			"key": "Request_Type",
-			"label": "API request type: https for Wiim products, http for Arylic products",
-			"inputType": "text",
-			"defaultValue": "https"
-		}
+
 	],
 	"language": "JavaScript",
 	"nodeVersion": "14",

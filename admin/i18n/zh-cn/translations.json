@@ -1,5 +1,3 @@
 {
-
-    "Refresh_Interval": "interval for refresh of player data in seconds",
-    "wiim adapter settings": "wiim的适配器设置"
+    "Refresh_Interval": "玩家数据刷新间隔( 秒)"
 }

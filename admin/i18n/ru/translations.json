@@ -1,4 +1,3 @@
 {
-    "Refresh_Interval": "interval for refresh of player data in seconds",
-    "wiim adapter settings": "Настройки адаптера для wiim"
+    "Refresh_Interval": "интервал для обновления данных игрока в секундах"
 }

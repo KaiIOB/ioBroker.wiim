@@ -12,7 +12,7 @@
 
 ## wiim adapter for ioBroker
 
-adapter to access Wiim/Arylic devices
+adapter to access Wiim/Arylic and other devices based on the Linkplay streaming/multiroom technology
 
 ## supported devices
 The adapter has been tested with:
@@ -129,6 +129,10 @@ August:		https://augustint.com/
 
 
 ## Changelog
+
+<### 0.3.0
+* (KaiIOB) improved stability of bonjour autodetect of streamers, dnla introduced to retrieve coverArt from generic players>
+
 
 <### 0.2.0
 * (KaiIOB) introduction of bonjour auto-detect of streamers>

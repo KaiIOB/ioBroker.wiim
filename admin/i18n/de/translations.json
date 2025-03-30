@@ -1,4 +1,3 @@
 {
-    "Refresh_Interval": "interval for refresh of player data in seconds",
-    "wiim adapter settings": "Adaptereinstellungen für wiim"
+    "Refresh_Interval": "Intervall für die Aktualisierung der Streamerdaten in Sekunden"
 }

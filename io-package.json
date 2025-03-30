@@ -1,20 +1,20 @@
 {
     "common": {
         "name": "wiim",
-        "version": "0.2.0",
+        "version": "0.3.0",
         "news": {
-            "0.2.0": {
-                "en": "improved beta",
-                "de": "verbesserte beta",
-                "ru": "Начальная версия",
-                "pt": "lançamento inicial",
-                "nl": "Eerste uitgave",
-                "fr": "Première version",
-                "it": "Versione iniziale",
-                "es": "Versión inicial",
-                "pl": "Pierwsze wydanie",
-                "uk": "Початкова версія",
-                "zh-cn": "首次出版"
+            "0.3.0": {
+                "en": "improved bonjour device discovery",
+                "de": "Verbesserte Bonjour-Geräte-Erkennung",
+                "ru": "обнаружение устройства bonjour",
+                "pt": "melhorou a descoberta do dispositivo bonjour",
+                "nl": "verbeterde bonjour apparaat ontdekking",
+                "fr": "amélioration de la découverte de l'appareil de bonjour",
+                "it": "migliore scoperta del dispositivo bonjour",
+                "es": "mejora del descubrimiento del dispositivo bonjour",
+                "pl": "ulepszone wykrywanie urządzeń bonjour",
+                "uk": "покращений відкриття пристрою bonjour",
+                "zh-cn": "改进了胸罩设备的发现"
             }
         },
         "titleLang": {
@@ -32,16 +32,16 @@
         },
         "desc": {
             "en": "adapter to access Wiim/Arylic devices",
-            "de": "adapter to access Wiim/Arylic devices",
-            "ru": "adapter to access Wiim/Arylic devices",
-            "pt": "adapter to access Wiim/Arylic devices",
-            "nl": "adapter to access Wiim/Arylic devices",
-            "fr": "adapter to access Wiim/Arylic devices",
-            "it": "adapter to access Wiim/Arylic devices",
-            "es": "adapter to access Wiim/Arylic devices",
-            "pl": "adapter to access Wiim/Arylic devices",
-            "uk": "adapter to access Wiim/Arylic devices",
-            "zh-cn": "adapter to access Wiim/Arylic devices"
+            "de": "adapter zum Zugriff auf Wiim/Arylic Geräte",
+            "ru": "адаптер для доступа к Wiim/Arylic устройствам",
+            "pt": "adaptador para acessar dispositivos Wiim/Arylic",
+            "nl": "adapter voor toegang tot Wiim/Arylic apparaten",
+            "fr": "adaptateur pour accéder aux appareils Wiim/Arylic",
+            "it": "adattatore per accedere ai dispositivi Wiim/Arylic",
+            "es": "adaptador para acceder a dispositivos Wiim/Arílico",
+            "pl": "adapter do dostępu do urządzeń Wiim / Aryl",
+            "uk": "адаптер для доступу Wiim/Arylic",
+            "zh-cn": "访问Wiim/Arylic设备的适配器"
         },
         "authors": [
             "KaiIOB <Kaibrendel@kabelmail.de>"
