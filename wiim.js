@@ -353,7 +353,8 @@ async function getWiimData(mywiimadapter, reqtype, ServName, IP_Address) {
         });
     }).on('error', error => {
         mywiimadapter.log.info(
-            `Did not receive data from streamer ${ServName} at ${IP_Address}. Is it up and connected to same network? -->${error.message}`);
+            `Did not receive data from streamer ${ServName} at ${IP_Address}. Is it up and connected to same network? -->${error.message}`
+        );
     });
 
     const theDate = new Date();
@@ -420,7 +421,8 @@ async function DataPointIni(mywiimadapter, StreamerIndex) {
         });
     }).on('error', error => {
         this.info.log(
-            `Could not retrieve data from streamer ${ServName} at ${myIPAddress}. Is it up and connected to same network --> ${error.message}`);
+            `Could not retrieve data from streamer ${ServName} at ${myIPAddress}. Is it up and connected to same network --> ${error.message}`
+        );
     });
 
     await mywiimadapter.setObjectNotExistsAsync(`${ServName}.album`, {
