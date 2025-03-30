@@ -105,10 +105,6 @@ class Wiim extends utils.Adapter {
     onUnload(callback) {
         try {
             this.clearTimeout(pollTimeout);
-            this.clearInterval(bonjourInterval);
-            this.clearInterval(evalInterval);
-            this.clearInterval(outerInterval);
-            this.clearInterval(innerInterval);
             pollTimeout = null;
             callback();
         } catch (e) {
@@ -356,7 +352,8 @@ async function getWiimData(mywiimadapter, reqtype, ServName, IP_Address) {
             }
         });
     }).on('error', error => {
-        mywiimadapter.log.info(`Did not receive data from streamer ${ServName} at ${IP_Address}. Is it up and connected to same network?`);
+        mywiimadapter.log.info(
+            `Did not receive data from streamer ${ServName} at ${IP_Address}. Is it up and connected to same network? -->${error.message}`);
     });
 
     const theDate = new Date();
@@ -382,12 +379,10 @@ async function sendWiimcommand(mywiimadapter, wiimcmd, IP_Address, reqtype) {
     );
 }
 
-
 async function DataPointIni(mywiimadapter, StreamerIndex) {
     const ServName = foundStreamerNames[StreamerIndex];
     const myIPAddress = foundStreamerIPs[StreamerIndex];
     const reqtype = foundReqTypes[StreamerIndex];
-
     mywiimadapter.setState('info.connection', false, true);
     // Reset the connection indicator during startup
     let json = '';
@@ -424,7 +419,8 @@ async function DataPointIni(mywiimadapter, StreamerIndex) {
             }
         });
     }).on('error', error => {
-        this.info.log(`Could not retrieve data from streamer ${ServName} at ${myIPAddress}. Is it up and connected to same network`);
+        this.info.log(
+            `Could not retrieve data from streamer ${ServName} at ${myIPAddress}. Is it up and connected to same network --> ${error.message}`);
     });
 
     await mywiimadapter.setObjectNotExistsAsync(`${ServName}.album`, {
