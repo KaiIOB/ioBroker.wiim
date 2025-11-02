@@ -67,7 +67,8 @@
     "test": "npm run test:js && npm run test:package",
     "check": "tsc --noEmit -p tsconfig.check.json",
     "lint": "eslint -c eslint.config.mjs",
-    "translate": "translate-adapter"
+    "translate": "translate-adapter",
+    "dev-server": "dev-server"
   },
   "bugs": {
     "url": "https://github.com/KaiIOB/ioBroker.wiim/issues"
