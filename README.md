@@ -23,6 +23,7 @@ The adapter has been tested with:
    	Arylic S10+
 	Audiocast M5
 	August WR320B (after firmware upgrade to 4.6.415156.0)
+	Müzo Cobblestone
 
 Wiim devices use https communication, Arylic devices use http communication.
 At least one feature (playPromptUrl) works only with Arylic devices with firmware >=4.6.415145 
