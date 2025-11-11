@@ -32,7 +32,7 @@ class Wiim extends utils.Adapter {
         let bonjourcounter = 0;
         let bonjourfinished = false;
 
-        this.log.info('Hello!!********************* Starting bonjour streamer discovery ************************** ');
+        this.log.debug('********************* Starting bonjour streamer discovery ************************** ');
         bonjour.find({ type: 'linkplay' }, service => {
             foundStreamerNames.push(service.host.substring(0, service.host.indexOf('.')));
             foundStreamerIPs.push(service.addresses);
@@ -229,16 +229,16 @@ async function getWiimData(mywiimadapter, reqtype, ServName, IP_Address) {
                     mywiimadapter.setState(`${ServName}.bitDepth`, json.metaData.bitDepth, true);
                 } catch (error) {
                     if (body != `Failed`) {
-                        mywiimadapter.log.info(
+                        mywiimadapter.log.debug(
                             `something went wrong for ${ServName}at ${IP_Address} :${error.message}`,
                         );
-                        mywiimadapter.log.info(`The request sent to the server was: ${url}`);
-                        mywiimadapter.log.info(`The response was: ${body}`);
+                        mywiimadapter.log.debug(`The request sent to the server was: ${url}`);
+                        mywiimadapter.log.debug(`The response was: ${body}`);
                     }
                 }
             });
         }).on('error', error => {
-            mywiimadapter.log.info(`error1:${error.message}`);
+            mywiimadapter.log.debug(`error1:${error.message}`);
         });
     } else {
         // if the streamer is a generic linkplay device, upnp is used to geht the album Art URI
