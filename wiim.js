@@ -32,7 +32,7 @@ class Wiim extends utils.Adapter {
         let bonjourcounter = 0;
         let bonjourfinished = false;
 
-        this.log.info('********************* Starting bonjour streamer discovery ************************** ');
+        this.log.info('Hello!!********************* Starting bonjour streamer discovery ************************** ');
         bonjour.find({ type: 'linkplay' }, service => {
             foundStreamerNames.push(service.host.substring(0, service.host.indexOf('.')));
             foundStreamerIPs.push(service.addresses);
@@ -67,7 +67,7 @@ class Wiim extends utils.Adapter {
                             .then(result => {
                                 if (result) {
                                     //hier muss JSON ausgewertet werden => IP_address muss ermittelt werden
-                                    this.log.info(
+                                    this.log.debug(
                                         `streamer ${foundStreamerNames[i]}(${foundStreamerIPs[i]})` +
                                             ` uses http, assuming generic Linkplay product`,
                                     );
@@ -76,21 +76,21 @@ class Wiim extends utils.Adapter {
                                 } else {
                                     foundReqTypes[i] = 'https';
                                     DataPointIni(this, i);
-                                    this.log.info(
+                                    this.log.debug(
                                         `streamer ${foundStreamerNames[i]}(${foundStreamerIPs[i]})` +
                                             ` uses https, assuming Wiim product`,
                                     );
                                 }
                             })
                             .catch(error => {
-                                this.log.info(`Linkplay streamer query failed: ${error.message}`);
+                                this.log.debug(`Linkplay streamer query failed: ${error.message}`);
                             });
 
                         clearInterval(innerInterval);
                     }, 5000);
                 }
             } else {
-                this.log.info(
+                this.log.debug(
                     'No streamers detected after 10 seconds. If you are sure streamers are up and running, please open the control app, to trigger broadcast.',
                 );
             }
