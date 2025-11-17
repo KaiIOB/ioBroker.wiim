@@ -437,6 +437,18 @@ async function DataPointIni(mywiimadapter, StreamerIndex) {
         native: {},
     });
 
+    await mywiimadapter.setObjectNotExistsAsync(`${ServName}.ipaddress`, {
+        type: 'string',
+        common: {
+            name: 'IP_address',
+            type: 'string',
+            role: 'indicator',
+            read: true,
+            write: false,
+        },
+        native: {},
+    });
+
     await mywiimadapter.setObjectNotExistsAsync(`${ServName}.title`, {
         type: 'state',
         common: {
@@ -766,7 +778,7 @@ async function DataPointIni(mywiimadapter, StreamerIndex) {
         },
         native: {},
     });
-
+    mywiimadapter.subscribeStates(`${ServName}.ipaddress`, { val: true, ack: true });
     mywiimadapter.subscribeStates(`${ServName}.album`, { val: true, ack: true });
     mywiimadapter.subscribeStates(`${ServName}.title`, { val: true, ack: true });
     mywiimadapter.subscribeStates(`${ServName}.artist`, { val: true, ack: true });
