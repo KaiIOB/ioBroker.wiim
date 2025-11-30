@@ -32,7 +32,7 @@ class Wiim extends utils.Adapter {
         let bonjourcounter = 0;
         let bonjourfinished = false;
 
-        this.log.info('********************* Starting bonjour streamer discovery ************************** ');
+        this.log.debug('********************* Starting bonjour streamer discovery ************************** ');
         bonjour.find({ type: 'linkplay' }, service => {
             foundStreamerNames.push(service.host.substring(0, service.host.indexOf('.')));
             foundStreamerIPs.push(service.addresses);
@@ -227,6 +227,7 @@ async function getWiimData(mywiimadapter, reqtype, ServName, IP_Address) {
                     mywiimadapter.setState(`${ServName}.albumArtURI`, json.metaData.albumArtURI, true);
                     mywiimadapter.setState(`${ServName}.sampleRate`, json.metaData.sampleRate, true);
                     mywiimadapter.setState(`${ServName}.bitDepth`, json.metaData.bitDepth, true);
+                    mywiimadapter.setState(`${ServName}.online`, true, true);
                 } catch (error) {
                     if (body != `Failed`) {
                         mywiimadapter.log.debug(
@@ -238,21 +239,28 @@ async function getWiimData(mywiimadapter, reqtype, ServName, IP_Address) {
                 }
             });
         }).on('error', error => {
-            mywiimadapter.log.debug(`error1:${error.message}`);
+            mywiimadapter.setState(`${ServName}.online`, false, true);
+            //mywiimadapter.log.debug(`error1:${error.message}`);
         });
     } else {
         // if the streamer is a generic linkplay device, upnp is used to geht the album Art URI
         const UPnPClient = require('node-upnp');
-        const client = new UPnPClient({
+        try {
+            const client = new UPnPClient({
             url: `http://${IP_Address}:49152/description.xml`,
-        });
-        const volume = await client.call('AVTransport', 'GetInfoEx', {
-            InstanceID: 0,
-        });
-        var mytext = volume.TrackMetaData.replace(/&gt;/g, '>').replace(/&lt;/g, '<');
-        var tagposbegin = mytext.indexOf('<upnp:albumArtURI>') + 18;
-        var tagposend = mytext.indexOf('</upnp:albumArtURI>');
-        mywiimadapter.setState(`${ServName}.albumArtURI`, mytext.substring(tagposbegin, tagposend), true);
+            });
+            const volume = await client.call('AVTransport', 'GetInfoEx', {
+                InstanceID: 0,
+            });
+            var mytext = volume.TrackMetaData.replace(/&gt;/g, '>').replace(/&lt;/g, '<');
+            var tagposbegin = mytext.indexOf('<upnp:albumArtURI>') + 18;
+            var tagposend = mytext.indexOf('</upnp:albumArtURI>');
+            mywiimadapter.setState(`${ServName}.albumArtURI`, mytext.substring(tagposbegin, tagposend), true);
+            mywiimadapter.setState(`${ServName}.online`, true, true);
+        } catch {
+            mywiimadapter.setState(`${ServName}.online`, false, true);
+
+        }
     }
 
     const url = `${reqtype}://${IP_Address}/httpapi.asp?command=getPlayerStatus`;
@@ -274,6 +282,7 @@ async function getWiimData(mywiimadapter, reqtype, ServName, IP_Address) {
                 const PliCurr = Number(json.plicurr);
                 mywiimadapter.setState(`${ServName}.loop_mode`, json.loop, true);
                 mywiimadapter.setState(`${ServName}.volume`, json.vol, true);
+                mywiimadapter.setState(`${ServName}.online`, true, true);
 
                 switch (json.mode) {
                     case '0':
@@ -348,13 +357,12 @@ async function getWiimData(mywiimadapter, reqtype, ServName, IP_Address) {
                     mywiimadapter.setState(`${ServName}.artist`, hexToASCII(json.Artist), true);
                 }
             } catch (error) {
-                mywiimadapter.log.info(`no track playing -->${error.message}`);
+                mywiimadapter.log.debug(`no track playing -->${error.message}`);
             }
         });
     }).on('error', error => {
-        mywiimadapter.log.info(
-            `Did not receive data from streamer ${ServName} at ${IP_Address}. Is it up and connected to same network? -->${error.message}`,
-        );
+        //mywiimadapter.log.debug(`Did not receive data from streamer ${ServName} at ${IP_Address}. Is it up and connected to same network? -->${error.message}`,);
+        mywiimadapter.setState(`${ServName}.online`, false, true);
     });
 
     const theDate = new Date();
@@ -374,7 +382,7 @@ async function sendWiimcommand(mywiimadapter, wiimcmd, IP_Address, reqtype) {
         { validateCertificate: false, rejectUnauthorized: false, requestCert: true },
         err => {
             if (!err) {
-                mywiimadapter.log.info(err);
+                mywiimadapter.log.debug(err);
             }
         },
     );
@@ -420,7 +428,7 @@ async function DataPointIni(mywiimadapter, StreamerIndex) {
             }
         });
     }).on('error', error => {
-        this.info.log(
+        mywiimadapter.log.debug(
             `Could not retrieve data from streamer ${ServName} at ${myIPAddress}. Is it up and connected to same network --> ${error.message}`,
         );
     });
@@ -438,16 +446,32 @@ async function DataPointIni(mywiimadapter, StreamerIndex) {
     });
 
     await mywiimadapter.setObjectNotExistsAsync(`${ServName}.ipaddress`, {
-        type: 'string',
+        type: 'state',
         common: {
             name: 'IP_address',
             type: 'string',
             role: 'indicator',
             read: true,
             write: false,
+            def: myIPAddress,
         },
         native: {},
     });
+
+
+    await mywiimadapter.setObjectNotExistsAsync(`${ServName}.online`, {
+        type: 'state',
+        common: {
+            name: 'online',
+            type: 'boolean',
+            role: 'indicator',
+            read: true,
+            write: false,
+            def: true,
+        },
+        native: {},
+    });
+
 
     await mywiimadapter.setObjectNotExistsAsync(`${ServName}.title`, {
         type: 'state',
