@@ -240,6 +240,7 @@ async function getWiimData(mywiimadapter, reqtype, ServName, IP_Address) {
             });
         }).on('error', error => {
             mywiimadapter.setState(`${ServName}.online`, false, true);
+            mywiimadapter.setState(`${ServName}.lastError`, error.message, true);
             //mywiimadapter.log.debug(`error1:${error.message}`);
         });
     } else {
@@ -247,7 +248,7 @@ async function getWiimData(mywiimadapter, reqtype, ServName, IP_Address) {
         const UPnPClient = require('node-upnp');
         try {
             const client = new UPnPClient({
-            url: `http://${IP_Address}:49152/description.xml`,
+                url: `http://${IP_Address}:49152/description.xml`,
             });
             const volume = await client.call('AVTransport', 'GetInfoEx', {
                 InstanceID: 0,
@@ -259,7 +260,6 @@ async function getWiimData(mywiimadapter, reqtype, ServName, IP_Address) {
             mywiimadapter.setState(`${ServName}.online`, true, true);
         } catch {
             mywiimadapter.setState(`${ServName}.online`, false, true);
-
         }
     }
 
@@ -363,6 +363,7 @@ async function getWiimData(mywiimadapter, reqtype, ServName, IP_Address) {
     }).on('error', error => {
         //mywiimadapter.log.debug(`Did not receive data from streamer ${ServName} at ${IP_Address}. Is it up and connected to same network? -->${error.message}`,);
         mywiimadapter.setState(`${ServName}.online`, false, true);
+        mywiimadapter.setState(`${ServName}.lastError`, error.message, true);
     });
 
     const theDate = new Date();
@@ -424,7 +425,7 @@ async function DataPointIni(mywiimadapter, StreamerIndex) {
                 mywiimadapter.setState('info.connection', true, true);
                 mywiimadapter.setState(`${ServName}.Device_Name`, json.DeviceName, true);
             } catch (error) {
-                this.log.error(`error4: ${error.message}`);
+                mywiimadapter.log.error(`error4: ${error.message}`);
             }
         });
     }).on('error', error => {
@@ -458,7 +459,6 @@ async function DataPointIni(mywiimadapter, StreamerIndex) {
         native: {},
     });
 
-
     await mywiimadapter.setObjectNotExistsAsync(`${ServName}.online`, {
         type: 'state',
         common: {
@@ -471,7 +471,6 @@ async function DataPointIni(mywiimadapter, StreamerIndex) {
         },
         native: {},
     });
-
 
     await mywiimadapter.setObjectNotExistsAsync(`${ServName}.title`, {
         type: 'state',
@@ -786,6 +785,19 @@ async function DataPointIni(mywiimadapter, StreamerIndex) {
             read: true,
             write: true,
             def: '',
+        },
+        native: {},
+    });
+
+    await mywiimadapter.setObjectNotExistsAsync(`${ServName}.lastError`, {
+        type: 'state',
+        common: {
+            name: 'lastError',
+            type: 'string',
+            role: 'indicator',
+            read: true,
+            write: true,
+            def: 'none',
         },
         native: {},
     });
