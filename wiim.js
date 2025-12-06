@@ -838,6 +838,8 @@ async function DataPointIni(mywiimadapter, StreamerIndex) {
     mywiimadapter.subscribeStates(`${ServName}.switchmode`, { val: true, ack: false });
     mywiimadapter.subscribeStates(`${ServName}.playPromptUrl`, { val: true, ack: false });
     mywiimadapter.subscribeStates(`${ServName}.setShutdown`, { val: true, ack: false });
+    mywiimadapter.subscribeStates(`${ServName}.lastError`, { val: true, ack: false });
+    mywiimadapter.subscribeStates(`${ServName}.online`, { val: true, ack: false });
 
     getWiimData(mywiimadapter, reqtype, ServName, myIPAddress);
 }
