@@ -23,6 +23,8 @@ The adapter has been tested with:
    	Arylic S10+
 	Audiocast M5
 	August WR320B (after firmware upgrade to 4.6.415156.0)
+	August WS350K
+	Audio Pro Addon C5A
 	Müzo Cobblestone
 
 Wiim devices use https communication, Arylic devices use http communication.
@@ -80,10 +82,10 @@ August:		https://augustint.com/
 
 		previous: button to go to the previous title in playlist, button read/write
 				write "true" to this data point if you want to jump to the previous title in the playlist
-
-		lastRefresh: time stamp of last data poll from device, string, read-only, e.g.:
 				"17:43:37"
 
+
+		lastRefresh: time stamp of last data poll from device, string, read-only, e.g.:
 		volume: playback volume, number, read/write
 				use this datapoint to set the desired volume (0-100)
 
@@ -130,6 +132,8 @@ August:		https://augustint.com/
 
 
 ## Changelog
+<### 0.4.0
+* (KaiIOB) reduced logging, introduction of player state, improved error handling, several devices added to list of tested devices>
 
 <### 0.3.0
 * (KaiIOB) improved stability of bonjour autodetect of streamers, dnla introduced to retrieve coverArt from generic players>

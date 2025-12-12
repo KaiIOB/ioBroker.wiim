@@ -4,7 +4,7 @@
 	"adapterName": "wiim",
 	"title": "Wiim Connect",
 	"description": "adapter to access Wiim/Arylic devices",
-	"keywords": ["Wiim", "streamer", "pro", "amp", "Arylic"],
+	"keywords": ["Wiim", "streamer", "pro", "amp", "Arylic", "multiroom", "audio"],
 	"authorName": "KaiIOB",
 	"authorGithub": "KaiIOB",
 	"authorEmail": "Kaibrendel@kabelmail.de",
