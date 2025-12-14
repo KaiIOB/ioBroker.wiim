@@ -134,8 +134,6 @@ August:		https://augustint.com/
 ## Changelog
 ### **WORK IN PROGRESS**
 
-### 1.0.0 (2025-12-14)
-
 <### 0.3.0
 * (KaiIOB) improved stability of bonjour autodetect of streamers, dnla introduced to retrieve coverArt from generic players>
 

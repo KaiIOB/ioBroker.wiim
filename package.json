@@ -1,6 +1,6 @@
 {
   "name": "iobroker.wiim",
-  "version": "1.0.0",
+  "version": "0.4.0",
   "description": "adapter to access Wiim/Arylic devices",
   "author": {
     "name": "KaiIOB",
@@ -26,7 +26,7 @@
   "dependencies": {
     "@iobroker/adapter-core": "^3.2.3",
     "bonjour": "^3.5.0",
-    "iobroker.wiim": "^1.0.0",
+    "iobroker.wiim": "^0.4.0",
     "node-upnp": "^1.3.0",
     "tcp-ping": "^0.1.1",
     "translate": "^3.0.1",
