@@ -3,7 +3,7 @@
         "name": "wiim",
         "version": "1.0.0",
         "news": {
-            "0.4.0": {
+            "1.0.0": {
                 "en": "reduced logging, introduction of player state, improved error handling, several devices added to list of tested devices",
                 "de": "reduzierte protokollierung, einführung von player-zustand, verbesserte fehlerbehandlung, mehrere geräte zur liste der getesteten geräte hinzugefügt",
                 "ru": "сокращение регистрации, введение состояния игрока, улучшение обработки ошибок, добавление нескольких устройств в список тестируемых устройств",
