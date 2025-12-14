@@ -132,7 +132,12 @@ August:		https://augustint.com/
 
 
 ## Changelog
-### **WORK IN PROGRESS**
+
+<### 0.4.1
+* (KaiIOB) minor correction>
+
+<### 0.4.0
+* (KaiIOB) reduced logging, introduction of player state, improved error handling, several devices added to list of tested devices>
 
 <### 0.3.0
 * (KaiIOB) improved stability of bonjour autodetect of streamers, dnla introduced to retrieve coverArt from generic players>
