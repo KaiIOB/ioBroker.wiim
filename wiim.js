@@ -283,7 +283,7 @@ async function getWiimData(mywiimadapter, reqtype, ServName, IP_Address) {
                 mywiimadapter.setState(`${ServName}.loop_mode`, json.loop, true);
                 mywiimadapter.setState(`${ServName}.volume`, json.vol, true);
                 mywiimadapter.setState(`${ServName}.online`, true, true);
-
+                mywiimadapter.setState(`${ServName}.status`, json.status, true);
                 switch (json.mode) {
                     case '0':
                         mywiimadapter.setState(`${ServName}.mode`, 'idling', true);
@@ -355,6 +355,7 @@ async function getWiimData(mywiimadapter, reqtype, ServName, IP_Address) {
                     mywiimadapter.setState(`${ServName}.album`, hexToASCII(json.Album), true);
                     mywiimadapter.setState(`${ServName}.title`, hexToASCII(json.Title), true);
                     mywiimadapter.setState(`${ServName}.artist`, hexToASCII(json.Artist), true);
+                    mywiimadapter.setState(`${ServName}.status`, hexToASCII(json.Status), true);
                 }
             } catch (error) {
                 mywiimadapter.log.debug(`no track playing -->${error.message}`);
@@ -468,6 +469,19 @@ async function DataPointIni(mywiimadapter, StreamerIndex) {
             read: true,
             write: false,
             def: true,
+        },
+        native: {},
+    });
+
+await mywiimadapter.setObjectNotExistsAsync(`${ServName}.status`, {
+        type: 'state',
+        common: {
+            name: 'status',
+            type: 'string',
+            role: 'indicator',
+            read: true,
+            write: false,
+            def: 'tbd',
         },
         native: {},
     });
@@ -840,7 +854,7 @@ async function DataPointIni(mywiimadapter, StreamerIndex) {
     mywiimadapter.subscribeStates(`${ServName}.setShutdown`, { val: true, ack: false });
     mywiimadapter.subscribeStates(`${ServName}.lastError`, { val: true, ack: false });
     mywiimadapter.subscribeStates(`${ServName}.online`, { val: true, ack: false });
-
+    mywiimadapter.subscribeStates(`${ServName}.status`, { val: true, ack: false });
     getWiimData(mywiimadapter, reqtype, ServName, myIPAddress);
 }
 
