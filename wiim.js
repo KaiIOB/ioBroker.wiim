@@ -473,7 +473,7 @@ async function DataPointIni(mywiimadapter, StreamerIndex) {
         native: {},
     });
 
-await mywiimadapter.setObjectNotExistsAsync(`${ServName}.status`, {
+    await mywiimadapter.setObjectNotExistsAsync(`${ServName}.status`, {
         type: 'state',
         common: {
             name: 'status',
