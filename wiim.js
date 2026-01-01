@@ -827,33 +827,33 @@ async function DataPointIni(mywiimadapter, StreamerIndex) {
         },
         native: {},
     });
-//    mywiimadapter.subscribeStates(`${ServName}.ipaddress`, { val: true, ack: true });
-//    mywiimadapter.subscribeStates(`${ServName}.album`, { val: true, ack: true });
-//    mywiimadapter.subscribeStates(`${ServName}.title`, { val: true, ack: true });
-//    mywiimadapter.subscribeStates(`${ServName}.artist`, { val: true, ack: true });
-//    mywiimadapter.subscribeStates(`${ServName}.albumArtURI`, { val: true, ack: true });
-//    mywiimadapter.subscribeStates(`${ServName}.sampleRate`, { val: true, ack: true });
-//    mywiimadapter.subscribeStates(`${ServName}.bitDepth`, { val: true, ack: true });
+    //    mywiimadapter.subscribeStates(`${ServName}.ipaddress`, { val: true, ack: true });
+    //    mywiimadapter.subscribeStates(`${ServName}.album`, { val: true, ack: true });
+    //    mywiimadapter.subscribeStates(`${ServName}.title`, { val: true, ack: true });
+    //    mywiimadapter.subscribeStates(`${ServName}.artist`, { val: true, ack: true });
+    //    mywiimadapter.subscribeStates(`${ServName}.albumArtURI`, { val: true, ack: true });
+    //    mywiimadapter.subscribeStates(`${ServName}.sampleRate`, { val: true, ack: true });
+    //    mywiimadapter.subscribeStates(`${ServName}.bitDepth`, { val: true, ack: true });
     mywiimadapter.subscribeStates(`${ServName}.Play_Pause`, { val: true, ack: true });
     mywiimadapter.subscribeStates(`${ServName}.next`, { val: true, ack: true });
     mywiimadapter.subscribeStates(`${ServName}.previous`, { val: true, ack: true });
-//    mywiimadapter.subscribeStates(`${ServName}.lastRefresh`, { val: true, ack: false });
+    //    mywiimadapter.subscribeStates(`${ServName}.lastRefresh`, { val: true, ack: false });
     mywiimadapter.subscribeStates(`${ServName}.volume`, { val: true, ack: false });
     mywiimadapter.subscribeStates(`${ServName}.play_preset`, { val: true, ack: false });
     mywiimadapter.subscribeStates(`${ServName}.play_URL`, { val: true, ack: false });
-//    mywiimadapter.subscribeStates(`${ServName}.loop_mode`, { val: true, ack: false });
+    //    mywiimadapter.subscribeStates(`${ServName}.loop_mode`, { val: true, ack: false });
     mywiimadapter.subscribeStates(`${ServName}.toggle_loop_mode`, { val: true, ack: false });
     mywiimadapter.subscribeStates(`${ServName}.setMaster`, { val: true, ack: false });
     mywiimadapter.subscribeStates(`${ServName}.leaveSyncGroup`, { val: true, ack: false });
     mywiimadapter.subscribeStates(`${ServName}.jumptopos`, { val: true, ack: false });
     mywiimadapter.subscribeStates(`${ServName}.jumptopli`, { val: true, ack: false });
-//    mywiimadapter.subscribeStates(`${ServName}.mode`, { val: true, ack: false });
+    //    mywiimadapter.subscribeStates(`${ServName}.mode`, { val: true, ack: false });
     mywiimadapter.subscribeStates(`${ServName}.switchmode`, { val: true, ack: false });
     mywiimadapter.subscribeStates(`${ServName}.playPromptUrl`, { val: true, ack: false });
-//    mywiimadapter.subscribeStates(`${ServName}.setShutdown`, { val: true, ack: false });
-//    mywiimadapter.subscribeStates(`${ServName}.lastError`, { val: true, ack: false });
-//    mywiimadapter.subscribeStates(`${ServName}.online`, { val: true, ack: false });
-//    mywiimadapter.subscribeStates(`${ServName}.status`, { val: true, ack: false });
+    //    mywiimadapter.subscribeStates(`${ServName}.setShutdown`, { val: true, ack: false });
+    //    mywiimadapter.subscribeStates(`${ServName}.lastError`, { val: true, ack: false });
+    //    mywiimadapter.subscribeStates(`${ServName}.online`, { val: true, ack: false });
+    //    mywiimadapter.subscribeStates(`${ServName}.status`, { val: true, ack: false });
     getWiimData(mywiimadapter, reqtype, ServName, myIPAddress);
 }
 
