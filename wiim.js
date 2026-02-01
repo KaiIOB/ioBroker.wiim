@@ -368,9 +368,15 @@ async function getWiimData(mywiimadapter, reqtype, ServName, IP_Address) {
     const mydate = theDate.toString();
     mywiimadapter.setState(`${ServName}.lastRefresh`, mydate.substring(16, 25), true);
 
+    let MyRefresh = mywiimadapter.config.Refresh_Interval;
+
+    if (MyRefresh > 2000000) {
+        MyRefresh = 2000000;
+        mywiimadapter.log.info('refresh interval limited to 2000000')
+    }
     pollTimeout = setTimeout(function () {
         getWiimData(mywiimadapter, reqtype, ServName, IP_Address);
-    }, mywiimadapter.config.Refresh_Interval * 1000);
+    }, MyRefresh* 1000);
 }
 
 // ***********************   Retrieve data from streamer@IP_address using command wiimcmd and reqtype http or https   ************************
