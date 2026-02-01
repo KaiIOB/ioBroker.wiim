@@ -420,7 +420,7 @@ async function DataPointIni(mywiimadapter, StreamerIndex) {
             try {
                 json = JSON.parse(body);
                 mywiimadapter.setState('info.connection', true, true);
-                mywiimadapter.setState(`${ServName}.Device_Name`, name2id(json.DeviceName), true);
+                mywiimadapter.setState(`${ServName}.Device_Name`, name2id(json.DeviceName, mywiimadapter), true);
             } catch (error) {
                 mywiimadapter.log.error(`Parse error: ${error.message}`);
             }
@@ -430,6 +430,18 @@ async function DataPointIni(mywiimadapter, StreamerIndex) {
             `Could not retrieve data from streamer ${ServName} at ${myIPAddress}. Is it up and connected to same network --> ${error.message}`,
         );
     });
+
+    await mywiimadapter.setObjectNotExistsAsync(`${ServName}`, {
+        type: 'device',
+        common: {
+            name: `${ServName}`,
+            type: 'device',
+            read: false,
+            write: false,
+        },
+        native: {},
+    });
+
 
     await mywiimadapter.setObjectNotExistsAsync(`${ServName}.album`, {
         type: 'state',
@@ -816,8 +828,9 @@ async function DataPointIni(mywiimadapter, StreamerIndex) {
         type: 'state',
         common: {
             name: 'setShutdown',
-            role: 'indicator',
-            read: true,
+            role: 'level.timer',
+            type: 'string',
+            read: false,
             write: true,
             def: '',
         },
@@ -863,11 +876,9 @@ function hexToASCII(hex) {
     }
     return ascii;
 }
-
-function name2id(pName) {
-    return (pName || '').replace(adapter.FORBIDDEN_CHARS, '_').replace('','_').replace('.','_');
+    function name2id(pName, mywiimadapter) {
+    return (pName || '').replace(mywiimadapter.FORBIDDEN_CHARS, '_').replace('','_').replace('.','_');
 }
-
 if (require.main !== module) {
     // Export the constructor in compact mode
     /**
