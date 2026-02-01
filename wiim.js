@@ -436,7 +436,7 @@ async function DataPointIni(mywiimadapter, StreamerIndex) {
         common: {
             name: 'album',
             type: 'string',
-            role: 'indicator',
+            role: 'media.album',
             read: true,
             write: false,
         },
@@ -448,7 +448,7 @@ async function DataPointIni(mywiimadapter, StreamerIndex) {
         common: {
             name: 'IP_address',
             type: 'string',
-            role: 'indicator',
+            role: 'info.ip',
             read: true,
             write: false,
             def: myIPAddress,
@@ -461,7 +461,7 @@ async function DataPointIni(mywiimadapter, StreamerIndex) {
         common: {
             name: 'online',
             type: 'boolean',
-            role: 'indicator',
+            role: 'info.status',
             read: true,
             write: false,
             def: true,
@@ -474,7 +474,7 @@ async function DataPointIni(mywiimadapter, StreamerIndex) {
         common: {
             name: 'status',
             type: 'string',
-            role: 'indicator',
+            role: 'media.state',
             read: true,
             write: false,
             def: 'tbd',
@@ -487,7 +487,7 @@ async function DataPointIni(mywiimadapter, StreamerIndex) {
         common: {
             name: 'title',
             type: 'string',
-            role: 'indicator',
+            role: 'media.title',
             read: true,
             write: false,
         },
@@ -499,7 +499,7 @@ async function DataPointIni(mywiimadapter, StreamerIndex) {
         common: {
             name: 'artist',
             type: 'string',
-            role: 'indicator',
+            role: 'media.artist',
             read: true,
             write: false,
         },
@@ -511,7 +511,7 @@ async function DataPointIni(mywiimadapter, StreamerIndex) {
         common: {
             name: 'albumArtURI',
             type: 'string',
-            role: 'indicator',
+            role: 'media.cover',
             read: true,
             write: false,
         },
@@ -523,7 +523,7 @@ async function DataPointIni(mywiimadapter, StreamerIndex) {
         common: {
             name: 'samplRate',
             type: 'string',
-            role: 'indicator',
+            role: 'media.bitrate',
             read: true,
             write: false,
         },
@@ -535,7 +535,7 @@ async function DataPointIni(mywiimadapter, StreamerIndex) {
         common: {
             name: 'bitDepth',
             type: 'string',
-            role: 'indicator',
+            role: 'media.bitrate',
             read: true,
             write: false,
         },
@@ -547,7 +547,7 @@ async function DataPointIni(mywiimadapter, StreamerIndex) {
         common: {
             name: 'Play_Pause',
             type: 'boolean',
-            role: 'button',
+            role: 'button.play',
             read: false,
             write: true,
         },
@@ -559,7 +559,7 @@ async function DataPointIni(mywiimadapter, StreamerIndex) {
         common: {
             name: 'next',
             type: 'boolean',
-            role: 'button',
+            role: 'button.next',
             read: false,
             write: true,
         },
@@ -571,7 +571,7 @@ async function DataPointIni(mywiimadapter, StreamerIndex) {
         common: {
             name: 'previous',
             type: 'boolean',
-            role: 'button',
+            role: 'button.prev',
             read: false,
             write: true,
         },
@@ -583,7 +583,7 @@ async function DataPointIni(mywiimadapter, StreamerIndex) {
         common: {
             name: 'loop_mode',
             type: 'string',
-            role: 'indicator',
+            role: 'media.mode.repeat',
             read: true,
             write: false,
             def: 'to be read',
@@ -635,7 +635,7 @@ async function DataPointIni(mywiimadapter, StreamerIndex) {
         common: {
             name: 'play_URL',
             type: 'string',
-            role: 'indicator',
+            role: 'media.url',
             read: true,
             write: true,
             def: 'none',
@@ -648,7 +648,7 @@ async function DataPointIni(mywiimadapter, StreamerIndex) {
         common: {
             name: 'toggle_loop_mode',
             type: 'boolean',
-            role: 'indicator',
+            role: 'button',
             read: true,
             write: true,
             def: false,
@@ -661,7 +661,7 @@ async function DataPointIni(mywiimadapter, StreamerIndex) {
         common: {
             name: 'current_pos',
             type: 'number',
-            role: 'indicator',
+            role: 'media.elapsed',
             read: true,
             write: false,
             def: 0,
@@ -674,7 +674,7 @@ async function DataPointIni(mywiimadapter, StreamerIndex) {
         common: {
             name: 'offset_pts',
             type: 'number',
-            role: 'indicator',
+            role: 'media.jump',
             read: true,
             write: false,
             def: 0,
@@ -687,7 +687,7 @@ async function DataPointIni(mywiimadapter, StreamerIndex) {
         common: {
             name: 'setMaster',
             type: 'string',
-            role: 'indicator',
+            role: 'info.ip',
             read: true,
             write: true,
             def: '0.0.0.0',
@@ -713,7 +713,7 @@ async function DataPointIni(mywiimadapter, StreamerIndex) {
         common: {
             name: 'tracklength',
             type: 'number',
-            role: 'indicator',
+            role: 'media.duration',
             read: true,
             write: false,
             def: 0,
@@ -725,8 +725,8 @@ async function DataPointIni(mywiimadapter, StreamerIndex) {
         type: 'state',
         common: {
             name: 'plicurr',
-            type: 'number',
-            role: 'indicator',
+            type: 'string',
+            role: 'media.track',
             read: true,
             write: false,
             def: 0,
@@ -752,7 +752,7 @@ async function DataPointIni(mywiimadapter, StreamerIndex) {
         common: {
             name: 'jumptopli',
             type: 'string',
-            role: 'indicator',
+            role: 'media.jump',
             read: true,
             write: true,
             def: '',
@@ -765,7 +765,7 @@ async function DataPointIni(mywiimadapter, StreamerIndex) {
         common: {
             name: 'mode',
             type: 'string',
-            role: 'indicator',
+            role: 'media.input',
             read: true,
             write: false,
             def: '',
@@ -778,7 +778,7 @@ async function DataPointIni(mywiimadapter, StreamerIndex) {
         common: {
             name: 'switchmode',
             type: 'string',
-            role: 'indicator',
+            role: 'media.input',
             read: true,
             write: true,
             def: '',
@@ -791,7 +791,7 @@ async function DataPointIni(mywiimadapter, StreamerIndex) {
         common: {
             name: 'playPromptUrl',
             type: 'string',
-            role: 'indicator',
+            role: 'media.url.announecment',
             read: true,
             write: true,
             def: '',
@@ -816,7 +816,6 @@ async function DataPointIni(mywiimadapter, StreamerIndex) {
         type: 'state',
         common: {
             name: 'setShutdown',
-            type: 'string',
             role: 'indicator',
             read: true,
             write: true,
@@ -824,33 +823,19 @@ async function DataPointIni(mywiimadapter, StreamerIndex) {
         },
         native: {},
     });
-    //    mywiimadapter.subscribeStates(`${ServName}.ipaddress`, { val: true, ack: true });
-    //    mywiimadapter.subscribeStates(`${ServName}.album`, { val: true, ack: true });
-    //    mywiimadapter.subscribeStates(`${ServName}.title`, { val: true, ack: true });
-    //    mywiimadapter.subscribeStates(`${ServName}.artist`, { val: true, ack: true });
-    //    mywiimadapter.subscribeStates(`${ServName}.albumArtURI`, { val: true, ack: true });
-    //    mywiimadapter.subscribeStates(`${ServName}.sampleRate`, { val: true, ack: true });
-    //    mywiimadapter.subscribeStates(`${ServName}.bitDepth`, { val: true, ack: true });
     mywiimadapter.subscribeStates(`${ServName}.Play_Pause`, { val: true, ack: true });
     mywiimadapter.subscribeStates(`${ServName}.next`, { val: true, ack: true });
     mywiimadapter.subscribeStates(`${ServName}.previous`, { val: true, ack: true });
-    //    mywiimadapter.subscribeStates(`${ServName}.lastRefresh`, { val: true, ack: false });
     mywiimadapter.subscribeStates(`${ServName}.volume`, { val: true, ack: false });
     mywiimadapter.subscribeStates(`${ServName}.play_preset`, { val: true, ack: false });
     mywiimadapter.subscribeStates(`${ServName}.play_URL`, { val: true, ack: false });
-    //    mywiimadapter.subscribeStates(`${ServName}.loop_mode`, { val: true, ack: false });
     mywiimadapter.subscribeStates(`${ServName}.toggle_loop_mode`, { val: true, ack: false });
     mywiimadapter.subscribeStates(`${ServName}.setMaster`, { val: true, ack: false });
     mywiimadapter.subscribeStates(`${ServName}.leaveSyncGroup`, { val: true, ack: false });
     mywiimadapter.subscribeStates(`${ServName}.jumptopos`, { val: true, ack: false });
     mywiimadapter.subscribeStates(`${ServName}.jumptopli`, { val: true, ack: false });
-    //    mywiimadapter.subscribeStates(`${ServName}.mode`, { val: true, ack: false });
     mywiimadapter.subscribeStates(`${ServName}.switchmode`, { val: true, ack: false });
     mywiimadapter.subscribeStates(`${ServName}.playPromptUrl`, { val: true, ack: false });
-    //    mywiimadapter.subscribeStates(`${ServName}.setShutdown`, { val: true, ack: false });
-    //    mywiimadapter.subscribeStates(`${ServName}.lastError`, { val: true, ack: false });
-    //    mywiimadapter.subscribeStates(`${ServName}.online`, { val: true, ack: false });
-    //    mywiimadapter.subscribeStates(`${ServName}.status`, { val: true, ack: false });
     getWiimData(mywiimadapter, reqtype, ServName, myIPAddress);
 }
 
