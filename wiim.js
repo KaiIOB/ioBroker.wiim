@@ -32,7 +32,7 @@ class Wiim extends utils.Adapter {
         let bonjourcounter = 0;
         let bonjourfinished = false;
 
-        this.log.debug('** Starting bonjour streamer discovery ** ');
+        this.log.debug('Starting bonjour streamer discovery');
         bonjour.find({ type: 'linkplay' }, service => {
             foundStreamerNames.push(service.host.substring(0, service.host.indexOf('.')));
             foundStreamerIPs.push(service.addresses);
@@ -91,7 +91,7 @@ class Wiim extends utils.Adapter {
                 }
             } else {
                 this.log.debug(
-                    'No streamers detected after 10 seconds. If you are sure streamers are up and running, please open the control app, to trigger broadcast.',
+                    'No streamers detected after 10s. If you are sure streamers are up and running, please open the control app, to trigger broadcast.',
                 );
             }
         }, 10000);
@@ -263,7 +263,6 @@ async function getWiimData(mywiimadapter, reqtype, ServName, IP_Address) {
     }
 
     const url = `${reqtype}://${IP_Address}/httpapi.asp?command=getPlayerStatus`;
-    //mywiimadapter.log.info("==================> " + reqtype + "://"+IP_Address+"/httpapi.asp?command=getPlayerStatus");
     http.get(url, { validateCertificate: false, rejectUnauthorized: false, requestCert: true }, res => {
         let body = '';
         //write response chunks to body
@@ -357,11 +356,10 @@ async function getWiimData(mywiimadapter, reqtype, ServName, IP_Address) {
                     mywiimadapter.setState(`${ServName}.status`, hexToASCII(json.Status), true);
                 }
             } catch (error) {
-                mywiimadapter.log.debug(`no track playing -->${error.message}`);
+                mywiimadapter.log.debug(`no track playing: ${error.message}`);
             }
         });
     }).on('error', error => {
-        //mywiimadapter.log.debug(`Did not receive data from streamer ${ServName} at ${IP_Address}. Is it up and connected to same network? -->${error.message}`,);
         mywiimadapter.setState(`${ServName}.online`, false, true);
         mywiimadapter.setState(`${ServName}.lastError`, error.message, true);
     });
@@ -421,11 +419,10 @@ async function DataPointIni(mywiimadapter, StreamerIndex) {
         res.on('end', () => {
             try {
                 json = JSON.parse(body);
-                //mywiimadapter.log.info(ServName + " has firmware " + json.firmware+ ". Ready to go!");
                 mywiimadapter.setState('info.connection', true, true);
                 mywiimadapter.setState(`${ServName}.Device_Name`, json.DeviceName, true);
             } catch (error) {
-                mywiimadapter.log.error(`error4: ${error.message}`);
+                mywiimadapter.log.error(`Parse error: ${error.message}`);
             }
         });
     }).on('error', error => {
@@ -550,8 +547,8 @@ async function DataPointIni(mywiimadapter, StreamerIndex) {
         common: {
             name: 'Play_Pause',
             type: 'boolean',
-            role: 'button.play',
-            read: true,
+            role: 'button',
+            read: false,
             write: true,
         },
         native: {},
@@ -562,8 +559,8 @@ async function DataPointIni(mywiimadapter, StreamerIndex) {
         common: {
             name: 'next',
             type: 'boolean',
-            role: 'button.play',
-            read: true,
+            role: 'button',
+            read: false,
             write: true,
         },
         native: {},
@@ -574,8 +571,8 @@ async function DataPointIni(mywiimadapter, StreamerIndex) {
         common: {
             name: 'previous',
             type: 'boolean',
-            role: 'button.play',
-            read: true,
+            role: 'button',
+            read: false,
             write: true,
         },
         native: {},
@@ -704,7 +701,7 @@ async function DataPointIni(mywiimadapter, StreamerIndex) {
             name: 'leaveSyncGroup',
             type: 'boolean',
             role: 'button',
-            read: true,
+            read: false,
             write: true,
             def: false,
         },

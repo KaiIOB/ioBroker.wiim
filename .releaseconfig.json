@@ -1,20 +1,6 @@
 {
-  "commitMessages": {
-    "release": "chore: release v{{version}}",
-    "noRelease": "chore: no release"
-  },
-  "scripts": {
-    "beforeBuild": "npm run test",
-    "build": "npm run build"
-  },
-  "publish": {
-    "npm": true,
-    "github": {
-      "release": true,
-      "addArtifacts": true
+    "plugins": ["license"],
+    "exec": {
+        "before_commit": "npm run build"
     }
-  },
-  "plugins": {
-    "iobroker": true
-  }
 }
