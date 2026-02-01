@@ -608,7 +608,7 @@ async function DataPointIni(mywiimadapter, StreamerIndex) {
         common: {
             name: 'lastRefresh',
             type: 'string',
-            role: 'indicator',
+            role: 'value.time',
             read: true,
             write: false,
             def: 'never',
@@ -621,10 +621,10 @@ async function DataPointIni(mywiimadapter, StreamerIndex) {
         common: {
             name: 'volume',
             type: 'string',
-            role: 'indicator',
+            role: 'level.volume',
             read: true,
             write: true,
-            def: 'never',
+            def: '15',
         },
         native: {},
     });
@@ -634,7 +634,7 @@ async function DataPointIni(mywiimadapter, StreamerIndex) {
         common: {
             name: 'play_preset',
             type: 'string',
-            role: 'indicator',
+            role: 'media.playid',
             read: true,
             write: true,
             def: 'none',
@@ -661,7 +661,7 @@ async function DataPointIni(mywiimadapter, StreamerIndex) {
             name: 'toggle_loop_mode',
             type: 'boolean',
             role: 'button',
-            read: true,
+            read: false,
             write: true,
             def: false,
         },
@@ -749,9 +749,9 @@ async function DataPointIni(mywiimadapter, StreamerIndex) {
     await mywiimadapter.setObjectNotExistsAsync(`${ServName}.jumptopos`, {
         type: 'state',
         common: {
-            name: 'jumptops',
+            name: 'jumptopos',
             type: 'number',
-            role: 'indicator',
+            role: 'media.elapsed',
             read: true,
             write: true,
             def: 0,
@@ -816,7 +816,7 @@ async function DataPointIni(mywiimadapter, StreamerIndex) {
         common: {
             name: 'lastError',
             type: 'string',
-            role: 'indicator',
+            role: 'text',
             read: true,
             write: false,
             def: 'none',
@@ -836,19 +836,19 @@ async function DataPointIni(mywiimadapter, StreamerIndex) {
         },
         native: {},
     });
-    mywiimadapter.subscribeStates(`${ServName}.Play_Pause`, { val: true, ack: true });
-    mywiimadapter.subscribeStates(`${ServName}.next`, { val: true, ack: true });
-    mywiimadapter.subscribeStates(`${ServName}.previous`, { val: true, ack: true });
-    mywiimadapter.subscribeStates(`${ServName}.volume`, { val: true, ack: false });
-    mywiimadapter.subscribeStates(`${ServName}.play_preset`, { val: true, ack: false });
-    mywiimadapter.subscribeStates(`${ServName}.play_URL`, { val: true, ack: false });
-    mywiimadapter.subscribeStates(`${ServName}.toggle_loop_mode`, { val: true, ack: false });
-    mywiimadapter.subscribeStates(`${ServName}.setMaster`, { val: true, ack: false });
-    mywiimadapter.subscribeStates(`${ServName}.leaveSyncGroup`, { val: true, ack: false });
-    mywiimadapter.subscribeStates(`${ServName}.jumptopos`, { val: true, ack: false });
-    mywiimadapter.subscribeStates(`${ServName}.jumptopli`, { val: true, ack: false });
-    mywiimadapter.subscribeStates(`${ServName}.switchmode`, { val: true, ack: false });
-    mywiimadapter.subscribeStates(`${ServName}.playPromptUrl`, { val: true, ack: false });
+    mywiimadapter.subscribeStates(`${ServName}.Play_Pause`);
+    mywiimadapter.subscribeStates(`${ServName}.next`);
+    mywiimadapter.subscribeStates(`${ServName}.previous`);
+    mywiimadapter.subscribeStates(`${ServName}.volume`);
+    mywiimadapter.subscribeStates(`${ServName}.play_preset`);
+    mywiimadapter.subscribeStates(`${ServName}.play_URL`);
+    mywiimadapter.subscribeStates(`${ServName}.toggle_loop_mode`);
+    mywiimadapter.subscribeStates(`${ServName}.setMaster`);
+    mywiimadapter.subscribeStates(`${ServName}.leaveSyncGroup`);
+    mywiimadapter.subscribeStates(`${ServName}.jumptopos`);
+    mywiimadapter.subscribeStates(`${ServName}.jumptopli`);
+    mywiimadapter.subscribeStates(`${ServName}.switchmode`);
+    mywiimadapter.subscribeStates(`${ServName}.playPromptUrl`);
     getWiimData(mywiimadapter, reqtype, ServName, myIPAddress);
 }
 
