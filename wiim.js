@@ -374,7 +374,7 @@ async function getWiimData(mywiimadapter, reqtype, ServName, IP_Address) {
         MyRefresh = 2000000;
         mywiimadapter.log.info('refresh interval limited to 2000000');
     }
-    pollTimeout = setTimeout(function () {
+    pollTimeout = mywiimadapter.setTimeout(function () {
         getWiimData(mywiimadapter, reqtype, ServName, IP_Address);
     }, MyRefresh * 1000);
 }
