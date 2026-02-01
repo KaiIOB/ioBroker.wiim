@@ -84,9 +84,7 @@
         ]
     },
     "native": {
-        "IP_Address": "0.0.0.0",
-        "Refresh_Interval": "15",
-        "Request_Type": "https"
+        "Refresh_Interval": "15"
     },
     "objects": [],
     "instanceObjects": [
