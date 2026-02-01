@@ -344,10 +344,10 @@ async function getWiimData(mywiimadapter, reqtype, ServName, IP_Address) {
                         break;
                 }
 
-                mywiimadapter.setState(`${ServName}.curpos`, Position, false);
+                mywiimadapter.setState(`${ServName}.curpos`, Position, true);
                 mywiimadapter.setState(`${ServName}.offset_pts`, Offset_PTS, true);
-                mywiimadapter.setState(`${ServName}.tracklength`, TotLen, false);
-                mywiimadapter.setState(`${ServName}.plicurr`, PliCurr, false);
+                mywiimadapter.setState(`${ServName}.tracklength`, TotLen, true);
+                mywiimadapter.setState(`${ServName}.plicurr`, PliCurr, true);
                 if (reqtype == 'http') {
                     //arylic provide album, title and artist only as hex format
                     mywiimadapter.setState(`${ServName}.album`, hexToASCII(json.Album), true);
@@ -420,7 +420,7 @@ async function DataPointIni(mywiimadapter, StreamerIndex) {
             try {
                 json = JSON.parse(body);
                 mywiimadapter.setState('info.connection', true, true);
-                mywiimadapter.setState(`${ServName}.Device_Name`, json.DeviceName, true);
+                mywiimadapter.setState(`${ServName}.Device_Name`, name2id(json.DeviceName), true);
             } catch (error) {
                 mywiimadapter.log.error(`Parse error: ${error.message}`);
             }
@@ -725,7 +725,7 @@ async function DataPointIni(mywiimadapter, StreamerIndex) {
         type: 'state',
         common: {
             name: 'plicurr',
-            type: 'string',
+            type: 'number',
             role: 'media.track',
             read: true,
             write: false,
@@ -862,6 +862,10 @@ function hexToASCII(hex) {
         ascii = ascii + ch;
     }
     return ascii;
+}
+
+function name2id(pName) {
+    return (pName || '').replace(adapter.FORBIDDEN_CHARS, '_').replace('','_').replace('.','_');
 }
 
 if (require.main !== module) {
