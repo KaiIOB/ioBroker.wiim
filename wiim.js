@@ -372,11 +372,11 @@ async function getWiimData(mywiimadapter, reqtype, ServName, IP_Address) {
 
     if (MyRefresh > 2000000) {
         MyRefresh = 2000000;
-        mywiimadapter.log.info('refresh interval limited to 2000000')
+        mywiimadapter.log.info('refresh interval limited to 2000000');
     }
     pollTimeout = setTimeout(function () {
         getWiimData(mywiimadapter, reqtype, ServName, IP_Address);
-    }, MyRefresh* 1000);
+    }, MyRefresh * 1000);
 }
 
 // ***********************   Retrieve data from streamer@IP_address using command wiimcmd and reqtype http or https   ************************
@@ -447,7 +447,6 @@ async function DataPointIni(mywiimadapter, StreamerIndex) {
         },
         native: {},
     });
-
 
     await mywiimadapter.setObjectNotExistsAsync(`${ServName}.album`, {
         type: 'state',
@@ -882,8 +881,8 @@ function hexToASCII(hex) {
     }
     return ascii;
 }
-    function name2id(pName, mywiimadapter) {
-    return (pName || '').replace(mywiimadapter.FORBIDDEN_CHARS, '_').replace('','_').replace('.','_');
+function name2id(pName, mywiimadapter) {
+    return (pName || '').replace(mywiimadapter.FORBIDDEN_CHARS, '_').replace('', '_').replace('.', '_');
 }
 if (require.main !== module) {
     // Export the constructor in compact mode
