@@ -29,8 +29,6 @@ class Wiim extends utils.Adapter {
     async onReady() {
         // Initialize your adapter here
         const bonjour = require('bonjour')();
-        let bonjourcounter = 0;
-        let bonjourfinished = false;
 
         this.log.debug('Starting bonjour streamer discovery');
         bonjour.find({ type: 'linkplay' }, service => {
@@ -406,7 +404,11 @@ async function DataPointIni(mywiimadapter, StreamerIndex) {
             try {
                 json = JSON.parse(body);
                 mywiimadapter.setState('info.connection', true, true);
-                mywiimadapter.setState(`${ServName}.Device_Name`, name2id(json.DeviceName, mywiimadapter).slice(1), true);
+                mywiimadapter.setState(
+                    `${ServName}.Device_Name`,
+                    name2id(json.DeviceName, mywiimadapter).slice(1),
+                    true,
+                );
             } catch (error) {
                 mywiimadapter.log.error(`Parse error: ${error.message}`);
             }
@@ -417,10 +419,10 @@ async function DataPointIni(mywiimadapter, StreamerIndex) {
         );
     });
 
-    await mywiimadapter.setObjectNotExistsAsync(`${name2id(ServName,mywiimadapter).slice(1)}`, {
+    await mywiimadapter.setObjectNotExistsAsync(`${name2id(ServName, mywiimadapter).slice(1)}`, {
         type: 'device',
         common: {
-            name: `${name2id(ServName,mywiimadapter).slice(1)}`,
+            name: `${name2id(ServName, mywiimadapter).slice(1)}`,
             type: 'device',
             read: false,
             write: false,
