@@ -824,19 +824,6 @@ async function DataPointIni(mywiimadapter, StreamerIndex) {
         native: {},
     });
     mywiimadapter.subscribeStates(`*`);
-//    mywiimadapter.subscribeStates(`${ServName}.Play_Pause`);
-//    mywiimadapter.subscribeStates(`${ServName}.next`);
-//    mywiimadapter.subscribeStates(`${ServName}.previous`);
-//    mywiimadapter.subscribeStates(`${ServName}.volume`);
-//    mywiimadapter.subscribeStates(`${ServName}.play_preset`);
-//    mywiimadapter.subscribeStates(`${ServName}.play_URL`);
-//    mywiimadapter.subscribeStates(`${ServName}.toggle_loop_mode`);
-//    mywiimadapter.subscribeStates(`${ServName}.setMaster`);
-//    mywiimadapter.subscribeStates(`${ServName}.leaveSyncGroup`);
-//    mywiimadapter.subscribeStates(`${ServName}.jumptopos`);
-//    mywiimadapter.subscribeStates(`${ServName}.jumptopli`);
-//    mywiimadapter.subscribeStates(`${ServName}.switchmode`);
-//    mywiimadapter.subscribeStates(`${ServName}.playPromptUrl`);
     getWiimData(mywiimadapter, reqtype, ServName, myIPAddress);
 }
 
