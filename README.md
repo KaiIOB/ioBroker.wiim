@@ -134,6 +134,7 @@ August:		https://augustint.com/
 ## Changelog
 
 ### **WORK IN PROGRESS**
+* corrections based on test feedback, simplyfied streamer detection, simplified state subscription, state roles corrected, r/w of state correted
 
 ### 0.4.1
 * (KaiIOB) minor correction>
