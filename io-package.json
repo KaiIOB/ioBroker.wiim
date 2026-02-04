@@ -1,113 +1,126 @@
 {
-    "common": {
-        "name": "wiim",
-        "version": "0.4.1",
-        "news": {
-            "0.4.1": {
-                "en": "reduced logging, introduction of player state, improved error handling, several devices added to list of tested devices",
-                "de": "reduzierte protokollierung, einführung von player-zustand, verbesserte fehlerbehandlung, mehrere geräte zur liste der getesteten geräte hinzugefügt",
-                "ru": "сокращение регистрации, введение состояния игрока, улучшение обработки ошибок, добавление нескольких устройств в список тестируемых устройств",
-                "pt": "registro reduzido, introdução do estado do jogador, manipulação de erros melhorada, vários dispositivos adicionados à lista de dispositivos testados",
-                "nl": "minder loggen, introductie van spelerstatus, verbeterde foutafhandeling, verschillende apparaten toegevoegd aan lijst van geteste apparaten",
-                "fr": "réduction de l'enregistrement, introduction de l'état du lecteur, amélioration de la gestion des erreurs, plusieurs appareils ajoutés à la liste des appareils testés",
-                "it": "ridotto logging, introduzione dello stato del giocatore, miglioramento della gestione degli errori, diversi dispositivi aggiunti all'elenco dei dispositivi testati",
-                "es": "menor registro, introducción del estado del jugador, mejor manejo de errores, varios dispositivos añadidos a la lista de dispositivos probados",
-                "pl": "zmniejszenie logowania, wprowadzenie stanu gracza, poprawa obsługi błędów, kilka urządzeń dodanych do listy badanych urządzeń",
-                "uk": "знижений журнал, введення стану гравця, поліпшення обробки помилок, кілька пристроїв додано до списку перевірених пристроїв",
-                "zh-cn": "减少记录、引入玩家状态、改进错误处理、在已测试设备清单中添加若干设备"
-            }
-        },
-        "titleLang": {
-            "en": "Wiim Connect",
-            "de": "Wiim Connect",
-            "ru": "Wiim Connect",
-            "pt": "Wiim Connect",
-            "nl": "Wiim Connect",
-            "fr": "Wiim Connect",
-            "it": "Wiim Connect",
-            "es": "Wiim Connect",
-            "pl": "Wiim Connect",
-            "uk": "Wiim Connect",
-            "zh-cn": "Wiim Connect"
-        },
-        "desc": {
-            "en": "adapter to access Wiim/Arylic devices",
-            "de": "adapter zum Zugriff auf Wiim/Arylic Geräte",
-            "ru": "адаптер для доступа к Wiim/Arylic устройствам",
-            "pt": "adaptador para acessar dispositivos Wiim/Arylic",
-            "nl": "adapter voor toegang tot Wiim/Arylic apparaten",
-            "fr": "adaptateur pour accéder aux appareils Wiim/Arylic",
-            "it": "adattatore per accedere ai dispositivi Wiim/Arylic",
-            "es": "adaptador para acceder a dispositivos Wiim/Arílico",
-            "pl": "adapter do dostępu do urządzeń Wiim / Aryl",
-            "uk": "адаптер для доступу Wiim/Arylic",
-            "zh-cn": "访问Wiim/Arylic设备的适配器"
-        },
-        "authors": [
-            "KaiIOB <Kaibrendel@kabelmail.de>"
-        ],
-        "keywords": [
-            "Wiim",
-            "streamer",
-            "pro",
-            "amp",
-            "Arylic"
-        ],
-        "licenseInformation": {
-            "type": "free",
-            "license": "MIT"
-        },
-        "platform": "Javascript/Node.js",
-        "icon": "wiim.png",
-        "enabled": true,
-        "extIcon": "https://raw.githubusercontent.com/KaiIOB/ioBroker.wiim/main/admin/wiim.png",
-        "readme": "https://github.com/KaiIOB/ioBroker.wiim/blob/main/README.md",
-        "loglevel": "info",
-        "tier": 3,
-        "mode": "daemon",
-        "type": "multimedia",
-        "compact": true,
-        "connectionType": "local",
-        "dataSource": "poll",
-        "adminUI": {
-            "config": "json"
-        },
-        "dependencies": [
-            {
-                "js-controller": ">=6.0.11"
-            }
-        ],
-        "globalDependencies": [
-            {
-                "admin": ">=7.6.17"
-            }
-        ]
+  "common": {
+    "name": "wiim",
+    "version": "0.4.2",
+    "news": {
+      "0.4.2": {
+        "en": "improved streamer detection, several code simplifications, modified state subscription",
+        "de": "verbesserte streamer-erkennung, mehrere code-vereinfachungen, geändertes zustandsabonnement",
+        "ru": "улучшенное обнаружение стримеров, несколько упрощений кода, измененная государственная подписка",
+        "pt": "detecção melhorada de streamer, várias simplificações de código, assinatura de estado modificada",
+        "nl": "verbeterde streamer detectie, verschillende code vereenvoudigingen, aangepaste staat abonnement",
+        "fr": "amélioration de la détection des flux, plusieurs simplifications de code, abonnement d'état modifié",
+        "it": "rilevamento migliorato del streamer, diverse semplificazioni di codice, abbonamento stato modificato",
+        "es": "mejorada detección de streamer, varias simplificaciones de código, la suscripción estatal modificada",
+        "pl": "lepsze wykrywanie usprawnień, kilka uproszczeń kodu, zmodyfikowana subskrypcja państwa",
+        "uk": "покращене виявлення потокового передавання, кілька спрощення коду, модифікована державна підписка",
+        "zh-cn": "改进流线器检测、若干代码简化、修改状态订阅"
+      },
+      "0.4.1": {
+        "en": "reduced logging, introduction of player state, improved error handling, several devices added to list of tested devices",
+        "de": "reduzierte protokollierung, einführung von player-zustand, verbesserte fehlerbehandlung, mehrere geräte zur liste der getesteten geräte hinzugefügt",
+        "ru": "сокращение регистрации, введение состояния игрока, улучшение обработки ошибок, добавление нескольких устройств в список тестируемых устройств",
+        "pt": "registro reduzido, introdução do estado do jogador, manipulação de erros melhorada, vários dispositivos adicionados à lista de dispositivos testados",
+        "nl": "minder loggen, introductie van spelerstatus, verbeterde foutafhandeling, verschillende apparaten toegevoegd aan lijst van geteste apparaten",
+        "fr": "réduction de l'enregistrement, introduction de l'état du lecteur, amélioration de la gestion des erreurs, plusieurs appareils ajoutés à la liste des appareils testés",
+        "it": "ridotto logging, introduzione dello stato del giocatore, miglioramento della gestione degli errori, diversi dispositivi aggiunti all'elenco dei dispositivi testati",
+        "es": "menor registro, introducción del estado del jugador, mejor manejo de errores, varios dispositivos añadidos a la lista de dispositivos probados",
+        "pl": "zmniejszenie logowania, wprowadzenie stanu gracza, poprawa obsługi błędów, kilka urządzeń dodanych do listy badanych urządzeń",
+        "uk": "знижений журнал, введення стану гравця, поліпшення обробки помилок, кілька пристроїв додано до списку перевірених пристроїв",
+        "zh-cn": "减少记录、引入玩家状态、改进错误处理、在已测试设备清单中添加若干设备"
+      }
     },
-    "native": {
-        "Refresh_Interval": "15"
+    "titleLang": {
+      "en": "Wiim Connect",
+      "de": "Wiim Connect",
+      "ru": "Wiim Connect",
+      "pt": "Wiim Connect",
+      "nl": "Wiim Connect",
+      "fr": "Wiim Connect",
+      "it": "Wiim Connect",
+      "es": "Wiim Connect",
+      "pl": "Wiim Connect",
+      "uk": "Wiim Connect",
+      "zh-cn": "Wiim Connect"
     },
-    "objects": [],
-    "instanceObjects": [
-        {
-            "_id": "info",
-            "type": "channel",
-            "common": {
-                "name": "Information"
-            },
-            "native": {}
-        },
-        {
-            "_id": "info.connection",
-            "type": "state",
-            "common": {
-                "role": "indicator.connected",
-                "name": "Device or service connected",
-                "type": "boolean",
-                "read": true,
-                "write": false,
-                "def": false
-            },
-            "native": {}
-        }
+    "desc": {
+      "en": "adapter to access Wiim/Arylic devices",
+      "de": "adapter zum Zugriff auf Wiim/Arylic Geräte",
+      "ru": "адаптер для доступа к Wiim/Arylic устройствам",
+      "pt": "adaptador para acessar dispositivos Wiim/Arylic",
+      "nl": "adapter voor toegang tot Wiim/Arylic apparaten",
+      "fr": "adaptateur pour accéder aux appareils Wiim/Arylic",
+      "it": "adattatore per accedere ai dispositivi Wiim/Arylic",
+      "es": "adaptador para acceder a dispositivos Wiim/Arílico",
+      "pl": "adapter do dostępu do urządzeń Wiim / Aryl",
+      "uk": "адаптер для доступу Wiim/Arylic",
+      "zh-cn": "访问Wiim/Arylic设备的适配器"
+    },
+    "authors": [
+      "KaiIOB <Kaibrendel@kabelmail.de>"
+    ],
+    "keywords": [
+      "Wiim",
+      "streamer",
+      "pro",
+      "amp",
+      "Arylic"
+    ],
+    "licenseInformation": {
+      "type": "free",
+      "license": "MIT"
+    },
+    "platform": "Javascript/Node.js",
+    "icon": "wiim.png",
+    "enabled": true,
+    "extIcon": "https://raw.githubusercontent.com/KaiIOB/ioBroker.wiim/main/admin/wiim.png",
+    "readme": "https://github.com/KaiIOB/ioBroker.wiim/blob/main/README.md",
+    "loglevel": "info",
+    "tier": 3,
+    "mode": "daemon",
+    "type": "multimedia",
+    "compact": true,
+    "connectionType": "local",
+    "dataSource": "poll",
+    "adminUI": {
+      "config": "json"
+    },
+    "dependencies": [
+      {
+        "js-controller": ">=6.0.11"
+      }
+    ],
+    "globalDependencies": [
+      {
+        "admin": ">=7.6.17"
+      }
     ]
+  },
+  "native": {
+    "Refresh_Interval": "15"
+  },
+  "objects": [],
+  "instanceObjects": [
+    {
+      "_id": "info",
+      "type": "channel",
+      "common": {
+        "name": "Information"
+      },
+      "native": {}
+    },
+    {
+      "_id": "info.connection",
+      "type": "state",
+      "common": {
+        "role": "indicator.connected",
+        "name": "Device or service connected",
+        "type": "boolean",
+        "read": true,
+        "write": false,
+        "def": false
+      },
+      "native": {}
+    }
+  ]
 }
