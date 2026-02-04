@@ -132,8 +132,8 @@ August:		https://augustint.com/
 
 
 ## Changelog
-### 0.4.2 (2026-02-04)
-* (KaiIOB) improved streamer detection, several code simplifications, modified state subscription
+
+### **WORK IN PROGRESS**
 
 ### 0.4.1
 * (KaiIOB) minor correction>
