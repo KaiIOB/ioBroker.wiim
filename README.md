@@ -132,8 +132,7 @@ August:		https://augustint.com/
 
 
 ## Changelog
-
-### **WORK IN PROGRESS**
+### 0.4.3 (2026-02-04)
 * corrections based on test feedback, simplyfied streamer detection, simplified state subscription, state roles corrected, r/w of state correted
 
 ### 0.4.1

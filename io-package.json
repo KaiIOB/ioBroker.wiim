@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "wiim",
-    "version": "0.4.2",
+    "version": "0.4.3",
     "news": {
+      "0.4.3": {
+        "en": "corrections based on test feedback, simplyfied streamer detection, simplified state subscription, state roles corrected, r/w of state correted",
+        "de": "korrekturen auf der grundlage von test-feedback, einfacher streamer-erkennung, vereinfachtes zustandsabonnement, korrigierte zustandsrollen, r/w von zustand korreliert",
+        "ru": "исправления, основанные на обратной связи теста, простое обнаружение стримера, упрощенная государственная подписка, исправленные роли состояния, r/w исправленного состояния",
+        "pt": "correções baseadas no feedback do teste, detecção de streamer simples, assinatura de estado simplificada, funções de estado corrigidas, r/w do estado correted",
+        "nl": "correcties op basis van testfeedback, eenvoudige detectie van streamers, vereenvoudigd staatsabonnement, correctie van de statusrollen, r/w van de staat corrigeerde",
+        "fr": "corrections basées sur la rétroaction de test, détection de flux simplement défié, abonnement simplifié d'état, rôles d'état corrigés, r/w d'état corrélé",
+        "it": "correzioni basate su feedback di prova, rilevamento di streamer semplice, abbonamento di stato semplificato, ruoli di stato corretti, r/w di stato corretti",
+        "es": "correcciones basadas en la retroalimentación de las pruebas, detección de streamer sencilla, suscripción simplificada del estado, corregidos los papeles del estado, r/w de estado corregido",
+        "pl": "korekty oparte na informacji zwrotnej z badań, uproszczona detekcja strumieniowa, uproszczona subskrypcja państwowa, poprawiona rola państwa, rr / w państwa sprostowane",
+        "uk": "корекція на основі тестового зворотного зв'язку, простого виявлення потокового передавання, спрощеної державної підписки, правильних ролей, р/вт державного корета",
+        "zh-cn": "基于测试反馈的校正,简单的fifed streamer检测,简化状态订阅,州角色校正,州冕的r/w"
+      },
       "0.4.2": {
         "en": "improved streamer detection, several code simplifications, modified state subscription",
         "de": "verbesserte streamer-erkennung, mehrere code-vereinfachungen, geändertes zustandsabonnement",
