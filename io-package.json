@@ -16,19 +16,6 @@
         "uk": "корекція на основі тестового зворотного зв'язку, простого виявлення потокового передавання, спрощеної державної підписки, правильних ролей, р/вт державного корета",
         "zh-cn": "基于测试反馈的校正,简单的fifed streamer检测,简化状态订阅,州角色校正,州冕的r/w"
       },
-      "0.4.2": {
-        "en": "improved streamer detection, several code simplifications, modified state subscription",
-        "de": "verbesserte streamer-erkennung, mehrere code-vereinfachungen, geändertes zustandsabonnement",
-        "ru": "улучшенное обнаружение стримеров, несколько упрощений кода, измененная государственная подписка",
-        "pt": "detecção melhorada de streamer, várias simplificações de código, assinatura de estado modificada",
-        "nl": "verbeterde streamer detectie, verschillende code vereenvoudigingen, aangepaste staat abonnement",
-        "fr": "amélioration de la détection des flux, plusieurs simplifications de code, abonnement d'état modifié",
-        "it": "rilevamento migliorato del streamer, diverse semplificazioni di codice, abbonamento stato modificato",
-        "es": "mejorada detección de streamer, varias simplificaciones de código, la suscripción estatal modificada",
-        "pl": "lepsze wykrywanie usprawnień, kilka uproszczeń kodu, zmodyfikowana subskrypcja państwa",
-        "uk": "покращене виявлення потокового передавання, кілька спрощення коду, модифікована державна підписка",
-        "zh-cn": "改进流线器检测、若干代码简化、修改状态订阅"
-      },
       "0.4.1": {
         "en": "reduced logging, introduction of player state, improved error handling, several devices added to list of tested devices",
         "de": "reduzierte protokollierung, einführung von player-zustand, verbesserte fehlerbehandlung, mehrere geräte zur liste der getesteten geräte hinzugefügt",
