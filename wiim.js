@@ -326,7 +326,7 @@ async function getWiimData(mywiimadapter, reqtype, ServName, IP_Address) {
 // ***********************   Retrieve data from streamer@IP_address using command wiimcmd and reqtype http or https   ************************
 async function sendWiimcommand(mywiimadapter, wiimcmd, IP_Address, reqtype) {
     const http = require(reqtype);
-    try{
+    try {
         http.get(
             `${reqtype}://${IP_Address}/httpapi.asp?command=${wiimcmd}`,
             { validateCertificate: false, rejectUnauthorized: false, requestCert: true },
