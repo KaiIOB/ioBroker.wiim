@@ -9,7 +9,6 @@ const foundStreamerNames = [];
 const foundReqTypes = [];
 const startedStreamerIPs = [];
 const startedStreamerNames = [];
-const StreamerCount = 0;
 let pollTimeout = null;
 
 class Wiim extends utils.Adapter {
@@ -828,7 +827,7 @@ async function checknewStreamers(mywiimadapter, lastcount) {
         foundStreamerIPs[n] = IPString.substring(0, IPString.indexOf(','));
     }
     //const zusaetzlicheIPEintraege = foundStreamerIPs.filter(item => !startedStreamerIPs.includes(item));
-    for (let i = 0; i < zusaetzlicheNamesEintraege.length; i++){
+    for (let i = 0; i < zusaetzlicheNamesEintraege.length; i++) {
         startedStreamerNames.push(zusaetzlicheNamesEintraege[i]);
         startedStreamerIPs.push(foundStreamerIPs[foundStreamerNames.indexOf(zusaetzlicheNamesEintraege[i])]);
         await isJson(`http://${foundStreamerIPs[i]}/httpapi.asp?command=getStatusEx`)
