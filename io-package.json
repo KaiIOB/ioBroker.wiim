@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "wiim",
-    "version": "0.4.3",
+    "version": "0.5.0",
     "news": {
+      "0.5.0": {
+        "en": "First release with frequent auto-detection of new streamers in network",
+        "de": "Erste Veröffentlichung mit häufiger Auto-Detektion neuer Streamer im Netzwerk",
+        "ru": "Первый релиз с частым автообнаружением новых стримеров в сети",
+        "pt": "Primeira versão com detecção automática frequente de novas streamers em rede",
+        "nl": "Eerste release met frequente automatische detectie van nieuwe streamers in het netwerk",
+        "fr": "Première sortie avec détection automatique fréquente de nouveaux flux dans le réseau",
+        "it": "Prima release con frequente rilevamento automatico di nuovi streamer in rete",
+        "es": "Primer lanzamiento con frecuentes auto-detección de nuevos streamers en red",
+        "pl": "Pierwsze wydanie z częstym autowykrywaniem nowych strumieni w sieci",
+        "uk": "Перший випуск з частими автовипусками нових потоковиків в мережі",
+        "zh-cn": "在网络中频繁自动检测新流线器的首次发布"
+      },
       "0.4.3": {
         "en": "corrections based on test feedback, simplyfied streamer detection, simplified state subscription, state roles corrected, r/w of state correted",
         "de": "korrekturen auf der grundlage von test-feedback, einfacher streamer-erkennung, vereinfachtes zustandsabonnement, korrigierte zustandsrollen, r/w von zustand korreliert",

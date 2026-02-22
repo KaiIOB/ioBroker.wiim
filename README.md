@@ -132,8 +132,7 @@ August:		https://augustint.com/
 
 
 ## Changelog
-
-### **WORK IN PROGRESS**
+### 0.5.0 (2026-02-22)
 * First release with frequent auto-detection of new streamers in network
 
 ### 0.4.3 (2026-02-04)
