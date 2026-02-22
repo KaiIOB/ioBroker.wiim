@@ -7,6 +7,9 @@ const utils = require('@iobroker/adapter-core');
 const foundStreamerIPs = [];
 const foundStreamerNames = [];
 const foundReqTypes = [];
+const startedStreamerIPs = [];
+const startedStreamerNames = [];
+const StreamerCount = 0;
 let pollTimeout = null;
 
 class Wiim extends utils.Adapter {
@@ -29,51 +32,14 @@ class Wiim extends utils.Adapter {
     async onReady() {
         // Initialize your adapter here
         const bonjour = require('bonjour')();
-
+        checknewStreamers(this, 0);
         this.log.debug('Starting bonjour streamer discovery');
         bonjour.find({ type: 'linkplay' }, service => {
             foundStreamerNames.push(service.host.substring(0, service.host.indexOf('.')));
             foundStreamerIPs.push(service.addresses);
         });
-        await this.delay(4000);
-        let splitfinished = false;
-        for (let n = 0; n < foundStreamerNames.length; n++) {
-            const IPString = `${foundStreamerIPs[n]}`;
-            foundStreamerIPs[n] = IPString.substring(0, IPString.indexOf(','));
-            splitfinished = true;
-        }
 
-        const noStreamers = foundStreamerNames.length;
-        if (noStreamers > 0 && splitfinished) {
-            for (let i = 0; i < foundStreamerNames.length; i++) {
-                isJson(`http://${foundStreamerIPs[i]}/httpapi.asp?command=getStatusEx`)
-                    .then(result => {
-                        if (result) {
-                            //hier muss JSON ausgewertet werden => IP_address muss ermittelt werden
-                            this.log.debug(
-                                `streamer ${foundStreamerNames[i]}(${foundStreamerIPs[i]})` +
-                                    ` uses http, assuming generic Linkplay product`,
-                            );
-                            foundReqTypes[i] = 'http';
-                            DataPointIni(this, i);
-                        } else {
-                            foundReqTypes[i] = 'https';
-                            DataPointIni(this, i);
-                            this.log.debug(
-                                `streamer ${foundStreamerNames[i]}(${foundStreamerIPs[i]})` +
-                                    ` uses https, assuming Wiim product`,
-                            );
-                        }
-                    })
-                    .catch(error => {
-                        this.log.debug(`Linkplay streamer query failed: ${error.message}`);
-                    });
-            }
-        } else {
-            this.log.debug(
-                'No streamers detected after 5s. If you are sure streamers are up and running, please open the control app, to trigger broadcast.',
-            );
-        }
+        //checknewStreamers(this,foundStreamerIPs.length);
     }
 
     /**
@@ -93,11 +59,11 @@ class Wiim extends utils.Adapter {
     }
 
     onStateChange(id, state) {
-        if (state && !state.ack) {
-            const statename = id.split('.');
-            const index = foundStreamerNames.indexOf(statename[2]);
-            const IP_Address = foundStreamerIPs[index];
+        const statename = id.split('.');
+        const index = startedStreamerNames.indexOf(statename[2]);
+        if (state && !state.ack && index != -1) {
             const reqtype = foundReqTypes[index];
+            const IP_Address = startedStreamerIPs[index];
             const mysubstring = `${statename[0]}.${statename[1]}.${statename[2]}.`;
             switch (id) {
                 case `${mysubstring}setShutdown`:
@@ -361,21 +327,22 @@ async function getWiimData(mywiimadapter, reqtype, ServName, IP_Address) {
 // ***********************   Retrieve data from streamer@IP_address using command wiimcmd and reqtype http or https   ************************
 async function sendWiimcommand(mywiimadapter, wiimcmd, IP_Address, reqtype) {
     const http = require(reqtype);
-    http.get(
-        `${reqtype}://${IP_Address}/httpapi.asp?command=${wiimcmd}`,
-        { validateCertificate: false, rejectUnauthorized: false, requestCert: true },
-        err => {
-            if (!err) {
-                mywiimadapter.log.debug(err);
-            }
-        },
-    );
+    try{
+        http.get(
+            `${reqtype}://${IP_Address}/httpapi.asp?command=${wiimcmd}`,
+            { validateCertificate: false, rejectUnauthorized: false, requestCert: true },
+            err => {
+                if (!err) {
+                    mywiimadapter.log.debug(err);
+                }
+            },
+        );
+    } catch (error) {
+        mywiimadapter.log.info(`Error sending command ${wiimcmd} to ${IP_Address} : ${error.message}`);
+    }
 }
 
-async function DataPointIni(mywiimadapter, StreamerIndex) {
-    const ServName = foundStreamerNames[StreamerIndex];
-    const myIPAddress = foundStreamerIPs[StreamerIndex];
-    const reqtype = foundReqTypes[StreamerIndex];
+async function DataPointIni(mywiimadapter, ServName, myIPAddress, reqtype) {
     mywiimadapter.setState('info.connection', false, true);
     // Reset the connection indicator during startup
     let json = '';
@@ -426,6 +393,19 @@ async function DataPointIni(mywiimadapter, StreamerIndex) {
             type: 'device',
             read: false,
             write: false,
+        },
+        native: {},
+    });
+
+    await mywiimadapter.setObjectNotExistsAsync(`${ServName}.reqtype`, {
+        type: 'state',
+        common: {
+            name: 'reqtype',
+            type: 'string',
+            role: 'info',
+            read: true,
+            write: false,
+            def: reqtype,
         },
         native: {},
     });
@@ -838,8 +818,42 @@ async function isJson(url) {
         console.log(`error:${error.message}`);
         return false;
     }
-    //const data = await res.json();
-    //return res;
+}
+
+async function checknewStreamers(mywiimadapter, lastcount) {
+    let myreqtype = '';
+    const zusaetzlicheNamesEintraege = foundStreamerNames.filter(item => !startedStreamerNames.includes(item));
+    for (let n = 0; n < foundStreamerNames.length; n++) {
+        const IPString = `${foundStreamerIPs[n]}`;
+        foundStreamerIPs[n] = IPString.substring(0, IPString.indexOf(','));
+    }
+    //const zusaetzlicheIPEintraege = foundStreamerIPs.filter(item => !startedStreamerIPs.includes(item));
+    for (let i = 0; i < zusaetzlicheNamesEintraege.length; i++){
+        startedStreamerNames.push(zusaetzlicheNamesEintraege[i]);
+        startedStreamerIPs.push(foundStreamerIPs[foundStreamerNames.indexOf(zusaetzlicheNamesEintraege[i])]);
+        await isJson(`http://${foundStreamerIPs[i]}/httpapi.asp?command=getStatusEx`)
+            .then(result => {
+                if (result) {
+                    //hier muss JSON ausgewertet werden => IP_address muss ermittelt werden
+                    myreqtype = 'http';
+                } else {
+                    myreqtype = 'https';
+                }
+            })
+            .catch(error => {
+                mywiimadapter.log.debug(`Linkplay streamer query failed: ${error.message}`);
+            });
+        foundReqTypes.push(myreqtype);
+        await DataPointIni(
+            mywiimadapter,
+            zusaetzlicheNamesEintraege[i],
+            foundStreamerIPs[foundStreamerNames.indexOf(zusaetzlicheNamesEintraege[i])],
+            myreqtype,
+        );
+    }
+    pollTimeout = mywiimadapter.setTimeout(() => {
+        checknewStreamers(mywiimadapter, lastcount);
+    }, 15000);
 }
 
 function hexToASCII(hex) {
