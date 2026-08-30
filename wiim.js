@@ -184,7 +184,7 @@ class Wiim extends utils.Adapter {
             if (bonjourInstance) {
                 try {
                     bonjourInstance.destroy();
-                } catch (e) {
+                } catch {
                     /* ignore */
                 }
                 bonjourInstance = null;
@@ -387,7 +387,7 @@ async function supportsHttp(ip) {
     try {
         const { statusCode } = await httpGet('http', `http://${ip}/httpapi.asp?command=getStatusEx`);
         return statusCode >= 200 && statusCode < 400;
-    } catch (e) {
+    } catch {
         return false;
     }
 }
@@ -404,7 +404,7 @@ function hexToUtf8(hex) {
     }
     try {
         return Buffer.from(hex, 'hex').toString('utf8');
-    } catch (e) {
+    } catch {
         return '';
     }
 }
