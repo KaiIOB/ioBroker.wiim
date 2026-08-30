@@ -1298,7 +1298,7 @@ async function createDataPoints(adapter, streamer) {
         }),
         mkState('multiroom_slave_volume', {
             name: 'Set guest volume ("ip:vol")',
-            type: 'string',
+            type: 'number',
             role: 'level.volume',
             read: true,
             write: true,
