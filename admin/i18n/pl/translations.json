@@ -1,3 +1,4 @@
 {
-    "Refresh_Interval": "interwał odświeżania danych gracza w sekundach"
+    "Refresh_Interval": "interwał odświeżania danych gracza w sekundach",
+    "interval for refresh of player data in seconds": "Interwał odświeżania danych gracza w sekundach"
 }

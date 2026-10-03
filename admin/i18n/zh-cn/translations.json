@@ -1,3 +1,4 @@
 {
-    "Refresh_Interval": "玩家数据刷新间隔( 秒)"
+    "Refresh_Interval": "玩家数据刷新间隔( 秒)",
+    "interval for refresh of player data in seconds": "玩家数据刷新间隔（秒）"
 }

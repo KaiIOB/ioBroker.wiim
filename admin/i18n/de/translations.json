@@ -1,3 +1,4 @@
 {
-    "Refresh_Interval": "Intervall für die Aktualisierung der Streamerdaten in Sekunden"
+    "Refresh_Interval": "Intervall für die Aktualisierung der Streamerdaten in Sekunden",
+    "interval for refresh of player data in seconds": "Intervall für die Aktualisierung der Spielerdaten in Sekunden"
 }
