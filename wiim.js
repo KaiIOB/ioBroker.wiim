@@ -841,11 +841,11 @@ async function createDataPoints(adapter, streamer) {
         }),
         mkState('wifi_channel', {
             name: 'WiFi channel',
-            type: 'number',
-            role: 'value',
+            type: 'string',
+            role: 'text',
             read: true,
             write: false,
-            def: 99,
+            def: '99',
         }),
         mkState('update_available', {
             name: 'Firmware update available',
@@ -918,11 +918,11 @@ async function createDataPoints(adapter, streamer) {
         }),
         mkState('loop_mode', {
             name: 'Loop mode (raw)',
-            type: 'number',
-            role: 'value',
+            type: 'string',
+            role: 'text',
             read: true,
             write: false,
-            def: 4,
+            def: '4',
         }),
         mkState('loop_mode_text', {
             name: 'Loop mode',
