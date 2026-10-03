@@ -772,7 +772,7 @@ async function createDataPoints(adapter, streamer) {
         }),
         mkState('lastRefresh', {
             type: 'string',
-            role: 'value.datetime',
+            role: 'date',
             name: 'lastRefresh',
             read: true,
             write: false,
@@ -845,7 +845,7 @@ async function createDataPoints(adapter, streamer) {
             role: 'value',
             read: true,
             write: false,
-            def: '',
+            def: 99,
         }),
         mkState('update_available', {
             name: 'Firmware update available',
@@ -919,7 +919,7 @@ async function createDataPoints(adapter, streamer) {
         mkState('loop_mode', {
             name: 'Loop mode (raw)',
             type: 'number',
-            role: 'text',
+            role: 'value',
             read: true,
             write: false,
             def: 4,
