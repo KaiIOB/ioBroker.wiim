@@ -46,89 +46,53 @@ August:		https://augustint.com/
 	interval for refresh of player data in seconds: time between two requests for updated data
 
 
-## Available States
+## States & Control Channels
 
-		album: name of album played, string, read-only
-				string that can be used to display the name of the current album, e.g.:
-					"Electric"
+The adapter automatically creates states for each detected WiiM, Arylic, or Linkplay-based streaming device. The states are divided into read-only metadata and read/write control states.
 
-		title: name if title played, string, read-only
-				string that can be used to display the name of the current title, e.g.:
-					"Wild Flower"
+### Metadata & Status (Read-Only)
+These states represent the current playback information and hardware metrics fetched from the device.
 
-		artist: name of artist of title played, string, read-only
-				string that can be used to display the name of the artist of the current title, e.g.:
-					"The Cult"
+| State ID | Type | Role | Unit | Description |
+| :--- | :--- | :--- | :--- | :--- |
+| `artist` | string | `media.artist` | - | Name of the currently playing artist. |
+| `album` | string | `media.album` | - | Name of the current album. |
+| `title` | string | `media.title` | - | Title of the current track. |
+| `albumArtURI` | string | `media.cover` | - | HTTP URL or URI pointing to the album cover artwork. |
+| `mode` | string | `text` | - | Current audio source mode (e.g., Bluetooth, Wi-Fi, Line-In). |
+| `loop_mode` | number | `value` | - | Raw numeric loop/repeat mode returned by the hardware. |
+| `sampleRate` | number | `value` | Hz | Audio sample rate of the currently playing stream (e.g., 44100). |
+| `bitDepth` | number | `value` | bit | Audio bit depth of the stream (e.g., 16 or 24 bit). |
+| `lastRefresh` | string | `date` | - | Timestamp of the last successful data refresh from the device. |
 
-		albumArtURI: URL of the cover art of the album played, string, read-only
-				string that can be used to display the cover art of the current title, e.g.:
-					"https://i.scdn.co/image/ab67616d0000b273ca8a324a5d0fce617bb2613d"
-					Unfortunately, the generic Linkplay devices do not provide this information via http API....
+### Playback Controls (Read/Write)
+Use these states to control the playback, routing, and system parameters of your streamers.
 
-		sampleRate: sample rate of file played, number, read-only
-				number which can be used to display the current sample rate, e.g.;
-					"44100"
+| State ID | Type | Role | Values / Range | Description |
+| :--- | :--- | :--- | :--- | :--- |
+| `Play_Pause` | boolean | `button` | trigger | Toggles between play and pause states. |
+| `next` | boolean | `button` | trigger | Skips to the next track in the queue or playlist. |
+| `previous` | boolean | `button` | trigger | Returns to the previous track. |
+| `volume` | number | `level.volume` | `0` to `100` % | Controls the device master volume. |
+| `loopmode` | number | `level` | `0` to `5` | Set selection dropdown for repeat and shuffle modes:<br>`0`: Repeat all<br>`1`: Repeat once<br>`2`: Shuffle + Repeat<br>`3`: Shuffle<br>`4`: No repeat<br>`5`: Shuffle + Repeat once |
+| `jumptopos` | number | `level` | seconds | Seeks to a specific position (in seconds) within the current track. |
+| `play_preset` | number | `button` | integer | Triggers a preset favorite slot pre-configured inside the WiiM/Arylic App. |
+| `play_URL` | string | `text` | URL string | Plays a direct custom audio stream URL (e.g., HTTP raw mp3 link). |
+| `playPromptUrl` | string | `text` | URL string | Plays an instant audio prompt or notification sound (e.g., for chimes/TTS). |
+| `switchmode` | string | `text` | input mode | Manually changes the active input source channel. |
+| `setShutdown` | number | `level` | minutes | Sets the integrated sleep timer (in minutes) after which the device turns off. |
 
+### Multiroom & Synchronization (Read/Write)
+Manage your device grouping and multiroom synchronous zones directly.
 
-		bitDepth: bit depth of file played, number, read-only
-				number holdin the value of the current bit depth, e.g.:
-					"16"
-
-		Play_Pause: button to play/pause, button, read/write
-				write "true" ti this datapoint to pause/play
-
-		next: button to skip to the next title in playlist, button, read/write
-				write "true" to this data point if you want to jump to the next title in the playlist
-
-		previous: button to go to the previous title in playlist, button read/write
-				write "true" to this data point if you want to jump to the previous title in the playlist
-				"17:43:37"
-
-
-		lastRefresh: time stamp of last data poll from device, string, read-only, e.g.:
-		volume: playback volume, number, read/write
-				use this datapoint to set the desired volume (0-100)
-
-		play_preset: start playback of specific preset, number, write-only
-				write the number of the preset you want to play to this datapoint
-
-		play_URL: URL of file to be played, string, read/write
-				the device will start to play the audio file/playlist located at the URL written to this datapoint
-
-		loop_mode: current loop mode, number, read-only
-				number between 1 and 4 indicating the current loop mode:
-					0 - loop all
-					1 - single loop
-					2 - shuffle loop
-					3 - shuffle, no loop
-					4 - no shuffle, no loop
-
-		toggle_loop_mode: skip to next loop mode, button, read-only
-					not implemented yet
-
-		setMaster: IP address of device to which this device shall be a slave within the sync group, read/write
-					write the IP of the device controlling the sync group this device should join to this datapoint
-
-		leaveSyncGroup: button to make device leave the current sync group, button, write
-					write "true" to this datapoint in order to force the device leave the current snyc group
-		
-		jumptopos: position in ms to which the playback should jump, number, write-only
-					write the position (in ms) to which playback should jump to this datapoint
-
-		jumptopli: number of playlist item to which the playback should jump, number, write-only
-					the device will jump to the index of the playlist xou write to this datapoint
-
-		mode: current source, string, read-only, e.g.:
-					"Spotify Connect"
-
-		switchmode: source to which the device should switch, write-only
-					
-
-		playPromptUrl: URL of a file which should be played overlaying the current playback, string, write-only
-					the device will play the file locate in the URL you write to this datapoint. The device will play the file in addtion to the current title. This can be used to implement a doorbell. After the "doorbell" is played the playback of the current track will return to the additional volume
-
-		setShutdown: time in seconds until the device should shut down
-					the device will shutdown after the number of seconds you write to this datapoint 
+| State ID | Type | Role | Description |
+| :--- | :--- | :--- | :--- |
+| `setMaster` | string | `text` | Enter the target IP address to pair this player as a multiroom slave group member. |
+| `leaveSyncGroup` | boolean | `button` | Triggers the device to leave its current multiroom sync group instantly. |
+| `multiroom_slave_volume` | number | `level.volume` | Adjusts the relative volume offsets for active multiroom slave instances. |
+| `multiroom_slave_mute` | boolean | `media.mute` | Mutes or unmutes all attached slave clients in the synchronized group. |
+| `multiroom_kickout` | boolean | `button` | Kicks out a predefined device context from the active multiroom tree. |
+ 
 
 
 ## Changelog
