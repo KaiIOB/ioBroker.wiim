@@ -841,7 +841,7 @@ async function createDataPoints(adapter, streamer) {
         }),
         mkState('wifi_channel', {
             name: 'WiFi channel',
-            type: 'string',
+            type: 'number',
             role: 'value',
             read: true,
             write: false,
@@ -901,7 +901,7 @@ async function createDataPoints(adapter, streamer) {
         mkState('ch', {
             name: 'Active channel',
             type: 'string',
-            role: 'info',
+            role: 'text',
             read: true,
             write: false,
             def: '0',
@@ -919,10 +919,10 @@ async function createDataPoints(adapter, streamer) {
         mkState('loop_mode', {
             name: 'Loop mode (raw)',
             type: 'number',
-            role: 'media.mode.repeat',
+            role: 'text',
             read: true,
             write: false,
-            def: '4',
+            def: 4,
         }),
         mkState('loop_mode_text', {
             name: 'Loop mode',
@@ -935,7 +935,7 @@ async function createDataPoints(adapter, streamer) {
         mkState('eq', {
             name: 'Equalizer preset',
             type: 'string',
-            role: 'info',
+            role: 'text',
             read: true,
             write: false,
             def: '0',
@@ -1112,7 +1112,7 @@ async function createDataPoints(adapter, streamer) {
         mkState('loopmode', {
             name: 'Set loop/shuffle mode',
             type: 'number',
-            role: 'media.mode.repeat',
+            role: 'level',
             min: 0,
             max: 5,
             read: true,
@@ -1241,7 +1241,7 @@ async function createDataPoints(adapter, streamer) {
         mkState('eq_load', {
             name: 'Load EQ preset by name',
             type: 'string',
-            role: 'info',
+            role: 'text',
             read: true,
             write: true,
             def: 'Flat',
@@ -1303,7 +1303,7 @@ async function createDataPoints(adapter, streamer) {
             role: 'text',
             read: true,
             write: true,
-            def: 0,
+            def: '',
         }),
         mkState('multiroom_slave_mute', {
             name: 'Set guest mute ("ip:0" or "ip:1")',
