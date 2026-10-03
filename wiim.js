@@ -51,9 +51,9 @@ const MODE_MAP = {
     42: 'External Storage',
     43: 'Optical',
     45: 'co-axial',
-    47: 'Line-In #2',
     49: 'HDMI',
     50: 'Mirror',
+    47: 'Line-In #2',
     51: 'USBDAC',
     60: 'Voice Mail',
     99: 'MR Guest',
@@ -734,14 +734,14 @@ async function createDataPoints(adapter, streamer) {
         mkState('Device_Name', {
             name: 'Device_Name',
             type: 'string',
-            role: 'indicator',
+            role: 'info.name',
             read: true,
             write: false,
         }),
         mkState('reqtype', {
             name: 'reqtype',
             type: 'string',
-            role: 'info',
+            role: 'text',
             read: true,
             write: false,
             def: reqtype,
@@ -771,9 +771,9 @@ async function createDataPoints(adapter, streamer) {
             def: 'none',
         }),
         mkState('lastRefresh', {
-            name: 'lastRefresh',
             type: 'string',
-            role: 'value.time',
+            role: 'value.datetime',
+            name: 'lastRefresh',
             read: true,
             write: false,
             def: 'never',
@@ -815,7 +815,7 @@ async function createDataPoints(adapter, streamer) {
         mkState('battery_charging', {
             name: 'Battery charging',
             type: 'boolean',
-            role: 'indicator.charging',
+            role: 'indicator',
             read: true,
             write: false,
             def: false,
@@ -834,7 +834,7 @@ async function createDataPoints(adapter, streamer) {
         mkState('rssi', {
             name: 'WiFi signal strength (RSSI)',
             type: 'number',
-            role: 'value.signal',
+            role: 'value.rssi',
             read: true,
             write: false,
             def: 0,
@@ -842,7 +842,7 @@ async function createDataPoints(adapter, streamer) {
         mkState('wifi_channel', {
             name: 'WiFi channel',
             type: 'string',
-            role: 'info',
+            role: 'value',
             read: true,
             write: false,
             def: '',
@@ -850,7 +850,7 @@ async function createDataPoints(adapter, streamer) {
         mkState('update_available', {
             name: 'Firmware update available',
             type: 'boolean',
-            role: 'indicator.update',
+            role: 'indicator',
             read: true,
             write: false,
             def: false,
@@ -859,9 +859,9 @@ async function createDataPoints(adapter, streamer) {
             name: 'New firmware version',
             type: 'string',
             role: 'info.firmware',
-            read: true,
             write: false,
             def: '',
+            read: true,
         }),
         mkState('prompt_status', {
             name: 'Voice prompts enabled',
@@ -874,7 +874,7 @@ async function createDataPoints(adapter, streamer) {
         mkState('group_role', {
             name: 'Multiroom role (master/slave)',
             type: 'string',
-            role: 'info',
+            role: 'info.status',
             read: true,
             write: false,
             def: 'master',
@@ -901,7 +901,7 @@ async function createDataPoints(adapter, streamer) {
         mkState('ch', {
             name: 'Active channel',
             type: 'string',
-            role: 'media.mode',
+            role: 'info',
             read: true,
             write: false,
             def: '0',
@@ -910,7 +910,7 @@ async function createDataPoints(adapter, streamer) {
         mkState('type', {
             name: 'Device role in group',
             type: 'string',
-            role: 'info',
+            role: 'text',
             read: true,
             write: false,
             def: '0',
@@ -918,7 +918,7 @@ async function createDataPoints(adapter, streamer) {
         }),
         mkState('loop_mode', {
             name: 'Loop mode (raw)',
-            type: 'string',
+            type: 'number',
             role: 'media.mode.repeat',
             read: true,
             write: false,
@@ -927,7 +927,7 @@ async function createDataPoints(adapter, streamer) {
         mkState('loop_mode_text', {
             name: 'Loop mode',
             type: 'string',
-            role: 'media.mode.repeat',
+            role: 'text',
             read: true,
             write: false,
             def: 'No repeat',
@@ -935,7 +935,7 @@ async function createDataPoints(adapter, streamer) {
         mkState('eq', {
             name: 'Equalizer preset',
             type: 'string',
-            role: 'media.mode',
+            role: 'info',
             read: true,
             write: false,
             def: '0',
@@ -1050,7 +1050,7 @@ async function createDataPoints(adapter, streamer) {
         mkState('plicurr', {
             name: 'Current playlist index',
             type: 'number',
-            role: 'media.track',
+            role: 'media.playid',
             read: true,
             write: false,
             def: 0,
@@ -1058,7 +1058,7 @@ async function createDataPoints(adapter, streamer) {
         mkState('plicount', {
             name: 'Playlist track count',
             type: 'number',
-            role: 'media.count',
+            role: 'media.playid',
             read: true,
             write: false,
             def: 0,
@@ -1184,7 +1184,7 @@ async function createDataPoints(adapter, streamer) {
         mkState('play_index', {
             name: 'Play track by playlist index',
             type: 'number',
-            role: 'media.track',
+            role: 'media.playid',
             read: true,
             write: true,
             def: 1,
@@ -1192,7 +1192,7 @@ async function createDataPoints(adapter, streamer) {
         mkState('play_local', {
             name: 'Play USB file by index',
             type: 'number',
-            role: 'media.track',
+            role: 'media.playid',
             read: true,
             write: true,
             def: 1,
@@ -1241,7 +1241,7 @@ async function createDataPoints(adapter, streamer) {
         mkState('eq_load', {
             name: 'Load EQ preset by name',
             type: 'string',
-            role: 'media.mode',
+            role: 'info',
             read: true,
             write: true,
             def: 'Flat',
@@ -1268,11 +1268,12 @@ async function createDataPoints(adapter, streamer) {
         mkState('setMaster', {
             name: 'Join multiroom group (master IP)',
             type: 'string',
-            role: 'info.ip',
+            role: 'text',
             read: true,
             write: true,
             def: '0.0.0.0',
         }),
+
         mkState('leaveSyncGroup', {
             name: 'Leave sync group',
             type: 'boolean',
@@ -1291,23 +1292,23 @@ async function createDataPoints(adapter, streamer) {
         mkState('multiroom_kickout', {
             name: 'Kick guest out of group (guest IP)',
             type: 'string',
-            role: 'info.ip',
+            role: 'text',
             read: true,
             write: true,
             def: '',
         }),
         mkState('multiroom_slave_volume', {
             name: 'Set guest volume ("ip:vol")',
-            type: 'number',
-            role: 'level.volume',
+            type: 'string',
+            role: 'text',
             read: true,
             write: true,
-            def: '',
+            def: 0,
         }),
         mkState('multiroom_slave_mute', {
             name: 'Set guest mute ("ip:0" or "ip:1")',
             type: 'string',
-            role: 'media.mute',
+            role: 'text',
             read: true,
             write: true,
             def: '',
