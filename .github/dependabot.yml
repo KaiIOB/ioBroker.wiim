@@ -8,6 +8,8 @@ updates:
       interval: "cron"
       timezone: "Europe/Berlin"
       cronjob: "42 2 28 * *"
+    cooldown:
+      default: 7    
     open-pull-requests-limit: 15
     assignees:
       - "Author"
@@ -22,3 +24,6 @@ updates:
     open-pull-requests-limit: 15
     assignees:
       - "Author"
+    ignore:
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]

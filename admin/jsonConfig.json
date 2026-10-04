@@ -1,17 +1,16 @@
 {
-	"i18n": true,
-	"type": "panel",
-	"items": {
-		"Refresh_Interval": {
-			"type": "number",
-			"label": "interval for refresh of player data in seconds",
-			"newLine": true,
-			"xs": 12,
+    "i18n": true,
+    "type": "panel",
+    "items": {
+        "Refresh_Interval": {
+            "type": "number",
+            "label": "interval for refresh of player data in seconds",
+            "newLine": true,
+            "xs": 12,
             "sm": 12,
             "md": 4,
             "lg": 3,
             "xl": 3
-		}
-
-	}
+        }
+    }
 }
