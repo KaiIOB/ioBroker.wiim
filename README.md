@@ -103,29 +103,30 @@ Manage your device grouping and multiroom synchronous zones directly.
 * corrections based on test feedback, simplyfied streamer detection, simplified state subscription, state roles corrected, r/w of state correted
 
 ### 0.4.1
-* (KaiIOB) minor correction>
+* (KaiIOB) minor correction
 
 ### 0.4.0
-* (KaiIOB) reduced logging, introduction of player state, improved error handling, several devices added to list of tested devices>
+* (KaiIOB) reduced logging, introduction of player state, improved error handling, several devices added to list of tested devices
 
 ### 0.3.0
-* (KaiIOB) improved stability of bonjour autodetect of streamers, dnla introduced to retrieve coverArt from generic players>
+* (KaiIOB) improved stability of bonjour autodetect of streamers, dnla introduced to retrieve coverArt from generic players
 
 ### 0.2.0
-* (KaiIOB) introduction of bonjour auto-detect of streamers>
+* (KaiIOB) introduction of bonjour auto-detect of streamers
 
 ### 0.1.0
-* (KaiIOB) main functions implemented and code clean-up>
+* (KaiIOB) main functions implemented and code clean-up
 
 ### 0.0.3
-* (KaiIOB) migration to setTimeout from setInteral>
+* (KaiIOB) migration to setTimeout from setInteral
 
 ### 0.0.2
-* (KaiIOB) Arylic devices added and corrections>
+* (KaiIOB) Arylic devices added and corrections
 
 ### 0.0.1
-* (KaiIOB) initial release>
-<>
+* (KaiIOB) initial release
+
+For older releases, see [CHANGELOG_OLD.md](CHANGELOG_OLD.md).
 
 ## License
 MIT License
