@@ -97,10 +97,9 @@ Manage your device grouping and multiroom synchronous zones directly.
 
 ## Changelog
 
-<!--
-  Placeholder for the next version (at the beginning of the line):
-  ### **WORK IN PROGRESS**
--->
+<!-- Placeholder for the next version (at the beginning of the line): ### **WORK IN PROGRESS** -->
+### **WORK IN PROGRESS**
+* (KaiIOB) Addition of most API features, code optimization
 
 ### 0.5.0 (2026-02-22)
 * First release with frequent auto-detection of new streamers in network
