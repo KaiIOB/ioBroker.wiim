@@ -98,7 +98,7 @@ Manage your device grouping and multiroom synchronous zones directly.
 ## Changelog
 
 <!-- Placeholder for the next version (at the beginning of the line): ### **WORK IN PROGRESS** -->
-### **WORK IN PROGRESS**
+### 0.6.0 (2026-10-06)
 * (KaiIOB) Addition of most API features, code optimization
 
 ### 0.5.0 (2026-02-22)
@@ -112,24 +112,6 @@ Manage your device grouping and multiroom synchronous zones directly.
 
 ### 0.4.0
 * (KaiIOB) reduced logging, introduction of player state, improved error handling, several devices added to list of tested devices
-
-### 0.3.0
-* (KaiIOB) improved stability of bonjour autodetect of streamers, dnla introduced to retrieve coverArt from generic players
-
-### 0.2.0
-* (KaiIOB) introduction of bonjour auto-detect of streamers
-
-### 0.1.0
-* (KaiIOB) main functions implemented and code clean-up
-
-### 0.0.3
-* (KaiIOB) migration to setTimeout from setInteral
-
-### 0.0.2
-* (KaiIOB) Arylic devices added and corrections
-
-### 0.0.1
-* (KaiIOB) initial release
 
 For older releases, see [CHANGELOG_OLD.md](CHANGELOG_OLD.md).
 

@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "wiim",
-    "version": "0.5.0",
+    "version": "0.6.0",
     "news": {
+      "0.6.0": {
+        "en": "Addition of most API features, code optimization",
+        "de": "Zusatz der meisten API-Funktionen, Codeoptimierung",
+        "ru": "Добавление большинства функций API, оптимизация кода",
+        "pt": "Adição da maioria das APIs e otimização de código",
+        "nl": "Toevoeging van de meeste API-functies, code-optimalisatie",
+        "fr": "Ajout de la plupart des API, optimisation du code",
+        "it": "Aggiunte più funzioni API, codice ottimizzato",
+        "es": "Añadir la mayoría de las API, optimizar el código",
+        "pl": "Dodawanie większości funkcji API, optymalizacja kodu",
+        "uk": "Додавання більшості функцій API, оптимізація коду",
+        "zh-cn": "添加了大多数 API 功能，代码优化"
+      },
       "0.5.0": {
         "en": "First release with frequent auto-detection of new streamers in network",
         "de": "Erste Veröffentlichung mit häufiger Auto-Detektion neuer Streamer im Netzwerk",
