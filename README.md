@@ -17,7 +17,7 @@ adapter to access Wiim/Arylic and other devices based on the Linkplay streaming/
 ## supported devices
 The adapter has been tested with:
 
-	Wiim Amp
+	Wiim Amp 
  	Wiim Mini
   	Arylic up2stream v3
    	Arylic S10+
@@ -28,7 +28,7 @@ The adapter has been tested with:
 	Müzo Cobblestone
 
 Wiim devices use https communication, Arylic devices use http communication.
-At least one feature (playPromptUrl) works only with Arylic devices with firmware >=4.6.415145 
+At least one feature (playPromptUrl)  -works only with Arylic devices with firmware >=4.6.415145 
 Currently only the most important features of the API are implemented. Please let me know if other features are useful to you.
 
 You can find information on the devices here:
@@ -96,6 +96,12 @@ Manage your device grouping and multiroom synchronous zones directly.
 
 
 ## Changelog
+
+<!--
+  Placeholder for the next version (at the beginning of the line):
+  ### **WORK IN PROGRESS**
+-->
+
 ### 0.5.0 (2026-02-22)
 * First release with frequent auto-detection of new streamers in network
 
