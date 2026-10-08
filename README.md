@@ -75,12 +75,12 @@ Use these states to control the playback, routing, and system parameters of your
 | `previous` | boolean | `button` | trigger | Returns to the previous track. |
 | `volume` | number | `level.volume` | `0` to `100` % | Controls the device master volume. |
 | `loopmode` | number | `level` | `0` to `5` | Set selection dropdown for repeat and shuffle modes:<br>`0`: Repeat all<br>`1`: Repeat once<br>`2`: Shuffle + Repeat<br>`3`: Shuffle<br>`4`: No repeat<br>`5`: Shuffle + Repeat once |
-| `jumptopos` | number | `level` | seconds | Seeks to a specific position (in seconds) within the current track. |
+| `jumptopos` | number | `media.elapsed` | seconds | Seeks to a specific position (in ms) within the current track. |
 | `play_preset` | number | `button` | integer | Triggers a preset favorite slot pre-configured inside the WiiM/Arylic App. |
 | `play_URL` | string | `text` | URL string | Plays a direct custom audio stream URL (e.g., HTTP raw mp3 link). |
 | `playPromptUrl` | string | `text` | URL string | Plays an instant audio prompt or notification sound (e.g., for chimes/TTS). |
 | `switchmode` | string | `text` | input mode | Manually changes the active input source channel. |
-| `setShutdown` | number | `level` | minutes | Sets the integrated sleep timer (in minutes) after which the device turns off. |
+| `setShutdown` | number | `level` | seconds | Sets the integrated sleep timer (in seconds) after which the device turns off. |
 
 ### Multiroom & Synchronization (Read/Write)
 Manage your device grouping and multiroom synchronous zones directly.
@@ -91,11 +91,11 @@ Manage your device grouping and multiroom synchronous zones directly.
 | `leaveSyncGroup` | boolean | `button` | Triggers the device to leave its current multiroom sync group instantly. |
 | `multiroom_slave_volume` | number | `level.volume` | Adjusts the relative volume offsets for active multiroom slave instances. |
 | `multiroom_slave_mute` | boolean | `media.mute` | Mutes or unmutes all attached slave clients in the synchronized group. |
-| `multiroom_kickout` | boolean | `button` | Kicks out a predefined device context from the active multiroom tree. |
  
 
 
 ## Changelog
+| `multiroom_kickout` | boolean | `button` | Kicks out a predefined device context from the active multiroom tree. |
 
 <!-- Placeholder for the next version (at the beginning of the line): ### **WORK IN PROGRESS** -->
 ### 0.6.0 (2026-10-06)

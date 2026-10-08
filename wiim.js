@@ -417,7 +417,10 @@ function hexToUtf8(hex) {
  * @returns {string}
  */
 function name2id(pName, adapter) {
-    return (pName || '').replace(adapter.FORBIDDEN_CHARS, '_').replace(/\./g, '_');
+    // 1. Fallback für leere Strings und Standard-Bereinigung von ioBroker (FORBIDDEN_CHARS und Punkte)
+    let id = (pName || '').replace(adapter.FORBIDDEN_CHARS, '_').replace(/\./g, '_');
+    // 2. Best Practice: ALLES ersetzen, was NICHT Alphanumerisch, Bindestrich oder Unterstrich ist
+    return id.replace(/[^a-zA-Z0-9_-]/g, '_');
 }
 
 /**
@@ -469,8 +472,8 @@ async function pollStreamer(adapter, streamer) {
             adapter.setState(`${name}.title`, md.title, true);
             adapter.setState(`${name}.artist`, md.artist, true);
             adapter.setState(`${name}.albumArtURI`, md.albumArtURI, true);
-            adapter.setState(`${name}.sampleRate`, md.sampleRate, true);
-            adapter.setState(`${name}.bitDepth`, md.bitDepth, true);
+            adapter.setState(`${name}.sampleRate`, Number(md.sampleRate), true);
+            adapter.setState(`${name}.bitDepth`, Number(md.bitDepth), true);
         } catch (error) {
             if (!error.message.includes('Failed')) {
                 adapter.log.debug(`getMetaInfo error for ${name}: ${error.message}`);
@@ -524,7 +527,7 @@ async function pollStreamer(adapter, streamer) {
         adapter.setState(`${name}.type`, json.type, true);
 
         // Loop mode: store both raw value and human-readable label
-        adapter.setState(`${name}.loop_mode`, json.loop, true);
+        adapter.setState(`${name}.loop_mode`, Number(json.loop), true);
         if (Object.prototype.hasOwnProperty.call(LOOP_MAP, json.loop)) {
             adapter.setState(`${name}.loop_mode_text`, LOOP_MAP[json.loop], true);
         }
@@ -757,7 +760,7 @@ async function createDataPoints(adapter, streamer) {
         mkState('alive', {
             name: 'alive',
             type: 'boolean',
-            role: 'indicator.connected',
+            role: 'indicator.reachable',
             read: true,
             write: false,
             def: false,
@@ -772,7 +775,7 @@ async function createDataPoints(adapter, streamer) {
         }),
         mkState('lastRefresh', {
             type: 'string',
-            role: 'date',
+            role: 'text',
             name: 'lastRefresh',
             read: true,
             write: false,
@@ -807,7 +810,7 @@ async function createDataPoints(adapter, streamer) {
         mkState('internet', {
             name: 'Internet access',
             type: 'boolean',
-            role: 'indicator.connected',
+            role: 'indicator.reachable',
             read: true,
             write: false,
             def: false,
@@ -918,11 +921,11 @@ async function createDataPoints(adapter, streamer) {
         }),
         mkState('loop_mode', {
             name: 'Loop mode (raw)',
-            type: 'string',
-            role: 'text',
+            type: 'number',
+            role: 'value',
             read: true,
             write: false,
-            def: '4',
+            def: 4,
         }),
         mkState('loop_mode_text', {
             name: 'Loop mode',
@@ -972,15 +975,17 @@ async function createDataPoints(adapter, streamer) {
         }),
         mkState('sampleRate', {
             name: 'Sample rate',
-            type: 'string',
-            role: 'media.bitrate',
+            type: 'number',
+            role: 'value',
+            unit: 'Hz',
             read: true,
             write: false,
         }),
         mkState('bitDepth', {
             name: 'Bit depth',
-            type: 'string',
-            role: 'media.bitrate',
+            type: 'number',
+            role: 'value',
+            unit: 'bit',
             read: true,
             write: false,
         }),
@@ -1058,7 +1063,7 @@ async function createDataPoints(adapter, streamer) {
         mkState('plicount', {
             name: 'Playlist track count',
             type: 'number',
-            role: 'media.playid',
+            role: 'value',
             read: true,
             write: false,
             def: 0,
@@ -1208,7 +1213,7 @@ async function createDataPoints(adapter, streamer) {
         }),
         mkState('jumptopli', {
             name: 'Jump to playlist index',
-            type: 'string',
+            type: 'number',
             role: 'media.jump',
             read: true,
             write: true,
