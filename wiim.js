@@ -1217,7 +1217,7 @@ async function createDataPoints(adapter, streamer) {
             role: 'media.jump',
             read: true,
             write: true,
-            def: '',
+            def: 0,
         }),
         mkState('playPromptUrl', {
             name: 'Play notification sound URL',
