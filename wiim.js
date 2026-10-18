@@ -75,20 +75,18 @@ const LOOP_MAP = {
 // ── Type definitions ──────────────────────────────────────────────────────────
 
 /**
- * name         - Bonjour service name / ioBroker namespace segment
- *
- * ip           - Resolved IPv4 address
- *
- * reqtype - Protocol supported by this device
- *
- * upnpClient  - Cached UPnP client instance
- *
- * pollCycle    - Incremented on each poll; used to throttle slow queries
+ * @typedef {object} StreamerInfo
+ * @property {string} name Bonjour service name, used for discovery and display
+ * @property {string} safeId Canonical ioBroker namespace segment
+ * @property {string} ip Resolved IPv4 address
+ * @property {'http'|'https'} reqtype Protocol supported by this device
+ * @property {object|null} upnpClient Cached UPnP client instance
+ * @property {number} pollCycle Number of polling cycles completed
  */
 
 // ── Streamer registry ─────────────────────────────────────────────────────────
 
-/** name → StreamerInfo */
+/** safeId → StreamerInfo */
 const streamers = new Map();
 
 // ── Discovery state ───────────────────────────────────────────────────────────
@@ -144,11 +142,12 @@ class Wiim extends utils.Adapter {
                 return;
             }
 
-            const existing = streamers.get(name);
+            const safeId = name2id(name, this);
+            const existing = streamers.get(safeId);
             if (existing) {
                 // Device already known – it may have come back online after an outage.
                 // If polling has stopped (no active timeout), restart it.
-                if (!pollTimeouts.has(name)) {
+                if (!pollTimeouts.has(safeId)) {
                     this.log.info(`Bonjour: known streamer ${name} reappeared – restarting poll`);
                     pollStreamer(this, existing);
                 }
@@ -212,9 +211,9 @@ class Wiim extends utils.Adapter {
         if (secondLastDot < 0) {
             return;
         }
-        const streamerName = withoutDatapoint.substring(secondLastDot + 1);
+        const safeId = withoutDatapoint.substring(secondLastDot + 1);
 
-        const streamer = streamers.get(streamerName);
+        const streamer = streamers.get(safeId);
         if (!streamer) {
             return;
         }
@@ -456,7 +455,7 @@ async function pollStreamer(adapter, streamer) {
         return;
     }
 
-    const { name, ip, reqtype } = streamer;
+    const { name, safeId, ip, reqtype } = streamer;
     streamer.pollCycle = (streamer.pollCycle || 0) + 1;
 
     // ── WiiM: rich metadata via getMetaInfo ───────────────────────────────────
@@ -468,12 +467,12 @@ async function pollStreamer(adapter, streamer) {
             }
             const json = JSON.parse(body);
             const md = json.metaData;
-            adapter.setState(`${name}.album`, md.album, true);
-            adapter.setState(`${name}.title`, md.title, true);
-            adapter.setState(`${name}.artist`, md.artist, true);
-            adapter.setState(`${name}.albumArtURI`, md.albumArtURI, true);
-            adapter.setState(`${name}.sampleRate`, Number(md.sampleRate), true);
-            adapter.setState(`${name}.bitDepth`, Number(md.bitDepth), true);
+            adapter.setState(`${safeId}.album`, md.album, true);
+            adapter.setState(`${safeId}.title`, md.title, true);
+            adapter.setState(`${safeId}.artist`, md.artist, true);
+            adapter.setState(`${safeId}.albumArtURI`, md.albumArtURI, true);
+            adapter.setState(`${safeId}.sampleRate`, Number(md.sampleRate), true);
+            adapter.setState(`${safeId}.bitDepth`, Number(md.bitDepth), true);
         } catch (error) {
             if (!error.message.includes('Failed')) {
                 adapter.log.debug(`getMetaInfo error for ${name}: ${error.message}`);
@@ -498,7 +497,7 @@ async function pollStreamer(adapter, streamer) {
             const start = xml.indexOf('<upnp:albumArtURI>') + 18;
             const end = xml.indexOf('</upnp:albumArtURI>');
             if (start > 17 && end > start) {
-                adapter.setState(`${name}.albumArtURI`, xml.substring(start, end), true);
+                adapter.setState(`${safeId}.albumArtURI`, xml.substring(start, end), true);
             }
         } catch (error) {
             streamer.upnpClient = null;
@@ -514,50 +513,50 @@ async function pollStreamer(adapter, streamer) {
         }
         const json = JSON.parse(body);
 
-        adapter.setState(`${name}.volume`, Number(json.vol), true);
-        adapter.setState(`${name}.mute`, json.mute === '1', true);
-        adapter.setState(`${name}.status`, json.status, true);
-        adapter.setState(`${name}.curpos`, Number(json.curpos), true);
-        adapter.setState(`${name}.offset_pts`, Number(json.offset_pts), true);
-        adapter.setState(`${name}.tracklength`, Number(json.totlen), true);
-        adapter.setState(`${name}.plicurr`, Number(json.plicurr), true);
-        adapter.setState(`${name}.plicount`, Number(json.plicount), true);
-        adapter.setState(`${name}.eq`, json.eq, true);
-        adapter.setState(`${name}.ch`, json.ch, true);
-        adapter.setState(`${name}.type`, json.type, true);
+        adapter.setState(`${safeId}.volume`, Number(json.vol), true);
+        adapter.setState(`${safeId}.mute`, json.mute === '1', true);
+        adapter.setState(`${safeId}.status`, json.status, true);
+        adapter.setState(`${safeId}.curpos`, Number(json.curpos) / 1000, true);
+        adapter.setState(`${safeId}.offset_pts`, Number(json.offset_pts) / 1000, true);
+        adapter.setState(`${safeId}.tracklength`, Number(json.totlen) / 1000, true);
+        adapter.setState(`${safeId}.plicurr`, Number(json.plicurr), true);
+        adapter.setState(`${safeId}.plicount`, Number(json.plicount), true);
+        adapter.setState(`${safeId}.eq`, json.eq, true);
+        adapter.setState(`${safeId}.ch`, json.ch, true);
+        adapter.setState(`${safeId}.type`, json.type, true);
 
         // Loop mode: store both raw value and human-readable label
-        adapter.setState(`${name}.loop_mode`, Number(json.loop), true);
+        adapter.setState(`${safeId}.loop_mode`, Number(json.loop), true);
         if (Object.prototype.hasOwnProperty.call(LOOP_MAP, json.loop)) {
-            adapter.setState(`${name}.loop_mode_text`, LOOP_MAP[json.loop], true);
+            adapter.setState(`${safeId}.loop_mode_text`, LOOP_MAP[json.loop], true);
         }
 
         if (Object.prototype.hasOwnProperty.call(MODE_MAP, json.mode)) {
-            adapter.setState(`${name}.mode`, MODE_MAP[json.mode], true);
+            adapter.setState(`${safeId}.mode`, MODE_MAP[json.mode], true);
         } else {
             adapter.log.debug(`${name}: unknown mode value '${json.mode}'`);
         }
 
         if (reqtype === 'http') {
             // Arylic encodes track fields as hex-encoded UTF-8
-            adapter.setState(`${name}.album`, hexToUtf8(json.Album), true);
-            adapter.setState(`${name}.title`, hexToUtf8(json.Title), true);
-            adapter.setState(`${name}.artist`, hexToUtf8(json.Artist), true);
-            adapter.setState(`${name}.status`, hexToUtf8(json.Status), true);
+            adapter.setState(`${safeId}.album`, hexToUtf8(json.Album), true);
+            adapter.setState(`${safeId}.title`, hexToUtf8(json.Title), true);
+            adapter.setState(`${safeId}.artist`, hexToUtf8(json.Artist), true);
+            adapter.setState(`${safeId}.status`, hexToUtf8(json.Status), true);
         }
 
-        adapter.setState(`${name}.lastRefresh`, new Date().toTimeString().substring(0, 8), true);
-        adapter.setState(`${name}.alive`, true, true);
+        adapter.setState(`${safeId}.lastRefresh`, new Date().toTimeString().substring(0, 8), true);
+        adapter.setState(`${safeId}.alive`, true, true);
     } catch (error) {
         if (isUnloading) {
             return;
         }
         adapter.log.debug(`getPlayerStatus error for ${name}: ${error.message}`);
-        adapter.setState(`${name}.alive`, false, true);
-        adapter.setState(`${name}.lastError`, error.message, true);
+        adapter.setState(`${safeId}.alive`, false, true);
+        adapter.setState(`${safeId}.lastError`, error.message, true);
         // Remove the timeout entry so the Bonjour callback can detect that polling
         // has stopped and will restart it when the device reappears on the network.
-        pollTimeouts.delete(name);
+        pollTimeouts.delete(safeId);
         return;
     }
 
@@ -569,7 +568,7 @@ async function pollStreamer(adapter, streamer) {
     // ── Schedule next poll ────────────────────────────────────────────────────
     if (!isUnloading) {
         const handle = adapter.setTimeout(() => pollStreamer(adapter, streamer), adapter._refreshIntervalMs);
-        pollTimeouts.set(name, handle);
+        pollTimeouts.set(safeId, handle);
     }
 }
 
@@ -581,7 +580,7 @@ async function pollStreamer(adapter, streamer) {
  * @param {StreamerInfo} streamer
  */
 async function pollDeviceInfo(adapter, streamer) {
-    const { name, ip, reqtype } = streamer;
+    const { name, safeId, ip, reqtype } = streamer;
 
     // getStatusEx – firmware, battery, RSSI, network info …
     try {
@@ -591,18 +590,18 @@ async function pollDeviceInfo(adapter, streamer) {
         }
         const json = JSON.parse(body);
 
-        adapter.setState(`${name}.firmware`, json.firmware || '', true);
-        adapter.setState(`${name}.uuid`, json.uuid || '', true);
-        adapter.setState(`${name}.hardware`, json.hardware || '', true);
-        adapter.setState(`${name}.internet`, json.internet === '1', true);
-        adapter.setState(`${name}.battery_charging`, json.battery === '1', true);
-        adapter.setState(`${name}.battery_percent`, Number(json.battery_percent) || 0, true);
-        adapter.setState(`${name}.rssi`, Number(json.RSSI) || 0, true);
-        adapter.setState(`${name}.wifi_channel`, json.WifiChannel || '', true);
-        adapter.setState(`${name}.update_available`, json.VersionUpdate === '1', true);
-        adapter.setState(`${name}.new_firmware`, json.NewVer || '', true);
-        adapter.setState(`${name}.prompt_status`, json.prompt_status === '1', true);
-        adapter.setState(`${name}.group_role`, json.group === '0' ? 'master' : 'slave', true);
+        adapter.setState(`${safeId}.firmware`, json.firmware || '', true);
+        adapter.setState(`${safeId}.uuid`, json.uuid || '', true);
+        adapter.setState(`${safeId}.hardware`, json.hardware || '', true);
+        adapter.setState(`${safeId}.internet`, json.internet === '1', true);
+        adapter.setState(`${safeId}.battery_charging`, json.battery === '1', true);
+        adapter.setState(`${safeId}.battery_percent`, Number(json.battery_percent) || 0, true);
+        adapter.setState(`${safeId}.rssi`, Number(json.RSSI) || 0, true);
+        adapter.setState(`${safeId}.wifi_channel`, json.WifiChannel || '', true);
+        adapter.setState(`${safeId}.update_available`, json.VersionUpdate === '1', true);
+        adapter.setState(`${safeId}.new_firmware`, json.NewVer || '', true);
+        adapter.setState(`${safeId}.prompt_status`, json.prompt_status === '1', true);
+        adapter.setState(`${safeId}.group_role`, json.group === '0' ? 'master' : 'slave', true);
     } catch (error) {
         if (!isUnloading) {
             adapter.log.debug(`getStatusEx error for ${name}: ${error.message}`);
@@ -616,8 +615,8 @@ async function pollDeviceInfo(adapter, streamer) {
             return;
         }
         const json = JSON.parse(body);
-        adapter.setState(`${name}.multiroom_slaves`, Number(json.slaves) || 0, true);
-        adapter.setState(`${name}.multiroom_slave_list`, JSON.stringify(json.slave_list || []), true);
+        adapter.setState(`${safeId}.multiroom_slaves`, Number(json.slaves) || 0, true);
+        adapter.setState(`${safeId}.multiroom_slave_list`, JSON.stringify(json.slave_list || []), true);
     } catch (error) {
         if (!isUnloading) {
             adapter.log.debug(`getSlaveList error for ${name}: ${error.message}`);
@@ -676,19 +675,21 @@ async function checkNewStreamers(adapter) {
             const { name, ip } = JSON.parse(key);
             pendingDiscoveries.delete(key);
 
-            if (streamers.has(name)) {
+            const safeId = name2id(name, adapter);
+            if (streamers.has(safeId)) {
                 continue;
             }
 
+            /** @type {'http'|'https'} */
             const reqtype = (await supportsHttp(ip)) ? 'http' : 'https';
             adapter.log.info(`New streamer: ${name} @ ${ip} (${reqtype})`);
 
-            const info = { name, ip, reqtype, upnpClient: null, pollCycle: 0 };
-            streamers.set(name, info);
+            const info = { name, safeId, ip, reqtype, upnpClient: null, pollCycle: 0 };
+            streamers.set(safeId, info);
 
             await createDataPoints(adapter, info);
             if (!isUnloading) {
-                adapter.setState(`${name}.alive`, true, true);
+                adapter.setState(`${safeId}.alive`, true, true);
                 pollStreamer(adapter, info);
             }
         }
@@ -712,8 +713,7 @@ async function checkNewStreamers(adapter) {
  * @param {StreamerInfo} streamer
  */
 async function createDataPoints(adapter, streamer) {
-    const { name, ip, reqtype } = streamer;
-    const safeId = name2id(name, adapter);
+    const { name, safeId, ip, reqtype } = streamer;
 
     await adapter.setObjectNotExistsAsync(safeId, {
         type: 'device',
@@ -726,7 +726,7 @@ async function createDataPoints(adapter, streamer) {
      * @param common
      */
     const mkState = (id, common) =>
-        adapter.setObjectNotExistsAsync(`${name}.${id}`, {
+        adapter.setObjectNotExistsAsync(`${safeId}.${id}`, {
             type: 'state',
             common,
             native: {},
@@ -1026,10 +1026,10 @@ async function createDataPoints(adapter, streamer) {
 
         // ── Position & playlist ───────────────────────────────────────────────
         mkState('curpos', {
-            name: 'Current position (ms)',
+            name: 'Current position (s)',
             type: 'number',
             role: 'media.elapsed',
-            unit: 'ms',
+            unit: 's',
             read: true,
             write: false,
             def: 0,
@@ -1038,7 +1038,7 @@ async function createDataPoints(adapter, streamer) {
             name: 'Offset PTS',
             type: 'number',
             role: 'media.elapsed',
-            unit: 'ms',
+            unit: 's',
             read: true,
             write: false,
             def: 0,
@@ -1343,7 +1343,7 @@ async function createDataPoints(adapter, streamer) {
                 return;
             }
             const json = JSON.parse(body);
-            adapter.setState(`${name}.Device_Name`, name2id(json.DeviceName, adapter), true);
+            adapter.setState(`${safeId}.Device_Name`, name2id(json.DeviceName, adapter), true);
             adapter.setState('info.connection', true, true);
         })
         .catch(error => {
