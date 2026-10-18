@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "wiim",
-    "version": "0.6.0",
+    "version": "0.6.1",
     "news": {
+      "0.6.1": {
+        "en": "Migration to seconds instead of ms, corrected bonjour name handling",
+        "de": "Umstellung auf Sekunden statt ms, Bonjour-Name korrigiert",
+        "ru": "Переход на секунды вместо мс, исправлена обработка имен bonjour",
+        "pt": "Migração para segundos em vez de ms, corrigiu o bom nome",
+        "nl": "Migratie naar seconden in plaats van ms, gecorrigeerde verwerking van bonjournamen",
+        "fr": "Migration en secondes au lieu de ms, gestion du nom Bonjour corrigée",
+        "it": "Migrazione a secondi anziché ms, corretta gestione bonjour",
+        "es": "Migración a segundos en lugar de ms, manejo de nombres Bonjour corregido",
+        "pl": "Migracja do sekund zamiast ms, poprawiono obsługę nazw bonjour",
+        "uk": "Міграція на секунди замість мс, виправлена обробка імені bonjour",
+        "zh-cn": "迁移到秒而不是毫秒，更正了 bonjour 名称处理"
+      },
       "0.6.0": {
         "en": "Addition of most API features, code optimization",
         "de": "Zusatz der meisten API-Funktionen, Codeoptimierung",

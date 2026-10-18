@@ -59,11 +59,11 @@ These states represent the current playback information and hardware metrics fet
 | `album` | string | `media.album` | - | Name of the current album. |
 | `title` | string | `media.title` | - | Title of the current track. |
 | `albumArtURI` | string | `media.cover` | - | HTTP URL or URI pointing to the album cover artwork. |
-| `mode` | string | `text` | - | Current audio source mode (e.g., Bluetooth, Wi-Fi, Line-In). |
+| `mode` | string | `media.input` | - | Current audio source mode (e.g., Bluetooth, Wi-Fi, Line-In). |
 | `loop_mode` | number | `value` | - | Raw numeric loop/repeat mode returned by the hardware. |
 | `sampleRate` | number | `value` | Hz | Audio sample rate of the currently playing stream (e.g., 44100). |
 | `bitDepth` | number | `value` | bit | Audio bit depth of the stream (e.g., 16 or 24 bit). |
-| `lastRefresh` | string | `date` | - | Timestamp of the last successful data refresh from the device. |
+| `lastRefresh` | string | `text` | - | Timestamp of the last successful data refresh from the device. |
 
 ### Playback Controls (Read/Write)
 Use these states to control the playback, routing, and system parameters of your streamers.
@@ -75,12 +75,12 @@ Use these states to control the playback, routing, and system parameters of your
 | `previous` | boolean | `button` | trigger | Returns to the previous track. |
 | `volume` | number | `level.volume` | `0` to `100` % | Controls the device master volume. |
 | `loopmode` | number | `level` | `0` to `5` | Set selection dropdown for repeat and shuffle modes:<br>`0`: Repeat all<br>`1`: Repeat once<br>`2`: Shuffle + Repeat<br>`3`: Shuffle<br>`4`: No repeat<br>`5`: Shuffle + Repeat once |
-| `jumptopos` | number | `media.elapsed` | seconds | Seeks to a specific position (in ms) within the current track. |
-| `play_preset` | number | `button` | integer | Triggers a preset favorite slot pre-configured inside the WiiM/Arylic App. |
-| `play_URL` | string | `text` | URL string | Plays a direct custom audio stream URL (e.g., HTTP raw mp3 link). |
-| `playPromptUrl` | string | `text` | URL string | Plays an instant audio prompt or notification sound (e.g., for chimes/TTS). |
-| `switchmode` | string | `text` | input mode | Manually changes the active input source channel. |
-| `setShutdown` | number | `level` | seconds | Sets the integrated sleep timer (in seconds) after which the device turns off. |
+| `jumptopos` | number | `media.elapsed` | ms | Seeks to a specific position (in ms) within the current track. |
+| `play_preset` | number | `media.playid` | integer | Triggers a preset favorite slot pre-configured inside the WiiM/Arylic App. |
+| `play_URL` | string | `media.url` | URL string | Plays a direct custom audio stream URL (e.g., HTTP raw mp3 link). |
+| `playPromptUrl` | string | `media.url.announcement` | URL string | Plays an instant audio prompt or notification sound (e.g., for chimes/TTS). |
+| `switchmode` | string | `media.input` | input mode | Manually changes the active input source channel. |
+| `setShutdown` | number | `level.timer` | seconds | Sets the integrated sleep timer (in seconds) after which the device turns off. |
 
 ### Multiroom & Synchronization (Read/Write)
 Manage your device grouping and multiroom synchronous zones directly.
@@ -89,15 +89,16 @@ Manage your device grouping and multiroom synchronous zones directly.
 | :--- | :--- | :--- | :--- |
 | `setMaster` | string | `text` | Enter the target IP address to pair this player as a multiroom slave group member. |
 | `leaveSyncGroup` | boolean | `button` | Triggers the device to leave its current multiroom sync group instantly. |
-| `multiroom_slave_volume` | number | `level.volume` | Adjusts the relative volume offsets for active multiroom slave instances. |
-| `multiroom_slave_mute` | boolean | `media.mute` | Mutes or unmutes all attached slave clients in the synchronized group. |
- 
+| `multiroom_slave_volume` | string | `text` | Adjusts the relative volume offsets for active multiroom slave instances, format "ip:volume". |
+| `multiroom_slave_mute` | string | `text` | Mutes or unmutes all attached slave clients in the synchronized group, format "ip:0" or "ip:1". |
+| `multiroom_kickout` | boolean | `button` | Kicks out a predefined device context from the active multiroom tree. | 
 
 
 ## Changelog
-| `multiroom_kickout` | boolean | `button` | Kicks out a predefined device context from the active multiroom tree. |
-
 <!-- Placeholder for the next version (at the beginning of the line): ### **WORK IN PROGRESS** -->
+### 0.6.1 (2026-10-18)
+Migration to seconds instead of ms, corrected bonjour name handling
+
 ### 0.6.0 (2026-10-06)
 * (KaiIOB) Addition of most API features, code optimization
 
@@ -109,9 +110,6 @@ Manage your device grouping and multiroom synchronous zones directly.
 
 ### 0.4.1
 * (KaiIOB) minor correction
-
-### 0.4.0
-* (KaiIOB) reduced logging, introduction of player state, improved error handling, several devices added to list of tested devices
 
 For older releases, see [CHANGELOG_OLD.md](CHANGELOG_OLD.md).
 
